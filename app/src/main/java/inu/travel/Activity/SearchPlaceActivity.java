@@ -33,8 +33,6 @@ public class SearchPlaceActivity extends Activity {
     Button btnViewDetail;
     Button btnComplete;
 
-    public static String mApiKey = "8818efcf-6165-3d1c-a056-93025f8b06c3"; // 발급받은 appKey
-
     /**
      * onCreate()
      */
@@ -109,8 +107,6 @@ public class SearchPlaceActivity extends Activity {
             }
         });
 
-//        mMapView = new TMapView(this);
-//        addView(mMapView);
         mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
         mMapView = new TMapView(this);
         mMainRelativeLayout.addView(mMapView);

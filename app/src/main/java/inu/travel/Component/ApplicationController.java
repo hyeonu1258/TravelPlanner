@@ -3,7 +3,7 @@ package inu.travel.Component;
 import android.app.Application;
 import android.util.Log;
 
-import com.example.jingyu.sopt6.Network.NetworkService;
+import inu.travel.Network.NetworkService;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;

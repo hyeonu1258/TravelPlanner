@@ -9,21 +9,23 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
-import com.skplanetx.tmapopenmapapi.R;
-
 import java.util.ArrayList;
+
+import inu.travel.Model.PlanList;
+import inu.travel.R;
+import inu.travel.ViewHolder.PlanViewHolder;
 
 /**
  * Created by JongMin on 2015-11-26.
  */
 public class PlanAdapter extends BaseAdapter {
 
-    private ArrayList<Plan> planDatas;
+    private ArrayList<PlanList> planDatas;
     LayoutInflater layoutInflater;
 
-    public PlanAdapter(ArrayList<Plan> planDatas, Context context) {
+    public PlanAdapter(ArrayList<PlanList> planDatas, Context context) {
         this.planDatas = planDatas;
-        layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -44,25 +46,26 @@ public class PlanAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder viewHolder = new ViewHolder();
+       // PlanViewHolder viewHolder = new PlanViewHolder();
+        PlanViewHolder viewHolder = new PlanViewHolder();
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_plan, parent, false);
+            convertView = layoutInflater.inflate(R.layout.list_item_plan
+                    , parent, false);
 
-            viewHolder.txtName_item = (TextView)convertView.findViewById(R.id.txtTitle_item);
+            viewHolder.txtNameItem = (TextView) convertView.findViewById(R.id.txtTitle_item);
             //viewHolder.txtId_item = (TextView)convertView.findViewById(R.id.txtAge);
-            viewHolder.txtDetail_item = (TextView)convertView.findViewById(R.id.txtDescription_item);
+            viewHolder.txtDescriptionItem = (TextView) convertView.findViewById(R.id.txtDescription_item);
 
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)convertView.getTag();
+            viewHolder = (PlanViewHolder) convertView.getTag();
         }
 
-        Plan plan_temp = planDatas.get(position);
-        System.out.println(plan_temp.getName()+"ffffffffffffffffffffffffffffff");
-        viewHolder.txtName_item.setText(plan_temp.getName().toString());
+        PlanList plan_temp = planDatas.get(position);
+        viewHolder.txtNameItem.setText(plan_temp.getPlanName().toString());
         //viewHolder.txtId_item.setText(String.valueOf(plan_temp.getId()));
-        viewHolder.txtDetail_item.setText(plan_temp.getDetail());
+        viewHolder.txtDescriptionItem.setText(plan_temp.getPlanDescription());
 
         return convertView;
     }
