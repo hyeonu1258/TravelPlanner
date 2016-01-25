@@ -3,6 +3,8 @@ package inu.travel.Component;
 import android.app.Application;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -13,6 +15,8 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
+import inu.travel.Network.AwsNetworkService;
+import inu.travel.Network.TourNetworkService;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -25,16 +29,19 @@ public class ApplicationController extends Application{
      */
     // TODO: ApplicationController 인스턴스 생성 및 getter 설정
     private static ApplicationController instance;
-    public static ApplicationController getInstance(){ return instance;}
+    public static ApplicationController getInstance(){ return instance; }
 
-//    NetworkService도 마찬가지로 Application을 상속받은 ApplicationController 내에서 관리해주는 것이 좋습니다.
-    // TODO: NetworkService 인스턴스 생성 및 getter 설정
-    private NetworkService networkService;
-    public NetworkService getNetwork(){return networkService;}
+    // NetworkService도 마찬가지로 Application을 상속받은 ApplicationController 내에서 관리해주는 것이 좋습니다.
+    // TODO: TourNetworkService 인스턴스 생성 및 getter 설정
+    private TourNetworkService tourNetworkService;
+    private AwsNetworkService awsNetworkService;
+    public TourNetworkService getTourNetwork() { return tourNetworkService; }
+    public AwsNetworkService getAwsNetwork() { return awsNetworkService; }
 
     //통신할 서버의 주소입니다. 클라이언트는 이 주소에 query 또는 path 등을 추가하여 요청합니다.
-    // TODO: baseUrl 설정
-    final String baseUrl = "https://apis.daum.net";
+    // TODO:baseUrl 설정
+    final String tourBaseUrl = TourNetworkService.baseUrl;
+    final String AwsBaseUrl = AwsNetworkService.baseUrl;
 
     @Override
     public void onCreate() {
@@ -46,10 +53,11 @@ public class ApplicationController extends Application{
         Log.i("MyTag", "Application 객체가 가장 먼저 실행됩니다.");
         // TODO: 인스턴스 가져오고 서비스 실행
         ApplicationController.instance = this;
-        this.buildService();
+        this.buildTourService();
+        this.buildAwsService();
     }
 
-    private void buildService() {
+    private void buildTourService() {
 
         /**
          * 쿠키를 관리하기 위해 CookieHandler를 만들어주고
@@ -81,11 +89,11 @@ public class ApplicationController extends Application{
                 // TODO: url에 apikey 쿼리문 추가하기
                 HttpUrl originalHttpUrl = original.httpUrl();
                 HttpUrl.Builder urlBuilder = originalHttpUrl.newBuilder().addQueryParameter(
-                        "apikey", networkService.API_KEY
+                        "apikey", tourNetworkService.API_KEY
                 );
                 HttpUrl httpUrl = urlBuilder.build();
 
-                Log.i("MyTag",  "apikey가 추가된 Url : " + httpUrl.toString());
+                Log.i("MyTag", "apikey가 추가된 Url : " + httpUrl.toString());
 
                 /**
                  * Request 빌더를 통해 위에서 새로 생성한 url을 달아주고
@@ -114,11 +122,29 @@ public class ApplicationController extends Application{
 
         // TODO: retrofit 객체 만들기
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(tourBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client((client))
                 .build();
-        //retrofit.create(NetworkService.class)를 통해 새로운 NetworkService를 만들어줍니다.
-        networkService = retrofit.create(NetworkService.class);
+        //retrofit.create(TourNetworkService.class)를 통해 새로운 NetworkService를 만들어줍니다.
+        tourNetworkService = retrofit.create(TourNetworkService.class);
     }
+
+    private void buildAwsService() {
+        if (awsNetworkService == null) {
+            Gson gson = new GsonBuilder()
+                    .create();
+
+            GsonConverterFactory factory = GsonConverterFactory.create(gson);  //서버에서 json 형식으로 데이터를 보내고 이를 파싱해서 받아오기 위해서 사용합니다.
+
+            // TODO: Retrofit.Builder()를 이용해 Retrofit 객체를 생성한 후 이를 이용해 AwsnetworkService 정의
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(AwsBaseUrl)
+                    .addConverterFactory(factory)
+                    .build();
+
+            awsNetworkService = retrofit.create(AwsNetworkService.class);
+        }
+    }
+
 }
