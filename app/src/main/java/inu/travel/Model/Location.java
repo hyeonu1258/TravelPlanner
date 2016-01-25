@@ -3,7 +3,7 @@ package inu.travel.Model;
 /**
  * Created by jingyu on 2016-01-25.
  */
-public class Place {
+public class Location {
     public String contenttypeid;
     public String contentid;
     public double mapx;

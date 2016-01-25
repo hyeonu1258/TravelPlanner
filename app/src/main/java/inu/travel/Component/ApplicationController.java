@@ -14,13 +14,14 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.URLEncoder;
 
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.Network.TourNetworkService;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
-public class ApplicationController extends Application{
+public class ApplicationController extends Application {
 
     /**
      * Application 클래스를 상속받은 ApplicationController 객체는 어플리케이션에서 단 하나만 존재해야 합니다.
@@ -29,14 +30,23 @@ public class ApplicationController extends Application{
      */
     // TODO: ApplicationController 인스턴스 생성 및 getter 설정
     private static ApplicationController instance;
-    public static ApplicationController getInstance(){ return instance; }
+
+    public static ApplicationController getInstance() {
+        return instance;
+    }
 
     // NetworkService도 마찬가지로 Application을 상속받은 ApplicationController 내에서 관리해주는 것이 좋습니다.
     // TODO: TourNetworkService 인스턴스 생성 및 getter 설정
     private TourNetworkService tourNetworkService;
     private AwsNetworkService awsNetworkService;
-    public TourNetworkService getTourNetwork() { return tourNetworkService; }
-    public AwsNetworkService getAwsNetwork() { return awsNetworkService; }
+
+    public TourNetworkService getTourNetwork() {
+        return tourNetworkService;
+    }
+
+    public AwsNetworkService getAwsNetwork() {
+        return awsNetworkService;
+    }
 
     //통신할 서버의 주소입니다. 클라이언트는 이 주소에 query 또는 path 등을 추가하여 요청합니다.
     // TODO:baseUrl 설정
@@ -88,11 +98,16 @@ public class ApplicationController extends Application{
                 Request original = chain.request();
                 // TODO: url에 apikey 쿼리문 추가하기
                 HttpUrl originalHttpUrl = original.httpUrl();
-                HttpUrl.Builder urlBuilder = originalHttpUrl.newBuilder().addQueryParameter(
-                        "apikey", tourNetworkService.API_KEY
-                );
-                HttpUrl httpUrl = urlBuilder.build();
+                HttpUrl.Builder urlBuilder = originalHttpUrl.newBuilder()
+                        .addQueryParameter(
+                                "ServiceKey", tourNetworkService.API_KEY
+                        ).addQueryParameter(
+                                "_type", "json"
+                        );
 
+                HttpUrl httpUrl = urlBuilder.build();
+//                httpUrl.encodedQuery();
+                // TODO: %253D 오류 url 인코딩오류같음
                 Log.i("MyTag", "apikey가 추가된 Url : " + httpUrl.toString());
 
                 /**
