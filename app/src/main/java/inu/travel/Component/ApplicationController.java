@@ -1,6 +1,7 @@
 package inu.travel.Component;
 
 import android.app.Application;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -106,9 +107,9 @@ public class ApplicationController extends Application {
                         );
 
                 HttpUrl httpUrl = urlBuilder.build();
-//                httpUrl.encodedQuery();
-                // TODO: %253D 오류 url 인코딩오류같음
-                Log.i("MyTag", "apikey가 추가된 Url : " + httpUrl.toString());
+
+                // TODO: %253D 오류 url 인코딩오류같음 => 더블인코딩되어서 디코딩 한번 해줌
+                Log.i("MyTag", "apikey가 추가된 Url : " +  Uri.decode(httpUrl.toString()));
 
                 /**
                  * Request 빌더를 통해 위에서 새로 생성한 url을 달아주고
@@ -116,7 +117,7 @@ public class ApplicationController extends Application {
                  */
 
                 // TODO: requestBuilder를 통해 새로운 request 만들기
-                Request.Builder requestBuilder = original.newBuilder().url(httpUrl)
+                Request.Builder requestBuilder = original.newBuilder().url(Uri.decode(httpUrl.toString()))
                         .method(original.method(), original.body());
 
                 Request request = requestBuilder.build();
