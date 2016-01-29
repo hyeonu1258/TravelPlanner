@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapGpsManager;
 import com.skp.Tmap.TMapMarkerItem;
@@ -23,6 +24,7 @@ import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
@@ -31,10 +33,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import inu.travel.Component.ApplicationController;
+import inu.travel.Model.SearchPlace;
 import inu.travel.Network.TourNetworkService;
 import inu.travel.R;
 import retrofit.Callback;
@@ -51,6 +55,7 @@ public class SearchPlaceActivity extends Activity {
     private String searchContent; // 검색한 내용
     private String mapX, mapY; //투어 API로 보낼 좌표
     private String contentTypeId = "12"; //관광지:12, 숙박:32, 음식점:39
+    private String radius = "5000"; //거리반경
 
     //지도 위 버튼들
     Button btnMT;
@@ -93,17 +98,17 @@ public class SearchPlaceActivity extends Activity {
 //        mMapView.setIconVisibility(true);
 
         //마커 표시
-        TMapPoint tpoint = new TMapPoint(37.570841, 126.985302);
-        TMapMarkerItem tItem = new TMapMarkerItem();
-        tItem.setTMapPoint(tpoint);
-        tItem.setName("관광지1");
-        tItem.setVisible(TMapMarkerItem.VISIBLE);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-        tItem.setIcon(bitmap);
-
-        tItem.setPosition(0.5f, 1.0f);
-        mMapView.addMarkerItem("tour1", tItem);
+//        TMapPoint tpoint = new TMapPoint(37.570841, 126.985302);
+//        TMapMarkerItem tItem = new TMapMarkerItem();
+//        tItem.setTMapPoint(tpoint);
+//        tItem.setName("관광지1");
+//        tItem.setVisible(TMapMarkerItem.VISIBLE);
+//
+//        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+//        tItem.setIcon(bitmap);
+//
+//        tItem.setPosition(0.5f, 1.0f);
+//        mMapView.addMarkerItem("tour1", tItem);
     }
 
     private void btnClickEvent() {
@@ -166,7 +171,7 @@ public class SearchPlaceActivity extends Activity {
             @Override
             public void onClick(View v) {
                 searchContent = editSearch.getText().toString();
-                Log.i("Mylog", searchContent);
+                Log.i("MyLog:searchContent", searchContent);
 
                 // 별도의 스레드로 검색한 지역의 좌표를 받아옴
                 TMapData tmapdata = new TMapData();
@@ -176,11 +181,17 @@ public class SearchPlaceActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                System.out.println(tourNetworkService.API_KEY);
-                                Log.i("Mylog", poiList.get(0).noorLat);
-                                Log.i("Mylog", poiList.get(0).noorLon);
+                                if (poiList.isEmpty() == true) {
+                                    Toast.makeText(getApplicationContext(), "검색결과가 없습니다..", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+
+                                Log.i("MyLog:noorLat", poiList.get(0).noorLat);
+                                Log.i("MyLog:noorLon", poiList.get(0).noorLon);
                                 mapX = poiList.get(0).noorLon;
                                 mapY = poiList.get(0).noorLat;
+
                                 getLocationListFromServer();
                             }
                         });
@@ -192,10 +203,6 @@ public class SearchPlaceActivity extends Activity {
     }
 
     private void getLocationListFromServer() {
-        if(mapX == null || mapY == null){
-            Toast.makeText(getApplicationContext(),"검색결과가 없습니다..", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         /**
          * query에 담을 parameter들을 HashMap을 통해 생성
@@ -207,13 +214,12 @@ public class SearchPlaceActivity extends Activity {
         HashMap<String, String> parameters = new HashMap<>();
 
         parameters.put("arrange", "B"); //정렬 B(조회순)
-        parameters.put("MobileOS","AND");
-        parameters.put("MobileApp","TravelPlanner");
-        parameters.put("contentTypeId",contentTypeId); //관광타입ID
-        parameters.put("mapX",mapX);
+        parameters.put("MobileOS", "AND");
+        parameters.put("contentTypeId", contentTypeId); //관광타입ID
+        parameters.put("mapX", mapX);
         parameters.put("mapY", mapY);
-        parameters.put("radius", "5000"); //거리반경(m단위)
-
+        parameters.put("radius", radius); //거리반경(m단위)
+//numOfRows 검색결과 개수지정
 
         /**
          * Call<Object> 형의 서버에 요청을 해주는 객체를 만듭니다.
@@ -243,37 +249,76 @@ public class SearchPlaceActivity extends Activity {
         // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
 
         retrofit.Call<Object> dataCall = tourNetworkService.getLocationList(parameters);
-        dataCall.enqueue(new Callback<Object>(){
+        dataCall.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Response<Object> response, Retrofit retrofit) {
                 int statusCode = response.code();
-                if(response.isSuccess()){
+                if (response.isSuccess()) {
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(response.body());
 
-                    try{
+                    try {
                         JSONObject jsonObject = new JSONObject(jsonString);
                         jsonObject = jsonObject.getJSONObject("response").getJSONObject("body").getJSONObject("items");
-                        Location location = gson.fromJson(jsonObject.toString(), Location.class);
-                        Log.i("MyTag", jsonObject.toString());
+                        List<SearchPlace> searchPlaceList = gson.fromJson(jsonObject.getJSONArray("item").toString(), new TypeToken<List<SearchPlace>>() {
+                        }.getType());
 
+                        Log.i("MyLog:jsonObject", jsonObject.toString());
+                        Log.i("MyLog:SearchPlace", searchPlaceList.get(0).toString());
+
+                        //리스트로 받아와도 TMapPOIItem 클래스와 일치해야 할 것 같음
+                        //TODO: SearchPlace를 리스트로 받아서 TMapPOIItem 리스트로 만들어준뒤 mMapView.addTMapPOIItem(tmappoi리스트)로 지도에 표시
                         //지도에 띄우기
+                        showPlaceOnMap(searchPlaceList);
                         //adapter.setShopItems((ArrayList<ShopItem>)shopResult.item);
 
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-                else{
-                    Log.i("MyTag", "실패 : " + statusCode);
+                } else {
+                    Log.i("MyLog", "실패 : " + statusCode);
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.i("MyTag", t.getMessage());
+                Log.i("MyLog", t.getMessage());
             }
         });
+    }
+
+    private void showPlaceOnMap(List<SearchPlace> searchPlace) { //지도에 검색된 장소들 띄우기
+        //실제좌표를 화면좌표로 바꾸기
+//        int x = mMapView.getMapXForPoint(searchPlace.mapx,searchPlace.mapy);
+//        int y = mMapView.getMapXForPoint(searchPlace.mapx,searchPlace.mapy);
+        ArrayList<TMapPOIItem> tMapPOIItems = new ArrayList<TMapPOIItem>();
+
+        //아이콘 설정
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        mMapView.setIcon(bitmap);
+        mMapView.setIconVisibility(true);
+
+        Log.i("MyLog:size", String.valueOf(searchPlace.size()));
+        for (int i = 0; i < searchPlace.size(); i++) {
+            TMapPOIItem item = new TMapPOIItem();
+            item.Icon = bitmap;
+            Log.i("MyLog:place", searchPlace.get(i).title);
+            item.noorLon = searchPlace.get(i).mapx;
+            item.noorLat = searchPlace.get(i).mapy;
+            item.name = searchPlace.get(i).title;
+            tMapPOIItems.add(i, item);
+        }
+
+        //이미 표시된 POI 지우기
+        mMapView.removeAllTMapPOIItem();
+
+        //맵에 POI 띄우기
+        mMapView.addTMapPOIItem(tMapPOIItems);
+
+
+//        Log.i("MyLog:item", item.noorLon);
+//        Log.i("MyLog:item", item.getPOIPoint().toString());
+        //System.out.println(searchPlace);
     }
 
 

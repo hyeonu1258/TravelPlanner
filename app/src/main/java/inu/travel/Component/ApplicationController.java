@@ -101,14 +101,17 @@ public class ApplicationController extends Application {
                 HttpUrl originalHttpUrl = original.httpUrl();
                 HttpUrl.Builder urlBuilder = originalHttpUrl.newBuilder()
                         .addQueryParameter(
-                                "ServiceKey", tourNetworkService.API_KEY
+                                "MobileApp", tourNetworkService.appName
+                        )
+                        .addQueryParameter(
+                                "ServiceKey", tourNetworkService.apiKey
                         ).addQueryParameter(
                                 "_type", "json"
                         );
 
                 HttpUrl httpUrl = urlBuilder.build();
 
-                // TODO: %253D 오류 url 인코딩오류같음 => 더블인코딩되어서 디코딩 한번 해줌
+                //%253D 오류 url 인코딩오류같음 => 더블인코딩되어서 디코딩 한번 해줌
                 Log.i("MyTag", "apikey가 추가된 Url : " +  Uri.decode(httpUrl.toString()));
 
                 /**
@@ -119,7 +122,6 @@ public class ApplicationController extends Application {
                 // TODO: requestBuilder를 통해 새로운 request 만들기
                 Request.Builder requestBuilder = original.newBuilder().url(Uri.decode(httpUrl.toString()))
                         .method(original.method(), original.body());
-
                 Request request = requestBuilder.build();
 
                 //chian.proceed() 메소드는 Request 객체를 인자로 받아 서버에 보내주고 응답을 받아와서 반환합니다. 따라서 Response 객체로 반환을 하겠죠?

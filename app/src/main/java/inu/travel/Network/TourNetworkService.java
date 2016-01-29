@@ -22,12 +22,10 @@ public interface TourNetworkService {
      * QueryMap, Query가 될 수도 있고
      * Body, Path, Query가 다 들어갈 수도 있습니다.
      */
-    String API_KEY = "5lBVFahPjOQQ3FgxFRffiOuRE7AvvXWzDVzIS5OAbRFOJA7Iye9tQhjPLKpgyJ2hPyvqRXsi3yurqH2oNdXnjA%3D%3D";
-    String appName = "travelplanner";
-
-//    String appName = ULEncoder.encode( "한국관광공사", "UTF-8"); //한글일 경우 인코딩 해야하는데 오류남
-
+    String apiKey = "5lBVFahPjOQQ3FgxFRffiOuRE7AvvXWzDVzIS5OAbRFOJA7Iye9tQhjPLKpgyJ2hPyvqRXsi3yurqH2oNdXnjA%3D%3D";
+    String appName = "TravelPlanner";
     String baseUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/";
+
     //장소 추가 화면이 시작할 때,
     //내주변 좌표(한국관광공사 주변)에서 1000m 이내에 있는 모든타입의 관광정보 조회 (한페이지에 10개씩, 첫페이지며, 리스트를 조회순으로 조회)
     //    http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=5lBVFahPjOQQ3FgxFRffiOuRE7AvvXWzDVzIS5OAbRFOJA7Iye9tQhjPLKpgyJ2hPyvqRXsi3yurqH2oNdXnjA%3D%3D&mapX=126.981611&mapY=37.568477&radius=1000&pageNo=1&numOfRows=10&listYN=Y&arrange=B&MobileOS=AND&MobileApp=AppTesting

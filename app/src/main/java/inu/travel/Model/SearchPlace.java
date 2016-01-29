@@ -1,13 +1,15 @@
 package inu.travel.Model;
 
+import java.util.List;
+
 /**
  * Created by jingyu on 2016-01-25.
  */
-public class Location {
+public class SearchPlace {
     public String contenttypeid;
     public String contentid;
-    public double mapx;
-    public double mapy;
+    public String mapx;
+    public String mapy;
     public String addr1;
     public String addr2;
     public int areacode;
@@ -20,9 +22,9 @@ public class Location {
     public int readcount; //조회수
     public int sigungucode;
     public String tel;
-    public String tilte;
+    public String title;
 
-//    <addr1>서울특별시 중구 명동8가길 32</addr1>
+    //    <addr1>서울특별시 중구 명동8가길 32</addr1>
 //    <addr2>(충무로2가)</addr2>
 //    <areacode>1</areacode>
 //    <cat1>A04</cat1>
@@ -39,4 +41,7 @@ public class Location {
 //    <sigungucode>24</sigungucode>
 //    <tel>02-753-6372, 778-1110</tel>
 //    <title>가나 안경원 (명동2호점)</title>
+    public String toString() {
+        return "Lat : " + this.mapx + "\nLon : " + this.mapy + "\ntitle : " + this.title;
+    }
 }
