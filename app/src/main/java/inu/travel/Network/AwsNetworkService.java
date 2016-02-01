@@ -25,4 +25,6 @@ public interface AwsNetworkService {
     @POST("/loin")
     Call<Object> memberLogin(@Body Person person);
 
+    //@GET
+
 }
