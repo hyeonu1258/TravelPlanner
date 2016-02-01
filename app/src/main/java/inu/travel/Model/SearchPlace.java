@@ -12,15 +12,15 @@ public class SearchPlace {
     public String mapy;
     public String addr1;
     public String addr2;
-    public int areacode;
+    public String areacode;
     public String cat1;
     public String cat2;
     public String cat3;
-    public int dist;
+    public String dist;
     public String firstimage;
     public String firstimage2;
-    public int readcount; //조회수
-    public int sigungucode;
+    public String readcount; //조회수
+    public String sigungucode;
     public String tel;
     public String title;
 
