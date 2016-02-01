@@ -32,4 +32,7 @@ public interface TourNetworkService {
     // TODO: Get 방식으로 요청
     @GET("locationBasedList")
     Call<Object> getLocationList(@QueryMap HashMap<String, String> parameter);
+
+    @GET("searchKeyword")
+    Call<Object> getLocationListByKeyword(@QueryMap HashMap<String, String> parameter);
 }
