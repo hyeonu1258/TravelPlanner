@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 
-public class SearchPlaceActivity extends Activity {
+public class SearchPlaceActivity extends Activity implements TMapView.OnClickListenerCallback {
 
     private Context mContext;
     private RelativeLayout mMainRelativeLayout = null;
@@ -56,6 +57,11 @@ public class SearchPlaceActivity extends Activity {
     private String mapX, mapY; //투어 API로 보낼 좌표
     private String contentTypeId = "12"; //관광지:12, 숙박:32, 음식점:39
     private String radius = "5000"; //거리반경
+    //아이콘 설정
+    private Bitmap defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+    private Bitmap selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+    //클릭하여 선택된 POI
+    private TMapPOIItem selectedPOIItem;
 
     //지도 위 버튼들
     Button btnMT;
@@ -81,6 +87,8 @@ public class SearchPlaceActivity extends Activity {
 
         setContentView(R.layout.activity_search_place);
         initNetworkService();
+
+        getSavedPlace();
         initView();
         btnClickEvent();
 
@@ -109,6 +117,11 @@ public class SearchPlaceActivity extends Activity {
 //
 //        tItem.setPosition(0.5f, 1.0f);
 //        mMapView.addMarkerItem("tour1", tItem);
+    }
+
+    //Todo: 이전에 만든 플랜에서 수정을 눌렀을 경우 이전에 저장된 장소를 서버에서 가져와야 함
+    private void getSavedPlace() {
+
     }
 
     private void btnClickEvent() {
@@ -173,6 +186,9 @@ public class SearchPlaceActivity extends Activity {
                 searchContent = editSearch.getText().toString();
                 Log.i("MyLog:searchContent", searchContent);
 
+//Todo :  http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword? API 사용하여 키워드로 검색할것
+
+
                 // 별도의 스레드로 검색한 지역의 좌표를 받아옴
                 TMapData tmapdata = new TMapData();
                 tmapdata.findAllPOI(searchContent, new TMapData.FindAllPOIListenerCallback() {
@@ -186,7 +202,15 @@ public class SearchPlaceActivity extends Activity {
                                     return;
                                 }
 
-
+//                                for(int i=0; i<poiList.size(); i++){
+//                                    Log.i("POI Name: " ,  poiList.get(i).getPOIName().toString() + ", " +
+//                                            "Address: " + poiList.get(i).getPOIAddress().replace("null", "") + ", " +
+//                                            "Point: " + poiList.get(i).getPOIPoint().toString());
+//                                }
+                                Log.i("MyLog:upperAddrName", poiList.get(0).upperAddrName);
+                                Log.i("MyLog:middleAddrName", poiList.get(0).middleAddrName);
+                                Log.i("MyLog:lowerAddrName", poiList.get(0).lowerAddrName);
+                                Log.i("MyLog:detailAddrName", poiList.get(0).detailAddrName);
                                 Log.i("MyLog:noorLat", poiList.get(0).noorLat);
                                 Log.i("MyLog:noorLon", poiList.get(0).noorLon);
                                 mapX = poiList.get(0).noorLon;
@@ -270,7 +294,6 @@ public class SearchPlaceActivity extends Activity {
                         //TODO: SearchPlace를 리스트로 받아서 TMapPOIItem 리스트로 만들어준뒤 mMapView.addTMapPOIItem(tmappoi리스트)로 지도에 표시
                         //지도에 띄우기
                         showPlaceOnMap(searchPlaceList);
-                        //adapter.setShopItems((ArrayList<ShopItem>)shopResult.item);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -293,15 +316,10 @@ public class SearchPlaceActivity extends Activity {
 //        int y = mMapView.getMapXForPoint(searchPlace.mapx,searchPlace.mapy);
         ArrayList<TMapPOIItem> tMapPOIItems = new ArrayList<TMapPOIItem>();
 
-        //아이콘 설정
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-        mMapView.setIcon(bitmap);
-        mMapView.setIconVisibility(true);
-
         Log.i("MyLog:size", String.valueOf(searchPlace.size()));
         for (int i = 0; i < searchPlace.size(); i++) {
             TMapPOIItem item = new TMapPOIItem();
-            item.Icon = bitmap;
+            item.Icon = defaultBitmap;
             Log.i("MyLog:place", searchPlace.get(i).title);
             item.noorLon = searchPlace.get(i).mapx;
             item.noorLat = searchPlace.get(i).mapy;
@@ -346,6 +364,34 @@ public class SearchPlaceActivity extends Activity {
         tourNetworkService = ApplicationController.getInstance().getTourNetwork();
     }
 
+    //TODO:화면 클릭시 POI를 반환하여 이벤트 처리할것
+    //명소 클릭시 처리하는 부분
+    /*
+        Parameters
+        - Markerlist : 클릭된 마커들
+        - Poilist : 클릭된 POI 들
+        - Point : 화면좌표값을 위도, 경도로 반환한 값
+        - Pointf : 화면좌표값
+    */
+    @Override
+    public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+        if (!arrayList1.isEmpty()) {
+//            for(int i=0; i<arrayList1.size(); i++) {
+//                Log.i("MyLog:clicked POI ", arrayList1.get(i).getPOIName());
+//            }
 
+            //get(0)으로 첫번째 거만 클릭이벤트 처리함
+            Toast.makeText(getApplicationContext(), arrayList1.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+
+            //선택된 POI를 임시로 저장 -> 나중에 장소 추가할때 저장할 데이터
+            selectedPOIItem = arrayList1.get(0);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+        return false;
+    }
 }
 
