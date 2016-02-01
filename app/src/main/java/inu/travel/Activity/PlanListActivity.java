@@ -43,7 +43,7 @@ public class PlanListActivity extends Activity {
         editName_d = (EditText) findViewById(R.id.editName_d);
         editDetail_d = (EditText) findViewById(R.id.editDetail_d);
         realm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext())
-                .name("PlanList.Realm5").build());
+                .name("PlanList.Realm6").build());
         makebutton();
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
