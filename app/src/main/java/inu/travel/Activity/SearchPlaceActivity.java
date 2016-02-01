@@ -58,8 +58,8 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     private String contentTypeId = "12"; //관광지:12, 숙박:32, 음식점:39
     private String radius = "5000"; //거리반경
     //아이콘 설정
-    private Bitmap defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-    private Bitmap selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+    private Bitmap defaultBitmap;
+    private Bitmap selectedBitmap;
     //클릭하여 선택된 POI
     private TMapPOIItem selectedPOIItem;
 
@@ -87,12 +87,12 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
         setContentView(R.layout.activity_search_place);
         initNetworkService();
+        mContext = this;
 
         getSavedPlace();
         initView();
         btnClickEvent();
 
-        mContext = this;
 
         mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
         mMapView = new TMapView(this);
@@ -210,7 +210,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
                                 Log.i("MyLog:upperAddrName", poiList.get(0).upperAddrName);
                                 Log.i("MyLog:middleAddrName", poiList.get(0).middleAddrName);
                                 Log.i("MyLog:lowerAddrName", poiList.get(0).lowerAddrName);
-                                Log.i("MyLog:detailAddrName", poiList.get(0).detailAddrName);
+//                                Log.i("MyLog:detailAddrName", poiList.get(0).detailAddrName);
                                 Log.i("MyLog:noorLat", poiList.get(0).noorLat);
                                 Log.i("MyLog:noorLon", poiList.get(0).noorLon);
                                 mapX = poiList.get(0).noorLon;
@@ -352,6 +352,10 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
         editSearch = (EditText) findViewById(R.id.editSearch);
         btnSearch = (Button) findViewById(R.id.btnSearch);
+
+        //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
     }
 
     @Override
