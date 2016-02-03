@@ -23,6 +23,8 @@ public class SearchPlace {
     public String sigungucode;
     public String tel;
     public String title;
+    public String homepage;
+    public String overview;
 
     //    <addr1>서울특별시 중구 명동8가길 32</addr1>
 //    <addr2>(충무로2가)</addr2>

@@ -46,7 +46,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     private TMapView mMapView = null;
     private TourNetworkService tourNetworkService;
     private String searchContent; // 검색한 내용
-    private String contentTypeId = "12"; //관광지:12, 숙박:32, 음식점:39
+    private String contentTypeId; //관광지:12, 숙박:32, 음식점:39
     private String radius = "50000"; //거리반경
 
     //아이콘 설정
@@ -163,9 +163,10 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         btnViewDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "상세보기", Toast.LENGTH_SHORT).show();
-                if (selectedPOIItem != null)
+                if (selectedPOIItem != null) //선택된게 있으면 실행
                     viewDetail(selectedPOIItem);
+                else
+                    Toast.makeText(getApplicationContext(), "선택된 장소가 없습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -193,6 +194,68 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
         parameters.put("MobileOS", "AND");
         parameters.put("contentId", item.getPOIID()); //콘텐트타입
+        parameters.put("defaultYN", "Y"); //기본정보
+        parameters.put("firstImageYN", "Y"); //이미지
+        parameters.put("addrinfoYN", "Y"); //주소
+        parameters.put("overviewYN", "Y"); //개요
+
+        // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
+
+        retrofit.Call<Object> dataCall = tourNetworkService.getDetailCommon(parameters);
+        dataCall.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Response<Object> response, Retrofit retrofit) {
+                int statusCode = response.code();
+                if (response.isSuccess()) {
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(response.body());
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        jsonObject = jsonObject.getJSONObject("response").getJSONObject("body").getJSONObject("items");
+                        SearchPlace searchPlace = gson.fromJson(jsonObject.getJSONObject("item").toString(), SearchPlace.class);
+
+                        Log.i("MyLog:jsonObject", jsonObject.toString());
+                        Log.i("MyLog:SearchPlace", searchPlace.toString());
+
+                        //Todo : 상세히 보기 다이얼 로그 띄우기
+                        showDetailView(searchPlace);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.i("MyLog", "실패 : " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.i("MyLog", t.getMessage());
+            }
+        });
+
+    }
+
+    //상세정보를 띄움
+    private void showDetailView(SearchPlace searchPlace) {
+        //정보가 없는 장소가 있으므로 예외처리할것
+        try {
+                Log.i("MyLog:detailname", selectedPOIItem.name);
+            if(searchPlace.addr1 != null)
+                Log.i("MyLog:detailaddr1", searchPlace.addr1);
+            if(searchPlace.addr2 != null)
+                Log.i("MyLog:detailaddr2", searchPlace.addr2);
+            if(searchPlace.tel != null)
+                Log.i("MyLog:detailtel", searchPlace.tel);
+            if(searchPlace.homepage != null)
+                Log.i("MyLog:detailhomepage", searchPlace.homepage);
+            if(searchPlace.overview != null)
+                Log.i("MyLog:detailoverview", searchPlace.overview);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     //Tmap API에서 검색한 장소의 주요 지점 찾기
@@ -330,9 +393,6 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     }
 
     private void showPlaceOnMap(List<SearchPlace> searchPlace) { //지도에 검색된 장소들 띄우기
-        //실제좌표를 화면좌표로 바꾸기
-//        int x = mMapView.getMapXForPoint(searchPlace.mapx,searchPlace.mapy);
-//        int y = mMapView.getMapXForPoint(searchPlace.mapx,searchPlace.mapy);
         ArrayList<TMapPOIItem> tMapPOIItems = new ArrayList<TMapPOIItem>();
         ArrayList<TMapPoint> tMapPoints = new ArrayList<TMapPoint>();
         String areaCode = searchPlace.get(0).areacode;
@@ -351,17 +411,16 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             item.name = searchPlace.get(i).title;
             item.setID(searchPlace.get(i).contentid); //자세히보기 API 요청시 필요함
             tMapPOIItems.add(j, item);
-            tMapPoints.add(j, item.getPOIPoint());
+            tMapPoints.add(j, item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
             j++;
         }
 
         //이미 표시된 POI 지우기
         mMapView.removeAllTMapPOIItem();
 
-
         //맵에 POI 띄우기
         mMapView.addTMapPOIItem(tMapPOIItems);
-        //찍은 좌표로 맵 이동
+        //찍은 좌표로 맵 이동, 최적화
         TMapInfo info = mMapView.getDisplayTMapInfo(tMapPoints);
         mMapView.setCenterPoint(info.getTMapPoint().getLongitude(), info.getTMapPoint().getLatitude(), true);
         mMapView.setZoomLevel(info.getTMapZoomLevel());
