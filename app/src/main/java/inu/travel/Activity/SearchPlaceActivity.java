@@ -256,6 +256,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             e.printStackTrace();
         }
 
+
     }
 
     //Tmap API에서 검색한 장소의 주요 지점 찾기
