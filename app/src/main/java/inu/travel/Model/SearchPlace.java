@@ -42,6 +42,9 @@ public class SearchPlace {
 //    <tel>02-753-6372, 778-1110</tel>
 //    <title>가나 안경원 (명동2호점)</title>
     public String toString() {
-        return "Lat : " + this.mapx + "\nLon : " + this.mapy + "\ntitle : " + this.title;
+        return "Lat : " + this.mapx +
+                "\nLon : " + this.mapy +
+                "\ntitle : " + this.title +
+                "\ncontentID : " + this.contentid;
     }
 }

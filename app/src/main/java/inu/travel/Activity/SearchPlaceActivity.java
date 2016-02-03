@@ -46,7 +46,6 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     private TMapView mMapView = null;
     private TourNetworkService tourNetworkService;
     private String searchContent; // 검색한 내용
-    private String mapX, mapY; //투어 API로 보낼 좌표
     private String contentTypeId = "12"; //관광지:12, 숙박:32, 음식점:39
     private String radius = "50000"; //거리반경
 
@@ -86,19 +85,18 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         initView();
         btnClickEvent();
 
-
         mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
         mMapView = new TMapView(this);
         mMainRelativeLayout.addView(mMapView);
         mMapView.setSKPMapApiKey("8818efcf-6165-3d1c-a056-93025f8b06c3"); //SDK 인증키입력
         mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
 
-        //이미지 추가하는 방법
-//        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.ic_launcher);
-//        mMapView.setIcon(bitmap);
-//        mMapView.setIconVisibility(true);
-
-        //마커 표시
+//        //이미지 추가하는 방법
+////        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.ic_launcher);
+////        mMapView.setIcon(bitmap);
+////        mMapView.setIconVisibility(true);
+//
+//        //마커 표시
 //        TMapPoint tpoint = new TMapPoint(37.570841, 126.985302);
 //        TMapMarkerItem tItem = new TMapMarkerItem();
 //        tItem.setTMapPoint(tpoint);
@@ -122,6 +120,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "숙박", Toast.LENGTH_SHORT).show();
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
                 searchArea("32");
             }
         });
@@ -130,6 +129,8 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "관광지", Toast.LENGTH_SHORT).show();
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+
                 searchArea("12");
             }
         });
@@ -138,6 +139,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "맛집", Toast.LENGTH_SHORT).show();
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
                 searchArea("39");
             }
         });
@@ -162,7 +164,8 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "상세보기", Toast.LENGTH_SHORT).show();
-
+                if (selectedPOIItem != null)
+                    viewDetail(selectedPOIItem);
             }
         });
 
@@ -177,12 +180,24 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
                 searchArea("12"); //default로 관광지
             }
         });
     }
 
+    //상세히보기
+    private void viewDetail(TMapPOIItem item) {
+        // TODO: getDetailCommon API 사용하여 상세정보 뽑기
+        HashMap<String, String> parameters = new HashMap<>();
+
+        parameters.put("MobileOS", "AND");
+        parameters.put("contentId", item.getPOIID()); //콘텐트타입
+    }
+
+    //Tmap API에서 검색한 장소의 주요 지점 찾기
     private void searchArea(String ContentTtype) {
+        selectedPOIItem = null; //클릭해서 임시저장한 데이터 삭제
         contentTypeId = ContentTtype;
         searchContent = editSearch.getText().toString();
         Log.i("MyLog:searchContent", searchContent);
@@ -217,10 +232,9 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 //                                Log.i("MyLog:detailAddrName", poiList.get(0).detailAddrName);
                         Log.i("MyLog:noorLat", poiList.get(0).noorLat);
                         Log.i("MyLog:noorLon", poiList.get(0).noorLon);
-                        mapX = poiList.get(0).noorLon;
-                        mapY = poiList.get(0).noorLat;
 
-                        getLocationListFromServer();
+                        // Tour API에서 쓸 좌표를 넘긴다.
+                        getLocationListFromServer(poiList.get(0).noorLon, poiList.get(0).noorLat);
                     }
                 });
             }
@@ -229,7 +243,8 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
     }
 
-    private void getLocationListFromServer() {
+    //Tour API에서
+    private void getLocationListFromServer(String mapX, String mapY) {
 
         /**
          * query에 담을 parameter들을 HashMap을 통해 생성
@@ -334,6 +349,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             item.noorLon = searchPlace.get(i).mapx;
             item.noorLat = searchPlace.get(i).mapy;
             item.name = searchPlace.get(i).title;
+            item.setID(searchPlace.get(i).contentid); //자세히보기 API 요청시 필요함
             tMapPOIItems.add(j, item);
             tMapPoints.add(j, item.getPOIPoint());
             j++;
@@ -341,6 +357,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
         //이미 표시된 POI 지우기
         mMapView.removeAllTMapPOIItem();
+
 
         //맵에 POI 띄우기
         mMapView.addTMapPOIItem(tMapPOIItems);
@@ -393,20 +410,28 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     */
     @Override
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-        if (selectedPOIItem != null)
-            selectedPOIItem.Icon = defaultBitmap;
-        if (!arrayList1.isEmpty()) {
-//            for(int i=0; i<arrayList1.size(); i++) {
-//                Log.i("MyLog:clicked POI ", arrayList1.get(i).getPOIName());
-//            }
 
-            //get(0)으로 첫번째 거만 클릭이벤트 처리함
-            Toast.makeText(getApplicationContext(), arrayList1.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+        if (!arrayList1.isEmpty()) { //장소를 클릭했을 경우
+            if (arrayList1.get(0) == selectedPOIItem) { //같은장소를 또 클릭햇을 경우 선택을 해제한다.
+                selectedPOIItem.Icon = defaultBitmap;
+                mMapView.addTMapPOIItem(arrayList1); //이미지를 초기화 해준뒤
+                selectedPOIItem = null; //임시저장된것 삭제
+            } else {//다른장소를 선택할 경우 이전의 것 이미지 초기화 해준뒤 선택한 장소 이미지 바꾸고 임시저장
+                //get(0)으로 첫번째 거만 클릭이벤트 처리함
+                Toast.makeText(getApplicationContext(), arrayList1.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
-            //선택된 POI를 임시로 저장 -> 나중에 장소 추가할때 저장할 데이터
-            selectedPOIItem = arrayList1.get(0);
-            selectedPOIItem.Icon = selectedBitmap;
-            mMapView.setIconVisibility(true);
+                if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
+                    selectedPOIItem.Icon = defaultBitmap;
+                    mMapView.addTMapPOIItem(arrayList1); //이미지를 초기화 해준뒤
+                    selectedPOIItem = null; //임시저장된것 삭제
+                }
+
+                //선택된 POI를 임시로 저장 -> 나중에 장소 추가, 자세히 보기 할때 저장할 데이터
+                selectedPOIItem = arrayList1.get(0);
+                selectedPOIItem.Icon = selectedBitmap;
+                mMapView.addTMapPOIItem(arrayList1); //갱신
+//                mMapView.setIconVisibility(true); //SKT타워에 마커가 자꾸 생김
+            }
         }
         return false;
     }

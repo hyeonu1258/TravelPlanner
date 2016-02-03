@@ -62,6 +62,7 @@
 			android:id="@+id/btnAddPlace"
 			android:layout_alignBottom="@+id/map_view"
 			android:text="장소추가"
+			android:textSize="15dp"
 			android:layout_width="80dp"
 			android:layout_height="50dp" />
 
@@ -71,6 +72,7 @@
 			android:layout_alignBottom="@+id/map_view"
 			android:layout_toRightOf="@+id/btnAddPlace"
 			android:text="장소삭제"
+			android:textSize="15dp"
 			android:layout_width="80dp"
 			android:layout_height="50dp" />
 
@@ -80,6 +82,7 @@
 			android:layout_alignBottom="@+id/map_view"
 			android:layout_toRightOf="@+id/btnRemovePlace"
 			android:text="상세보기"
+			android:textSize="15dp"
 			android:layout_width="80dp"
 			android:layout_height="50dp" />
 
@@ -89,6 +92,7 @@
 			android:layout_alignBottom="@+id/map_view"
 			android:layout_toRightOf="@+id/btnViewDetail"
 			android:text="완료"
+			android:textSize="15dp"
 			android:layout_width="80dp"
 			android:layout_height="50dp" />
 
