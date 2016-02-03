@@ -1,17 +1,26 @@
 package inu.travel.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Layout;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -26,6 +35,8 @@ import com.skp.Tmap.TMapView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +49,11 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+import android.os.Handler;
+
 
 public class SearchPlaceActivity extends Activity implements TMapView.OnClickListenerCallback {
+    Handler handler = new Handler();  // 외부쓰레드 에서 메인 UI화면을 그릴때 사용
 
     private Context mContext;
     private RelativeLayout mMainRelativeLayout = null;
@@ -238,24 +252,116 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     }
 
     //상세정보를 띄움
-    private void showDetailView(SearchPlace searchPlace) {
+    private void showDetailView(final SearchPlace searchPlace) {
         //정보가 없는 장소가 있으므로 예외처리할것
         try {
-                Log.i("MyLog:detailname", selectedPOIItem.name);
-            if(searchPlace.addr1 != null)
+            Log.i("MyLog:detailname", selectedPOIItem.name);
+            if (searchPlace.addr1 != null)
                 Log.i("MyLog:detailaddr1", searchPlace.addr1);
-            if(searchPlace.addr2 != null)
+            if (searchPlace.addr2 != null)
                 Log.i("MyLog:detailaddr2", searchPlace.addr2);
-            if(searchPlace.tel != null)
+            if (searchPlace.tel != null)
                 Log.i("MyLog:detailtel", searchPlace.tel);
-            if(searchPlace.homepage != null)
+            if (searchPlace.homepage != null)
                 Log.i("MyLog:detailhomepage", searchPlace.homepage);
-            if(searchPlace.overview != null)
+            if (searchPlace.overview != null)
                 Log.i("MyLog:detailoverview", searchPlace.overview);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+        LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater();
+        final View dialogLayout = layoutInflater.inflate(R.layout.detail_view, null);
+
+        //데이터 findByid
+        final ImageView imageViewDetailPicture = (ImageView) dialogLayout.findViewById(R.id.imageViewDetailPicture);
+        Button btnDetailClose = (Button) dialogLayout.findViewById(R.id.btnDetailClose);
+        TextView txtDetailName = (TextView) dialogLayout.findViewById(R.id.txtDetailName);
+        TextView txtDetailAddr = (TextView) dialogLayout.findViewById(R.id.txtDetailAddr);
+        TextView txtDetailHomepage = (TextView) dialogLayout.findViewById(R.id.txtDetailHomepage);
+        TextView txtDetailTel = (TextView) dialogLayout.findViewById(R.id.txtDetailTel);
+        TextView txtDetailOverview = (TextView) dialogLayout.findViewById(R.id.txtDetailOverview);
+
+        //핸들러사용
+
+
+        // 인터넷 상의 이미지 보여주기
+
+        // 1. 권한을 획득한다 (인터넷에 접근할수 있는 권한을 획득한다)  - 메니페스트 파일
+        // 2. Thread 에서 웹의 이미지를 받아온다 - honeycomb(3.0) 버젼 부터 바뀜
+        // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
+
+
+        //Thread t = new Thread(Runnable 객체를 만든다);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {    // 오래 거릴 작업을 구현한다
+                // TODO Auto-generated method stub
+                try {
+                    URL url = new URL(searchPlace.firstimage);
+                    InputStream is = url.openStream();
+                    final Bitmap bm = BitmapFactory.decodeStream(is);
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {  // 화면에 그려줄 작업
+                            imageViewDetailPicture.setImageBitmap(bm);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        t.start();
+
+        //runOnUiThread사용방법
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // 인터넷 상의 이미지 보여주기
+//
+//                // 1. 권한을 획득한다 (인터넷에 접근할수 있는 권한을 획득한다)  - 메니페스트 파일
+//                // 2. Thread 에서 웹의 이미지를 받아온다 - honeycomb(3.0) 버젼 부터 바뀜
+//                // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
+//
+//                try {
+//                    URL url = new URL(searchPlace.firstimage);
+//                    InputStream is = url.openStream();
+//                    Bitmap bm = BitmapFactory.decodeStream(is);
+//                    imageViewDetailPicture.setImageBitmap(bm);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+
+
+        if (selectedPOIItem.name != null)
+            txtDetailName.setText(selectedPOIItem.name);
+        if (searchPlace.addr1 != null)
+            txtDetailAddr.setText(searchPlace.addr1);
+        if (searchPlace.addr2 != null)
+            txtDetailAddr.append(searchPlace.addr1);
+        if (searchPlace.homepage != null)
+            txtDetailHomepage.setText(Html.fromHtml(searchPlace.homepage));
+        if (searchPlace.tel != null)
+            txtDetailTel.setText(searchPlace.tel);
+        if (searchPlace.overview != null)
+            txtDetailOverview.setText(Html.fromHtml(searchPlace.overview));
+
+        //다이얼로그를 만들기 위한 빌더를 만들어줍니다. 이 때 인자는 해당 액티비티.this 로 해야합니다. 다이얼로그를 만들기 위한 틀입니다.
+        AlertDialog.Builder builder = new AlertDialog.Builder(SearchPlaceActivity.this);
+        builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
+        final DialogInterface mPopupDlg = builder.show();
+        btnDetailClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupDlg.dismiss();
+            }
+        });
 
     }
 
@@ -460,7 +566,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     }
 
     //TODO:화면 클릭시 POI를 반환하여 이벤트 처리할것
-    //명소 클릭시 처리하는 부분
+//명소 클릭시 처리하는 부분
     /*
         Parameters
         - Markerlist : 클릭된 마커들
