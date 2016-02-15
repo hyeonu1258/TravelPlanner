@@ -1,15 +1,20 @@
 package inu.travel.Network;
 
+import java.util.List;
+
 import inu.travel.Model.Person;
+import inu.travel.Model.PlanList;
 import retrofit.Call;
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 
 public interface AwsNetworkService {
 
     // Aws_URL
     //String baseUrl = "http//52.34.206.80:3000";
-    String baseUrl = "http://192.168.1.102:3000";
+    String baseUrl = "http://192.168.43.204:3000";
 
     // TODO: 1. 서버와 네트워킹을 하기 위한 서비스(인터페이스로 구현)
     /**
@@ -20,11 +25,18 @@ public interface AwsNetworkService {
      * */
 
     @POST("/join")
-    Call<Person> memberJoin(@Body Person person);
+    Call<Object> memberJoin(@Body Person person);
 
-    @POST("/loin")
+    @POST("/login")
     Call<Object> memberLogin(@Body Person person);
 
-    //@GET
+    @GET("/plan/list/{id}")
+    Call<List<PlanList>> getPlanList(@Path("id") String id);
+
+    @POST("/plan/list/add")
+    Call<Object> makePlanList(@Body PlanList planList);
+
+    @POST("/plan/list/delete")
+    Call<Object> removePlanList(@Body PlanList planList);
 
 }

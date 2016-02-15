@@ -1,50 +1,50 @@
 package inu.travel.Model;
 
-import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Person extends RealmObject {
+//public class Person extends RealmObject {
+public class Person  {
 
     @PrimaryKey
-    private String personId;
+    private String id;
+    private String pw;
+    private String email;
 
-    private String personPassword;
-    private String personEmail;
     public Person(){
 
     }
     public Person(String personId,String personPassword){
-        this.personId = personId;
-        this.personPassword = personPassword;
+        this.id = personId;
+        this.pw = personPassword;
     }
 
     public Person(String personId,String personPassword,String personEmail){
-        this.personId=personId;
-        this.personPassword=personPassword;
-        this.personEmail=personEmail;
+        this.id = personId;
+        this.pw = personPassword;
+        this.email = personEmail;
     }
 
-    public String getPersonEmail() {
-        return personEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPersonEmail(String personEmail) {
-        this.personEmail = personEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getPersonId() {
-        return personId;
+    public String getId() {
+        return id;
     }
 
-    public void setPersonId(String personId) {
-        this.personId = personId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getPersonPassword() {
-        return personPassword;
+    public String getPw() {
+        return pw;
     }
 
-    public void setPersonPassword(String personPassword) {
-        this.personPassword = personPassword;
+    public void setPw(String pw) {
+        this.pw = pw;
     }
 }

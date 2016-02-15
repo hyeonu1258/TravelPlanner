@@ -10,8 +10,11 @@ import android.widget.Toast;
 
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Person;
+import inu.travel.Model.PersonRealM;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.R;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -21,22 +24,26 @@ public class LoginActivity extends Activity {
     EditText editID, editPass;
     Button btnLogin, btnJoin;
     AwsNetworkService awsNetworkService;
+    private Realm loginrealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         initView();
         initNetworkService();
+        initRealM();
+       // loginTest();
 
         Toast.makeText(getApplicationContext(), "로그인 화면입니다.", Toast.LENGTH_LONG).show();
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String id = editID.getText().toString();
-                String pass = editPass.getText().toString();
+                final String id = editID.getText().toString();
+                final String pass = editPass.getText().toString();
                 boolean bool = true;
 
 
@@ -44,7 +51,7 @@ public class LoginActivity extends Activity {
                         + "입력하신   아이디 : " + id + "\n"
                         + "입력하신 비밀번호 : " + pass, Toast.LENGTH_SHORT).show();
 
-                Person person = new Person(id,pass);
+                final Person person = new Person(id,pass);
 
                 Call<Object> memberLogin = awsNetworkService.memberLogin(person);
 
@@ -53,7 +60,15 @@ public class LoginActivity extends Activity {
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
                             Toast.makeText(getApplicationContext(), "로그인 OK", Toast.LENGTH_SHORT).show();
+
+
+                            PersonRealM temp_person = new PersonRealM(id,pass,0);
+                            loginrealm.beginTransaction(); //데이터 변경을 알리는 코드
+                            loginrealm.copyToRealmOrUpdate(temp_person);
+                            loginrealm.commitTransaction(); //데이터 변경사항을 저장하는 코드
+
                             Intent intent = new Intent(getApplicationContext(), PlanListActivity.class);
+                            intent.putExtra("loginid",id);
                             startActivity(intent);
                             finish();
                         } else if (response.code() == 503) {
@@ -67,12 +82,16 @@ public class LoginActivity extends Activity {
                     }
                 });
 
-
-
+/*
+                PersonRealM temp_person = new PersonRealM(id,pass,0);
+                loginrealm.beginTransaction(); //데이터 변경을 알리는 코드
+                loginrealm.copyToRealmOrUpdate(temp_person);
+                loginrealm.commitTransaction(); //데이터 변경사항을 저장하는 코드
 
 
                 Intent intent = new Intent(getApplicationContext(), PlanListActivity.class);
                 startActivity(intent);
+                */
 
             }
         });
@@ -97,4 +116,20 @@ public class LoginActivity extends Activity {
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
+
+    private void initRealM() {
+        loginrealm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext())
+                .name("Plan.login4").build());
+    }
+    private void loginTest(){
+        long count = loginrealm.getTable(PersonRealM.class).size();
+        System.out.println(count);
+        if( count ==1){
+            Intent intent = new Intent(getApplicationContext(),PlanListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
 }

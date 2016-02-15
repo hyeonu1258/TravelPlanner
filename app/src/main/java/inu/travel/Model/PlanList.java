@@ -1,37 +1,63 @@
 package inu.travel.Model;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+public class PlanList  {
 
-public class PlanList extends RealmObject {
 
-    @PrimaryKey
-    private long planNum;
+    String id;
+    String name;
+    String description;
+    int num;
 
-    private String planName;
-    private String planDescription;
 
-    public long getPlanNum() {
-        return planNum;
+    public PlanList(String id,String name,String description){
+        this.id=id;
+        this.name=name;
+        this.description=description;
+        this.num=1;
+    }
+    public PlanList(String id,String name){
+        this.id=id;
+        this.name=name;
+    }
+    public PlanList(){
+
     }
 
-    public void setPlanNum(long planNum) {
-        this.planNum = planNum;
+
+    public String getDescription() {
+        return description;
     }
 
-    public String getPlanName() {
-        return planName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setPlanName(String planName) {
-        this.planName = planName;
+    public String getId() {
+        return id;
     }
 
-    public String getPlanDescription() {
-        return planDescription;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setPlanDescription(String planDescription) {
-        this.planDescription = planDescription;
+    public String getName() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+
+
+
+
 }
