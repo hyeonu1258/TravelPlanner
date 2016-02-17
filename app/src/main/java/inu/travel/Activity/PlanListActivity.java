@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,38 +14,43 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
-
 import java.util.ArrayList;
+import java.util.List;
 
 import inu.travel.Adapter.PlanAdapter;
+import inu.travel.Component.ApplicationController;
 import inu.travel.Model.PlanList;
+import inu.travel.Network.AwsNetworkService;
 import inu.travel.R;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class PlanListActivity extends Activity {
 
-    private ArrayList<PlanList> planDatas = null;
+    private List<PlanList> planDatas = new ArrayList<>();
 
     EditText editDetail_d;
     GridView gridView;
-    private Realm realm;
     PlanAdapter adapter;
-    static long count;
     EditText editName_d;
+    AwsNetworkService awsNetworkService;
+    int PlanListLengh = 0;
+    String user_id;                      //userId
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_list);
-        gridView = (GridView) findViewById(R.id.gridView);
-        editName_d = (EditText) findViewById(R.id.editName_d);
-        editDetail_d = (EditText) findViewById(R.id.editDetail_d);
-        realm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext())
-                .name("PlanList.Realm6").build());
+
+        initView();
+        makeList();
         makebutton();
+        initNetworkService();
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -53,14 +59,20 @@ public class PlanListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final PlanList Plan_temp = (PlanList) adapter.getItem(position);
-                String temp_str = Plan_temp.getPlanName();
-                String temp1_str = Plan_temp.getPlanDescription();
-                long PlanID = Plan_temp.getPlanNum();
+                String temp_str = Plan_temp.getName();
+                String temp1_str = Plan_temp.getDescription();
+                long PlanID = Plan_temp.getNum();
 
-                Toast.makeText(PlanListActivity.this, "" + temp_str + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlanListActivity.this, "" +position+ temp_str + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
 
-                if (PlanID == 0) {
+                if (PlanID == PlanListLengh) {
                     makePlan();
+                }
+                else {
+
+                    Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
+                    startActivity(intent);
+                    //TODO 김진규들어가기
                 }
             }
         });
@@ -68,30 +80,56 @@ public class PlanListActivity extends Activity {
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             long temp_id;
-
+            String remove_name;
+            String remove_id="aaa";
+            //TODO 아이디 저장
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final PlanList Plan_temp = (PlanList) adapter.getItem(position);
-                long PlanID = Plan_temp.getPlanNum();
+                long PlanID = Plan_temp.getNum();
                 temp_id = PlanID;
+                remove_name = Plan_temp.getName();
 
-                if (PlanID != 0) {
+
+
+
+                if (PlanID != PlanListLengh) {
                     LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
                     View dialogLayout = layoutInflater.inflate(R.layout.dialog_remove_plan, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlanListActivity.this);
                     builder.setTitle("삭제");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
                     builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
 
+
                     builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            minusId(temp_id);       //그리드뷰를 하나씩 땡긴다.
-                            final PlanList planList = realm.where(PlanList.class).equalTo("planNum", count - 1).findFirst();
-                            realm.beginTransaction(); //데이터 변경을 알리는 코드
-                            planList.removeFromRealm();    // 마지막 그리드뷰 삭제
-                            realm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-                            adapter.notifyDataSetChanged();
-                            onResume();
+
+
+                            PlanList temp_planList = new PlanList(remove_id, remove_name);
+
+                            Toast.makeText(PlanListActivity.this, "" + remove_id + remove_name, Toast.LENGTH_SHORT).show();
+
+                            Call<Object> removePlanList = awsNetworkService.removePlanList(temp_planList);
+                            removePlanList.enqueue(new Callback<Object>() {
+                                @Override
+                                public void onResponse(Response<Object> response, Retrofit retrofit) {
+                                    //Toast.makeText(PlanListActivity.this, "들어가나요?", Toast.LENGTH_SHORT).show();
+                                    if (response.code() == 200) {
+                                        onResume();
+                                        Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
+                                    } else if (response.code() == 503) {
+                                        Toast.makeText(PlanListActivity.this, "삭제실패", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    Toast.makeText(getApplicationContext(), "삭제실패했습니다. ", Toast.LENGTH_LONG).show();
+                                    Log.i("MyTag", "에러내용 : " + t.getMessage());
+                                }
+                            });
+
                         }
                     });
 
@@ -112,39 +150,73 @@ public class PlanListActivity extends Activity {
             }
         });
     }
+// private ArrayList<PlanList> loadDB()
+    private void loadDB() {
+       // List<PlanList> planDatas = new ArrayList<>();
 
-    private ArrayList<PlanList> loadDB() {
+       // String example = "{name : 부산여행1, description : 부산여행1입니다.}, { name : 부산여행2, description : 부산여행2입니다.}" ;
+        Intent intent = getIntent();
 
-        ArrayList<PlanList> planDatas = new ArrayList<>();
-        count = realm.getTable(PlanList.class).size();
+        user_id = intent.getStringExtra("loginid");
 
-        Toast.makeText(PlanListActivity.this, count + "", Toast.LENGTH_SHORT).show();
-        for (int j = 1; j <= count + 1; j++) {
-            if (j == count + 1)
-                j = 0;
-            RealmResults<PlanList> results_ID = realm.where(PlanList.class).equalTo("planNum", j).findAll();
-            for (int i = 0; i < results_ID.size(); i++) {
-                PlanList plan_temp = new PlanList();
-                plan_temp.setPlanNum(results_ID.get(i).getPlanNum());
-                plan_temp.setPlanName(results_ID.get(i).getPlanName());
-                plan_temp.setPlanDescription(results_ID.get(i).getPlanDescription());
-                planDatas.add(plan_temp);
+
+        Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
+        //Test
+        /*
+        List<PlanList> planExample = new ArrayList<>();
+        PlanList temp = new PlanList();
+        temp.setPlanName("김인회");
+        temp.setPlanDescription("천재");
+        temp.setPlanNum(1);
+        planExample.add(temp);
+        */
+
+        final Call<List<PlanList>> getPlanList = awsNetworkService.getPlanList(user_id);
+
+        getPlanList.enqueue(new Callback<List<PlanList>>() {
+            @Override
+            public void onResponse(Response<List<PlanList>> response, Retrofit retrofit) {
+
+                if (response.code() == 200) {
+                    planDatas = response.body();
+                    Toast.makeText(PlanListActivity.this, ""+planDatas.size(), Toast.LENGTH_SHORT).show();
+                    PlanListLengh = planDatas.size();
+                    makebutton();
+                    adapter.setSource(planDatas);
+                } else if (response.code() == 503) {
+                    int statusCode = response.code();
+                    Log.i("MyTag", "응답코드 : " + statusCode);
+                }
             }
-            if (j == 0) {
-                j = (int) count + 2;
-            }
-        }
 
-        return planDatas;
-    }
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failed to load thumbnails", Toast.LENGTH_LONG).show();
+                Log.i("MyTag", "에러내용 : " + t.getMessage());
+            }
+        });
+
+        /*
+        //Test
+        planDatas = planExample;
+        makebutton();
+        adapter.setSource(planDatas);
+        // return planDatas;
+        */
+}
+
+
+
+
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        planDatas = loadDB();
+       // planDatas = loadDB();
+        loadDB();
         makeList();
-        adapter.notifyDataSetChanged();
+     //   adapter.notifyDataSetChanged();
 
     }
 
@@ -154,17 +226,12 @@ public class PlanListActivity extends Activity {
     }
 
     private void makebutton() {
-        count = realm.getTable(PlanList.class).size();
-        Toast.makeText(PlanListActivity.this, "count 개수" + count, Toast.LENGTH_SHORT).show();
-        if (count == 0) {
+            //planDatas = new ArrayList<>();
             PlanList plan = new PlanList();
-            plan.setPlanNum(count++);
-            plan.setPlanName("+");
-            realm.beginTransaction(); //데이터 변경을 알리는 코드
-            realm.copyToRealm(plan); //기존 realm의 Person 테이블에 방금 새로 만든 Person 객체의 데이터를 추가
-            realm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-        }
-
+            plan.setNum(PlanListLengh);
+            plan.setName("+");
+            planDatas.add(plan);
+            adapter.notifyDataSetChanged();
     }
 
     void makePlan() {
@@ -180,21 +247,40 @@ public class PlanListActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                PlanList plan = new PlanList(); //Person 인스턴스 생성
-                plan.setPlanNum(count++); //id 필드에 데이터 추가
+                Intent intent = getIntent();
+                String id = intent.getStringExtra("loginid");
+                String name = editName_d.getText().toString();
+                String description = editDetail_d.getText().toString();
 
-                plan.setPlanName(editName_d.getText().toString()); //name 필드에 데이터 추가
-                plan.setPlanDescription(editDetail_d.getText().toString()); //age 필드에 데이터 추가
+                PlanList temp_planList = new PlanList(id,name,description);
+                Call<Object> makePlanList = awsNetworkService.makePlanList(temp_planList);
 
-                realm.beginTransaction(); //데이터 변경을 알리는 코드
-                realm.copyToRealm(plan); //기존 realm의 Person 테이블에 방금 새로 만든 Person 객체의 데이터를 추가
-                realm.commitTransaction(); //데이터 변경사항을 저장하는 코드
+                makePlanList.enqueue(new Callback<Object>() {
+                    @Override
+                    public void onResponse(Response<Object> response, Retrofit retrofit) {
+                        if (response.code() == 200) {
+                            Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(PlanListActivity.this, plan.getPlanNum() + "", Toast.LENGTH_SHORT).show();
-                editName_d.setText("");
-                editDetail_d.setText("");
-                Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
-                startActivity(intent);
+                            editName_d.setText("");
+                            editDetail_d.setText("");
+                            onResume();
+
+                            ///
+
+                        } else if (response.code() == 405) {
+                            Toast.makeText(getApplicationContext(), "등록실패!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+
+
+
+
 
 
             }
@@ -213,22 +299,18 @@ public class PlanListActivity extends Activity {
         alertDialog.show(); //다이얼로그를 띄웁니다.
     }
 
-    void minusId(long id) {
-        //삭제하는 그리드뷰를 중심으로 ID값을 하나씩 감소시킨다.
-        for (int j = (int) id + 1; j < count; j++) {
-            long temp_id;
 
-            RealmResults<PlanList> results_ID = realm.where(PlanList.class).equalTo("planNum", j).findAll();
-            temp_id = (long) j - 1;
-            PlanList temp_plan = new PlanList();
-            realm.beginTransaction(); //데이터 변경을 알리는 코드
-            temp_plan.setPlanNum(temp_id);
-            temp_plan.setPlanName(results_ID.get(0).getPlanName());
-            temp_plan.setPlanDescription(results_ID.get(0).getPlanDescription());
-            realm.copyToRealmOrUpdate(temp_plan);
-            realm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-        }
+    private void initNetworkService(){
+        awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
+
+    private void initView() {
+        gridView = (GridView) findViewById(R.id.gridView);
+        editName_d = (EditText) findViewById(R.id.editName_d);
+        editDetail_d = (EditText) findViewById(R.id.editDetail_d);
+    }
+
+
 
 
 }

@@ -207,7 +207,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         HashMap<String, String> parameters = new HashMap<>();
 
         parameters.put("MobileOS", "AND");
-        parameters.put("contentId", item.getPOIID()); //콘텐트타입
+        parameters.put("contentId", item.getPOIID()); //POIID
         parameters.put("defaultYN", "Y"); //기본정보
         parameters.put("firstImageYN", "Y"); //이미지
         parameters.put("addrinfoYN", "Y"); //주소
@@ -283,14 +283,10 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         TextView txtDetailOverview = (TextView) dialogLayout.findViewById(R.id.txtDetailOverview);
 
         //핸들러사용
-
-
         // 인터넷 상의 이미지 보여주기
-
         // 1. 권한을 획득한다 (인터넷에 접근할수 있는 권한을 획득한다)  - 메니페스트 파일
         // 2. Thread 에서 웹의 이미지를 받아온다 - honeycomb(3.0) 버젼 부터 바뀜
         // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
-
 
         //Thread t = new Thread(Runnable 객체를 만든다);
         Thread t = new Thread(new Runnable() {
@@ -302,7 +298,6 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
                     InputStream is = url.openStream();
                     final Bitmap bm = BitmapFactory.decodeStream(is);
                     handler.post(new Runnable() {
-
                         @Override
                         public void run() {  // 화면에 그려줄 작업
                             imageViewDetailPicture.setImageBitmap(bm);
@@ -311,7 +306,6 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
 

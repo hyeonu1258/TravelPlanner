@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
-import java.util.ArrayList;
+import java.util.List;
 
 import inu.travel.Model.PlanList;
 import inu.travel.R;
@@ -20,13 +19,20 @@ import inu.travel.ViewHolder.PlanViewHolder;
  */
 public class PlanAdapter extends BaseAdapter {
 
-    private ArrayList<PlanList> planDatas;
+    private List<PlanList> planDatas;
     LayoutInflater layoutInflater;
 
-    public PlanAdapter(ArrayList<PlanList> planDatas, Context context) {
+    public PlanAdapter(List<PlanList> planDatas, Context context) {
         this.planDatas = planDatas;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
+    public void setSource(List<PlanList> planDatas) {
+
+        this.planDatas = planDatas;
+        this.notifyDataSetChanged();
+    }
+
 
     @Override
     public int getCount() {
@@ -63,9 +69,9 @@ public class PlanAdapter extends BaseAdapter {
         }
 
         PlanList plan_temp = planDatas.get(position);
-        viewHolder.txtNameItem.setText(plan_temp.getPlanName().toString());
+        viewHolder.txtNameItem.setText(plan_temp.getName().toString());
         //viewHolder.txtId_item.setText(String.valueOf(plan_temp.getId()));
-        viewHolder.txtDescriptionItem.setText(plan_temp.getPlanDescription());
+        viewHolder.txtDescriptionItem.setText(plan_temp.getDescription());
 
         return convertView;
     }

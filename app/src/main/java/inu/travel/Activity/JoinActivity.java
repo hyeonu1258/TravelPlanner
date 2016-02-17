@@ -2,6 +2,7 @@ package inu.travel.Activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,8 +13,6 @@ import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Person;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.R;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -44,10 +43,10 @@ public class JoinActivity extends Activity {
                 String email = editEmail.getText().toString();
 
                 Person person = new Person(id, pass, email);
-                Call<Person> memberJoin = awsNetworkService.memberJoin(person);
-                memberJoin.enqueue(new Callback<Person>() {
+                Call<Object> memberJoin = awsNetworkService.memberJoin(person);
+                memberJoin.enqueue(new Callback<Object>() {
                     @Override
-                    public void onResponse(Response<Person> response, Retrofit retrofit) {
+                    public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
                             Toast.makeText(getApplicationContext(), "회원등록 OK", Toast.LENGTH_SHORT).show();
                             /*
@@ -64,15 +63,17 @@ public class JoinActivity extends Activity {
 
                     @Override
                     public void onFailure(Throwable t) {
+                        // debug
+                        Log.i("Test", "실패");
 
                     }
                 });
 
-
+                /*
                 Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.\n"
                                 + "회원아이디 : " + id + " 비밀번호 : " + pass,
                         Toast.LENGTH_SHORT).show();
-
+                */
 
             }
         });
