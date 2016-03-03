@@ -1,13 +1,20 @@
 package inu.travel.Activity;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Person;
@@ -21,38 +28,72 @@ import retrofit.Retrofit;
 
 public class JoinActivity extends Activity {
     TextView textView1, textView2;
-    EditText editID, editPass, editEmail;
-    Button btnSubmit;
+    EditText editID, editPass, editEmail; // id, pass, email 칸
+    Button btnSubmit;                     //회원가입 버튼
+    SharedPreferences pref;
+    SharedPreferences.Editor edit;
     AwsNetworkService awsNetworkService;
-//    private Realm realm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
 
-        initView();
-        initNetworkService();
-        //initRealM();
+        initView();                 //View 초기화
+        initNetworkService();       //Network,서버  연결
+        initSharedPre();        //SharedPreferences 초기화
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+
+
+
+        editEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            //이메일을 입력하고 Enter 입력 했을 때 이벤트 처리
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    //Email 에서 Enterkey 눌렀을 때
+                switch (actionId) {
+                    //IME_ACTION_DONE 이게 Enterkey 이벤트
+                    case EditorInfo.IME_ACTION_DONE:
+                        btnSubmit.callOnClick();            //btnSubmit 클릭됨.
+                        break;
+
+                }
+                return false;
+            }
+        });
+
+
+
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {       //회원가입 완료 버튼 클릭
+            String id;
+            String pass;
+            String email;
+
             @Override
             public void onClick(View v) {
-                String id = editID.getText().toString();
-                String pass = editPass.getText().toString();
-                String email = editEmail.getText().toString();
+                id = editID.getText().toString();
+                pass = editPass.getText().toString();
+                email = editEmail.getText().toString();
+                String temp = testMD5(pass);            //MD5를 통해서 비밀번호 암호화
+                //temp 임시 암호화 변수
+                Toast.makeText(JoinActivity.this, ""+testMD5(pass), Toast.LENGTH_SHORT).show();
 
-                Person person = new Person(id, pass, email);
+                //Person 객체 생성해서 서버로 보냄
+                Person person = new Person(id, temp, email);
                 Call<Object> memberJoin = awsNetworkService.memberJoin(person);
                 memberJoin.enqueue(new Callback<Object>() {
                     @Override
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
                             Toast.makeText(getApplicationContext(), "회원등록 OK", Toast.LENGTH_SHORT).show();
-                            /*
+                            edit.putString("id", id);
+                            edit.putString("pass",pass);
+                            edit.commit();
+                            //id, pass SharedPreferences 저장한다.
                             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                             startActivity(intent);
-                            */
                             finish();
                         } else if (response.code() == 406) {
                             Toast.makeText(getApplicationContext(), "존재하는 email 입니다!", Toast.LENGTH_LONG).show();
@@ -65,15 +106,12 @@ public class JoinActivity extends Activity {
                     public void onFailure(Throwable t) {
                         // debug
                         Log.i("Test", "실패");
+                        Toast.makeText(JoinActivity.this, "회원가입 오류", Toast.LENGTH_SHORT).show();
 
                     }
                 });
 
-                /*
-                Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.\n"
-                                + "회원아이디 : " + id + " 비밀번호 : " + pass,
-                        Toast.LENGTH_SHORT).show();
-                */
+
 
             }
         });
@@ -92,17 +130,29 @@ public class JoinActivity extends Activity {
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
 
-//    private void initRealM() {
-//        realm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext())
-//                .name("PlanList.Realm5").build());
-//    }
+    private void initSharedPre() {
+        pref = getSharedPreferences("login",0);
+        edit = pref.edit();
+        //SharedPreferences 초기화
+    }
 
-    private void savePerson() {
 
-        /*
-        realm.beginTransaction(); //데이터 변경을 알리는 코드
-        realm.copyToRealm(); //기존 realm의 Person 테이블에 방금 새로 만든 Person 객체의 데이터를 추가
-        realm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-        */
+    public String testMD5(String str){                  //암호화 함수
+        String MD5 = "";
+        try{
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes());
+            byte byteData[] = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0 ; i < byteData.length ; i++){
+                sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+            }
+            MD5 = sb.toString();
+
+        }catch(NoSuchAlgorithmException e){
+            e.printStackTrace();
+            MD5 = null;
+        }
+        return MD5;
     }
 }

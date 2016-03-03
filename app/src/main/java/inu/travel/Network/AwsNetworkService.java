@@ -1,14 +1,21 @@
 package inu.travel.Network;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import inu.travel.Model.Person;
+import inu.travel.Model.Place;
+import inu.travel.Model.PlaceList;
 import inu.travel.Model.PlanList;
 import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
+import retrofit.http.QueryMap;
 
 public interface AwsNetworkService {
 
@@ -39,5 +46,10 @@ public interface AwsNetworkService {
     @POST("/plan/list/delete")
     Call<Object> removePlanList(@Body PlanList planList);
 
-//    @POST("/plan/place")
+    @POST("/place/add")
+    Call<Object> addPlace(@Body PlaceList placeList);
+
+    @GET("/place")
+    Call<PlaceList> getPlaceList(@QueryMap HashMap<String,String> param);
+
 }

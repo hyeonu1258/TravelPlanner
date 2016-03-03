@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,8 +37,11 @@ public class PlanListActivity extends Activity {
     PlanAdapter adapter;
     EditText editName_d;
     AwsNetworkService awsNetworkService;
-    int PlanListLengh = 0;
-    String user_id;                      //userId
+    SharedPreferences pref;
+    int PlanListLengh = 0;               //플랜 총 개수
+    String user_id;                      //사용자 아이디
+
+
 
 
 
@@ -48,12 +52,13 @@ public class PlanListActivity extends Activity {
 
         initView();
         makeList();
-        makebutton();
-        initNetworkService();
+        makePlusButton();       // +버튼 만들기
+        initNetworkService();   //Network 서버 연결
+        initSharedPre();        //SharedPreferences 초기화, 유저 아이디 얻어온다.
+                                //플랜 만들 때, 삭제할 때 유저 아이디가 필요
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -62,59 +67,54 @@ public class PlanListActivity extends Activity {
                 String temp_str = Plan_temp.getName();
                 String temp1_str = Plan_temp.getDescription();
                 long PlanID = Plan_temp.getNum();
+                // gridview 상에서 클릭한 플랜의 이름, 설명, 번호를 받아온다.
 
-                Toast.makeText(PlanListActivity.this, "" +position+ temp_str + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlanListActivity.this, "" + position + temp_str + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
 
-                if (PlanID == PlanListLengh) {
+                if (PlanID == PlanListLengh) {                      // +버튼을 클릭했을 때
                     makePlan();
-                }
-                else {
-
+                } else {                                            // 플랜을 선택했을 때
                     Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
+                    intent.putExtra("Userid", user_id);
+                    intent.putExtra("PlanName",temp_str);
+                    //김진규한테 플랜이름, 아이디 보냄
                     startActivity(intent);
-                    //TODO 김진규들어가기
                 }
             }
-        });
+        });// gridView.setOnItemClickListener close
+
+
 
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-            long temp_id;
-            String remove_name;
-            String remove_id="aaa";
-            //TODO 아이디 저장
+            String temp_name;
+            //삭제할 플랜이름 저장 변수
+
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final PlanList Plan_temp = (PlanList) adapter.getItem(position);
-                long PlanID = Plan_temp.getNum();
-                temp_id = PlanID;
-                remove_name = Plan_temp.getName();
+                long PlanID = Plan_temp.getNum();               // 클릭한 gridview 상의 번호를 받아옴
+                temp_name = Plan_temp.getName();                //클릭한 플랜의 이름 받아옴
 
-
-
-
-                if (PlanID != PlanListLengh) {
+                if (PlanID != PlanListLengh) {                  // + 이 아닐 경우 삭제가능
                     LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
                     View dialogLayout = layoutInflater.inflate(R.layout.dialog_remove_plan, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlanListActivity.this);
                     builder.setTitle("삭제");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
                     builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
 
-
                     builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-
-                            PlanList temp_planList = new PlanList(remove_id, remove_name);
-
-                            Toast.makeText(PlanListActivity.this, "" + remove_id + remove_name, Toast.LENGTH_SHORT).show();
+                            PlanList temp_planList = new PlanList(user_id, temp_name);
+                            //삭제할 PlanList의 객체 생성 아이디, 플랜이름
+                            Toast.makeText(PlanListActivity.this, "" + user_id + temp_name, Toast.LENGTH_SHORT).show();
 
                             Call<Object> removePlanList = awsNetworkService.removePlanList(temp_planList);
                             removePlanList.enqueue(new Callback<Object>() {
                                 @Override
                                 public void onResponse(Response<Object> response, Retrofit retrofit) {
-                                    //Toast.makeText(PlanListActivity.this, "들어가나요?", Toast.LENGTH_SHORT).show();
                                     if (response.code() == 200) {
                                         onResume();
                                         Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
@@ -125,7 +125,7 @@ public class PlanListActivity extends Activity {
 
                                 @Override
                                 public void onFailure(Throwable t) {
-                                    Toast.makeText(getApplicationContext(), "삭제실패했습니다. ", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "삭제실패오류. ", Toast.LENGTH_LONG).show();
                                     Log.i("MyTag", "에러내용 : " + t.getMessage());
                                 }
                             });
@@ -142,46 +142,29 @@ public class PlanListActivity extends Activity {
 
                     });
 
-
                     AlertDialog alertDialog = builder.create(); //만들어놓은 AlertDialog.Builder인 builder를 이용해서 새로운 AlertDialog를 만듭니다.
                     alertDialog.show(); //다이얼로그를 띄웁니다.
                 }
                 return true;
             }
-        });
-    }
-// private ArrayList<PlanList> loadDB()
-    private void loadDB() {
-       // List<PlanList> planDatas = new ArrayList<>();
+        });//gridView.setOnItemLongClickListener close
 
-       // String example = "{name : 부산여행1, description : 부산여행1입니다.}, { name : 부산여행2, description : 부산여행2입니다.}" ;
-        Intent intent = getIntent();
+    }//protected void onCreate close
 
-        user_id = intent.getStringExtra("loginid");
-
+    private void loadServer() {                         //서버로부터 플랜목록 받아옴
 
         Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
-        //Test
-        /*
-        List<PlanList> planExample = new ArrayList<>();
-        PlanList temp = new PlanList();
-        temp.setPlanName("김인회");
-        temp.setPlanDescription("천재");
-        temp.setPlanNum(1);
-        planExample.add(temp);
-        */
 
         final Call<List<PlanList>> getPlanList = awsNetworkService.getPlanList(user_id);
 
         getPlanList.enqueue(new Callback<List<PlanList>>() {
             @Override
             public void onResponse(Response<List<PlanList>> response, Retrofit retrofit) {
-
                 if (response.code() == 200) {
                     planDatas = response.body();
-                    Toast.makeText(PlanListActivity.this, ""+planDatas.size(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlanListActivity.this, "" + planDatas.size(), Toast.LENGTH_SHORT).show();
                     PlanListLengh = planDatas.size();
-                    makebutton();
+                    makePlusButton();
                     adapter.setSource(planDatas);
                 } else if (response.code() == 503) {
                     int statusCode = response.code();
@@ -196,28 +179,15 @@ public class PlanListActivity extends Activity {
             }
         });
 
-        /*
-        //Test
-        planDatas = planExample;
-        makebutton();
-        adapter.setSource(planDatas);
-        // return planDatas;
-        */
+
 }
-
-
-
-
 
 
     @Override
     protected void onResume() {
         super.onResume();
-       // planDatas = loadDB();
-        loadDB();
+        loadServer();               //서버로부터 플랜목록을 받아옴
         makeList();
-     //   adapter.notifyDataSetChanged();
-
     }
 
     private void makeList() {
@@ -225,10 +195,9 @@ public class PlanListActivity extends Activity {
         gridView.setAdapter(adapter);
     }
 
-    private void makebutton() {
-            //planDatas = new ArrayList<>();
+    private void makePlusButton() {                         // + 버튼 만드는 함수
             PlanList plan = new PlanList();
-            plan.setNum(PlanListLengh);
+            plan.setNum(PlanListLengh);                     //PlanListLengh 번호를 통해 마지막에 생기게 함
             plan.setName("+");
             planDatas.add(plan);
             adapter.notifyDataSetChanged();
@@ -247,12 +216,11 @@ public class PlanListActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                Intent intent = getIntent();
-                String id = intent.getStringExtra("loginid");
                 String name = editName_d.getText().toString();
                 String description = editDetail_d.getText().toString();
 
-                PlanList temp_planList = new PlanList(id,name,description);
+                PlanList temp_planList = new PlanList(user_id, name, description);
+                // PlanLIst 객체 생성 아이디, 플랜이름, 플랜 설명
                 Call<Object> makePlanList = awsNetworkService.makePlanList(temp_planList);
 
                 makePlanList.enqueue(new Callback<Object>() {
@@ -260,12 +228,9 @@ public class PlanListActivity extends Activity {
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
                             Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
-
                             editName_d.setText("");
                             editDetail_d.setText("");
                             onResume();
-
-                            ///
 
                         } else if (response.code() == 405) {
                             Toast.makeText(getApplicationContext(), "등록실패!", Toast.LENGTH_LONG).show();
@@ -274,14 +239,9 @@ public class PlanListActivity extends Activity {
 
                     @Override
                     public void onFailure(Throwable t) {
-
+                        Toast.makeText(getApplicationContext(), "플랜등록오류", Toast.LENGTH_LONG).show();
                     }
                 });
-
-
-
-
-
 
             }
         });
@@ -310,7 +270,11 @@ public class PlanListActivity extends Activity {
         editDetail_d = (EditText) findViewById(R.id.editDetail_d);
     }
 
+    private void initSharedPre(){
+        pref = getSharedPreferences("login",0);
+        user_id = pref.getString("id", "");                  //SharedPreferences을 통해 id를 받아온다.
+        Toast.makeText(PlanListActivity.this, ""+user_id, Toast.LENGTH_SHORT).show();
 
-
+    }
 
 }

@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Layout;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapInfo;
@@ -32,6 +31,7 @@ import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,9 +42,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import inu.travel.Component.ApplicationController;
+import inu.travel.Model.Place;
+import inu.travel.Model.PlaceList;
 import inu.travel.Model.SearchPlace;
+import inu.travel.Network.AwsNetworkService;
 import inu.travel.Network.TourNetworkService;
 import inu.travel.R;
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -54,6 +58,7 @@ import android.os.Handler;
 
 public class SearchPlaceActivity extends Activity implements TMapView.OnClickListenerCallback {
     Handler handler = new Handler();  // 외부쓰레드 에서 메인 UI화면을 그릴때 사용
+    AwsNetworkService awsNetworkService;
 
     private Context mContext;
     private RelativeLayout mMainRelativeLayout = null;
@@ -65,9 +70,20 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
     //아이콘 설정
     private Bitmap defaultBitmap;
-    private Bitmap selectedBitmap;
-    //클릭하여 선택된 POI
-    private TMapPOIItem selectedPOIItem = null;
+    private Bitmap selectedBitmap; //클릭할때 바뀔 아이콘
+    private Bitmap savedBitmap; //장소추가했을때
+
+
+    //클릭하여 선택된 장소 임시저장객체
+    private TMapPOIItem selectedPOIItem = null; //TMAP에서 쓰일 객체
+    private Place selectedPlace = null; // 보낼객체
+
+    //추가한 장소들을 담을 자료구조
+    private ArrayList<Place> placeList = new ArrayList<>();
+
+    //id, planname
+    private String id;
+    private String pname;
 
     //지도 위 버튼들
     Button btnMT;
@@ -95,9 +111,10 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         initNetworkService();
         mContext = this;
 
-        getSavedPlace();
+        getPlaceList(); //db에서 장소 받아옴
         initView();
         btnClickEvent();
+        getUser();
 
         mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
         mMapView = new TMapView(this);
@@ -114,7 +131,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 //        TMapPoint tpoint = new TMapPoint(37.570841, 126.985302);
 //        TMapMarkerItem tItem = new TMapMarkerItem();
 //        tItem.setTMapPoint(tpoint);
-//        tItem.setName("관광지1");
+//        tItem.setPlacename("관광지1");
 //        tItem.setVisible(TMapMarkerItem.VISIBLE);
 //
 //        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
@@ -124,8 +141,38 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 //        mMapView.addMarkerItem("tour1", tItem);
     }
 
+    private void getUser() {
+        Intent i = getIntent();
+        id = i.getStringExtra("Userid");
+        pname = i.getStringExtra("PlanName");
+    }
+
     //Todo: 이전에 만든 플랜에서 수정을 눌렀을 경우 이전에 저장된 장소를 서버에서 가져와야 함
-    private void getSavedPlace() {
+    private void getPlaceList() {
+        HashMap<String,String> param = new HashMap<>();
+        param.put("id", id);
+        param.put("pname", pname);
+//
+//        final Call<PlaceList> getPlaceList = awsNetworkService.getPlaceList(param);
+//        getPlaceList.enqueue(new Callback<PlaceList>() {
+//            @Override
+//            public void onResponse(Response<PlaceList> response, Retrofit retrofit) {
+//
+//                if (response.code() == 200) {
+//                    placeDatas = response.body();
+//                    Toast.makeText(SearchPlaceActivity.this, ""+placeDatas.size(), Toast.LENGTH_SHORT).show();
+//                } else if (response.code() == 503) {
+//                    int statusCode = response.code();
+//                    Log.i("MyTag", "응답코드 : " + statusCode);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+//                Log.i("MyTag", "에러내용 : " + t.getMessage());
+//            }
+//        });
 
     }
 
@@ -162,7 +209,29 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "장소추가", Toast.LENGTH_SHORT).show();
+                if (selectedPOIItem == null) {
+                    System.out.println("선택한장소가 없습니다.");
+                    return;
+                }
+                //중복검사
+                for (int i = 0; i < placeList.size(); i++) {
+                    if (placeList.get(i).getContentid().equals(selectedPOIItem.id)) {
+                        System.out.println("이미 추가한 장소입니다.");
+                        return;
+                    }
+                }
 
+                //리스트에 장소객체추가
+                Place place = new Place();
+                place.setPlacename(selectedPOIItem.name);
+                place.setContentid(selectedPOIItem.id);
+                place.setContenttypeid(contentTypeId);
+                place.setMapx(selectedPOIItem.noorLat);
+                place.setMapy(selectedPOIItem.noorLon);
+                placeList.add(place);
+                System.out.println("장소리스트 개수 : " + placeList.size());
+                System.out.println("추가한 장소 : " + placeList.get(placeList.size() - 1).getPlacename());
+                printArray();
             }
         });
 
@@ -170,7 +239,18 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "장소삭제", Toast.LENGTH_SHORT).show();
+                if (selectedPOIItem == null || placeList.isEmpty())
+                    return;
 
+                for (int i = 0; i < placeList.size(); i++) {
+                    if (placeList.get(i).getContentid().equals(selectedPOIItem.id)) {
+                        System.out.println("삭제할 장소 : " + placeList.get(i).getPlacename());
+                        placeList.remove(i);
+                        System.out.println("삭제성공");
+                        printArray();
+                    }
+
+                }
             }
         });
 
@@ -188,7 +268,52 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
+                //TODO : 종민이한테 리스트를 넘겨줄것
+                for (int i = 0; i < placeList.size(); i++)
+                    System.out.println(placeList.get(i).getPlacename());
 
+                System.out.println(id + pname);
+                PlaceList placeList2 = new PlaceList(id,pname,placeList);
+
+//                JSONObject obj = new JSONObject();
+//                try {
+//                    JSONArray jArray = new JSONArray();//배열이 필요할때
+//                    for (int i = 0; i < placeList.size(); i++)//배열
+//                    {
+//                        JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+//                        sObject.put("contentid", placeList.get(i).getContentid());
+//                        sObject.put("contenttypeid", placeList.get(i).getContenttypeid());
+//                        sObject.put("mapx", placeList.get(i).getMapx());
+//                        sObject.put("mapy", placeList.get(i).getMapy());
+//                        jArray.put(sObject);
+//                    }
+//                    obj.put("pname", "플랜명");
+//                    obj.put("id", "유저아이디");
+//                    obj.put("item", jArray);//배열을 넣음
+//
+//                    System.out.println(obj.toString());
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+
+                retrofit.Call<Object> addPlace = awsNetworkService.addPlace(placeList2);
+                addPlace.enqueue(new Callback<Object>() {
+                    @Override
+                    public void onResponse(Response<Object> response, Retrofit retrofit) {
+                        if (response.code() == 200) {
+                            Log.i("완료 => ", "성공");
+                        } else if (response.code() == 503) {
+                            int statusCode = response.code();
+                            Log.i("MyTag", "응답코드 : " + statusCode);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
             }
         });
 
@@ -201,13 +326,19 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         });
     }
 
+    private void printArray() {
+        for (int i = 0; i < placeList.size(); i++) {
+            System.out.println(i + " : " + placeList.get(i).getPlacename());
+        }
+    }
+
     //상세히보기
     private void viewDetail(TMapPOIItem item) {
-        // TODO: getDetailCommon API 사용하여 상세정보 뽑기
+        // getDetailCommon API 사용하여 상세정보 뽑기
         HashMap<String, String> parameters = new HashMap<>();
 
         parameters.put("MobileOS", "AND");
-        parameters.put("contentId", item.getPOIID()); //POIID
+        parameters.put("contentId", item.getPOIID()); //콘텐트ID
         parameters.put("defaultYN", "Y"); //기본정보
         parameters.put("firstImageYN", "Y"); //이미지
         parameters.put("addrinfoYN", "Y"); //주소
@@ -232,7 +363,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
                         Log.i("MyLog:jsonObject", jsonObject.toString());
                         Log.i("MyLog:SearchPlace", searchPlace.toString());
 
-                        //Todo : 상세히 보기 다이얼 로그 띄우기
+                        //상세히 보기 다이얼 로그 띄우기
                         showDetailView(searchPlace);
 
                     } catch (JSONException e) {
@@ -254,21 +385,21 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     //상세정보를 띄움
     private void showDetailView(final SearchPlace searchPlace) {
         //정보가 없는 장소가 있으므로 예외처리할것
-        try {
-            Log.i("MyLog:detailname", selectedPOIItem.name);
-            if (searchPlace.addr1 != null)
-                Log.i("MyLog:detailaddr1", searchPlace.addr1);
-            if (searchPlace.addr2 != null)
-                Log.i("MyLog:detailaddr2", searchPlace.addr2);
-            if (searchPlace.tel != null)
-                Log.i("MyLog:detailtel", searchPlace.tel);
-            if (searchPlace.homepage != null)
-                Log.i("MyLog:detailhomepage", searchPlace.homepage);
-            if (searchPlace.overview != null)
-                Log.i("MyLog:detailoverview", searchPlace.overview);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.i("MyLog:detailname", selectedPOIItem.name);
+//            if (searchPlace.addr1 != null)
+//                Log.i("MyLog:detailaddr1", searchPlace.addr1);
+//            if (searchPlace.addr2 != null)
+//                Log.i("MyLog:detailaddr2", searchPlace.addr2);
+//            if (searchPlace.tel != null)
+//                Log.i("MyLog:detailtel", searchPlace.tel);
+//            if (searchPlace.homepage != null)
+//                Log.i("MyLog:detailhomepage", searchPlace.homepage);
+//            if (searchPlace.overview != null)
+//                Log.i("MyLog:detailoverview", searchPlace.overview);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater();
         final View dialogLayout = layoutInflater.inflate(R.layout.detail_view, null);
@@ -291,8 +422,8 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         //Thread t = new Thread(Runnable 객체를 만든다);
         Thread t = new Thread(new Runnable() {
             @Override
-            public void run() {    // 오래 거릴 작업을 구현한다
-                // TODO Auto-generated method stub
+            public void run() {    // 오래 걸릴 작업을 구현한다
+                // Auto-generated method stub
                 try {
                     URL url = new URL(searchPlace.firstimage);
                     InputStream is = url.openStream();
@@ -334,7 +465,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
 
         if (selectedPOIItem.name != null)
-            txtDetailName.setText(selectedPOIItem.name);
+            txtDetailName.setText(searchPlace.title);
         if (searchPlace.addr1 != null)
             txtDetailAddr.setText(searchPlace.addr1);
         if (searchPlace.addr2 != null)
@@ -369,7 +500,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         //키보드 내리기
         InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mInputMethodManager.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
-//Todo :  http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword? API 사용하여 키워드로 검색할것
+//http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword? API 사용하여 키워드로 검색할것
 
 
         // 별도의 스레드로 검색한 지역의 좌표를 받아옴
@@ -416,7 +547,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
          * 위의 페이지에서 '요청 변수' 항목의 내용들을 변수명을 일치시키고
          * 값도 형식에 맞추어 입력해줍니다.
          * */
-        // TODO: query에 사용될 parameter들을 HashMap을 이용하여 구현
+        // query에 사용될 parameter들을 HashMap을 이용하여 구현
         HashMap<String, String> parameters = new HashMap<>();
 
         parameters.put("arrange", "E"); //정렬 E(거리순)
@@ -425,8 +556,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         parameters.put("mapX", mapX);
         parameters.put("mapY", mapY);
         parameters.put("radius", radius); //거리반경(m단위)
-        parameters.put("numOfRows", "20");
-//numOfRows 검색결과 개수지정
+        parameters.put("numOfRows", "20"); //numOfRows 검색결과 개수지정
 
         /**
          * Call<Object> 형의 서버에 요청을 해주는 객체를 만듭니다.
@@ -453,7 +583,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
          * ShopResult에서 우리가 필요한건 shopResult.item 이죠? shopResult에 선언했던 ShopItem 형 객체입니다.
          * 이 ShopItem 객체를 adapter에 setter를 통해 넣어주면 됩니다.
          */
-        // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
+        //NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
 
         retrofit.Call<Object> dataCall = tourNetworkService.getLocationList(parameters);
         dataCall.enqueue(new Callback<Object>() {
@@ -474,7 +604,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
                         Log.i("MyLog:SearchPlace", searchPlaceList.get(0).toString());
 
                         //리스트로 받아와도 TMapPOIItem 클래스와 일치해야 할 것 같음
-                        //TODO: SearchPlace를 리스트로 받아서 TMapPOIItem 리스트로 만들어준뒤 mMapView.addTMapPOIItem(tmappoi리스트)로 지도에 표시
+                        //SearchPlace를 리스트로 받아서 TMapPOIItem 리스트로 만들어준뒤 mMapView.addTMapPOIItem(tmappoi리스트)로 지도에 표시
                         //지도에 띄우기
                         showPlaceOnMap(searchPlaceList);
 
@@ -509,7 +639,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
             Log.i("MyLog:place", searchPlace.get(i).title);
             item.noorLon = searchPlace.get(i).mapx;
             item.noorLat = searchPlace.get(i).mapy;
-            item.name = searchPlace.get(i).title;
+            item.name = searchPlace.get(i).title; //장소명
             item.setID(searchPlace.get(i).contentid); //자세히보기 API 요청시 필요함
             tMapPOIItems.add(j, item);
             tMapPoints.add(j, item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
@@ -519,8 +649,11 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         //이미 표시된 POI 지우기
         mMapView.removeAllTMapPOIItem();
 
+        //TODO: DB에서 가져온 장소 리스트에 추가시키기
+
         //맵에 POI 띄우기
         mMapView.addTMapPOIItem(tMapPOIItems);
+
         //찍은 좌표로 맵 이동, 최적화
         TMapInfo info = mMapView.getDisplayTMapInfo(tMapPoints);
         mMapView.setCenterPoint(info.getTMapPoint().getLongitude(), info.getTMapPoint().getLatitude(), true);
@@ -547,6 +680,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
         selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
+        savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
     }
 
     @Override
@@ -557,6 +691,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
 
     private void initNetworkService() {
         tourNetworkService = ApplicationController.getInstance().getTourNetwork();
+        awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
 
     //TODO:화면 클릭시 POI를 반환하여 이벤트 처리할것
@@ -572,7 +707,7 @@ public class SearchPlaceActivity extends Activity implements TMapView.OnClickLis
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
 
         if (!arrayList1.isEmpty()) { //장소를 클릭했을 경우
-            if (arrayList1.get(0) == selectedPOIItem) { //같은장소를 또 클릭햇을 경우 선택을 해제한다.
+            if (arrayList1.get(0).Icon == selectedBitmap) { //같은장소를 또 클릭햇을 경우 선택을 해제한다.
                 selectedPOIItem.Icon = defaultBitmap;
                 mMapView.addTMapPOIItem(arrayList1); //이미지를 초기화 해준뒤
                 selectedPOIItem = null; //임시저장된것 삭제

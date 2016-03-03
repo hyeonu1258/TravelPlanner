@@ -1,20 +1,27 @@
 package inu.travel.Activity;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Person;
-import inu.travel.Model.PersonRealM;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.R;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -22,9 +29,16 @@ import retrofit.Retrofit;
 
 public class LoginActivity extends Activity {
     EditText editID, editPass;
-    Button btnLogin, btnJoin;
+    Button btnLogin, btnJoin;                       //로그인버튼, 회원가입 버튼
+    SharedPreferences pref;
+    SharedPreferences.Editor edit;
     AwsNetworkService awsNetworkService;
-    private Realm loginrealm;
+    String Userid;                      //사용자 아이디
+    String Userpass;                    //사용자 비밀번호
+    ProgressBar progressBar; // 로딩화면을 위한 변수
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,43 +46,65 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
 
-        initView();
-        initNetworkService();
-        initRealM();
-       // loginTest();
+        initView();                 //view 초기화
+        initNetworkService();       //Network 서버 연결
+        initSharedPre();    //SharedPreferences 초기화
+        loginTest(); //로그인 된적이 있는지를 검사하여서 바로 로그인 시킴
+
+
+
 
         Toast.makeText(getApplicationContext(), "로그인 화면입니다.", Toast.LENGTH_LONG).show();
 
+
+        editPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            //비밀번호를 입력하고 Enter 입력 했을 때 이벤트 처리
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                //Pass창에서 Enterkey 입력시
+                switch (actionId) {
+                    //IME_ACTION_DONE 가 Enterkey 처리
+                    case EditorInfo.IME_ACTION_DONE:
+                        btnLogin.performClick();         //btnLogin 클릭
+                        break;
+                }
+                return false;
+            }
+        });
+
+
+
+
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {               //로그인 버튼 클릭
+
+
                 final String id = editID.getText().toString();
                 final String pass = editPass.getText().toString();
-                boolean bool = true;
-
 
                 Toast.makeText(getApplicationContext(), "로그인 버튼이 눌렸습니다.\n"
                         + "입력하신   아이디 : " + id + "\n"
                         + "입력하신 비밀번호 : " + pass, Toast.LENGTH_SHORT).show();
 
-                final Person person = new Person(id,pass);
-
+                String Temp = testMD5(pass);
+                //temp 임시 암호화 변수
+                final Person person = new Person(id,Temp);
+                //Person 객체에 아이디, 비밀번호 넣어서 객체를 서버에 전송
                 Call<Object> memberLogin = awsNetworkService.memberLogin(person);
 
                 memberLogin.enqueue(new Callback<Object>() {
                     @Override
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
+                            ActivateProgressbar();      //로딩화면 활성화
                             Toast.makeText(getApplicationContext(), "로그인 OK", Toast.LENGTH_SHORT).show();
-
-
-                            PersonRealM temp_person = new PersonRealM(id,pass,0);
-                            loginrealm.beginTransaction(); //데이터 변경을 알리는 코드
-                            loginrealm.copyToRealmOrUpdate(temp_person);
-                            loginrealm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-
+                            edit.putString("id", id);
+                            edit.putString("pass", pass);
+                            edit.commit();
+                            //SharedPreferences 아이디 비밀번호 저장
                             Intent intent = new Intent(getApplicationContext(), PlanListActivity.class);
-                            intent.putExtra("loginid",id);
                             startActivity(intent);
                             finish();
                         } else if (response.code() == 503) {
@@ -78,20 +114,9 @@ public class LoginActivity extends Activity {
 
                     @Override
                     public void onFailure(Throwable t) {
-
+                        Toast.makeText(getApplicationContext(), "완전 오류!", Toast.LENGTH_LONG).show();
                     }
                 });
-
-/*
-                PersonRealM temp_person = new PersonRealM(id,pass,0);
-                loginrealm.beginTransaction(); //데이터 변경을 알리는 코드
-                loginrealm.copyToRealmOrUpdate(temp_person);
-                loginrealm.commitTransaction(); //데이터 변경사항을 저장하는 코드
-
-
-                Intent intent = new Intent(getApplicationContext(), PlanListActivity.class);
-                startActivity(intent);
-                */
 
             }
         });
@@ -116,20 +141,62 @@ public class LoginActivity extends Activity {
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
-
-    private void initRealM() {
-        loginrealm = Realm.getInstance(new RealmConfiguration.Builder(getApplicationContext())
-                .name("Plan.login4").build());
+    private void initSharedPre(){
+            pref = getSharedPreferences("login",0);
+            edit = pref.edit();
     }
-    private void loginTest(){
-        long count = loginrealm.getTable(PersonRealM.class).size();
-        System.out.println(count);
-        if( count ==1){
-            Intent intent = new Intent(getApplicationContext(),PlanListActivity.class);
-            startActivity(intent);
-            finish();
+
+    private void loginTest(){                               //로그인한적이 있는 검사하는 함수
+        Userid = pref.getString("id", "null");              //SharedPreferences에서 아이디 가져옴
+        Userpass = pref.getString("pass", "null");          //SharedPreferences에서 비밀번호 가져옴
+
+        if(!(Userid.equals("null"))){                       //null이 아니라면
+            Toast.makeText(LoginActivity.this, "로그인 기록이 있다."+ Userid + Userpass, Toast.LENGTH_SHORT).show();
+            editID.setText(Userid);                         //아이디 설정
+            editPass.setText(Userpass);                     //비밀번호 설정
+            Toast.makeText(LoginActivity.this, ""+btnLogin.getText()+editID.getText()+editPass.getText(), Toast.LENGTH_SHORT).show();
+
+            btnLogin.post(new Runnable() {
+                @Override
+                public void run() {
+                    btnLogin.performClick();            //스레드 로그인 버튼 클릭
+                }
+            });
+
+        } else {
+            Toast.makeText(LoginActivity.this, "로그인 기록이 없다.", Toast.LENGTH_SHORT).show();
         }
 
     }
+
+    private void ActivateProgressbar(){                     //로그인시 화면 생성 함수
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration (5000); //in milliseconds
+        animation.setInterpolator (new DecelerateInterpolator());
+        animation.start ();
+    }
+
+    public String testMD5(String str){              //암호화 함수
+        String MD5 = "";
+        try{
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes());
+            byte byteData[] = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0 ; i < byteData.length ; i++){
+                sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+            }
+            MD5 = sb.toString();
+
+        }catch(NoSuchAlgorithmException e){
+            e.printStackTrace();
+            MD5 = null;
+        }
+        return MD5;
+    }
+
+
 
 }
