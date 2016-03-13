@@ -21,7 +21,7 @@ public interface AwsNetworkService {
 
     // Aws_URL
     //String baseUrl = "http//52.34.206.80:3000";
-    String baseUrl = "http://192.168.43.204:3000";
+    String baseUrl = "http://192.168.43.82:3000";
 
     // TODO: 1. 서버와 네트워킹을 하기 위한 서비스(인터페이스로 구현)
     /**
@@ -49,7 +49,7 @@ public interface AwsNetworkService {
     @POST("/place/add")
     Call<Object> addPlace(@Body PlaceList placeList);
 
-    @GET("/place")
-    Call<PlaceList> getPlaceList(@QueryMap HashMap<String,String> param);
+    @POST("/place/load")
+    Call<ArrayList<Place>> getPlaceList(@QueryMap HashMap<String,String> param);
 
 }
