@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class PlaceList {
     String id;
-    String pname;
+    String planname;
     ArrayList<Place> item;
 
 
@@ -18,7 +18,7 @@ public class PlaceList {
 
     public PlaceList(String id, String pname){
         this.id = id;
-        this.pname = pname;
+        this.planname = pname;
     }
 
 
@@ -31,11 +31,11 @@ public class PlaceList {
     }
 
     public String getPname() {
-        return pname;
+        return planname;
     }
 
     public void setPname(String pname) {
-        this.pname = pname;
+        this.planname = pname;
     }
 
     public ArrayList<Place> getItem(){

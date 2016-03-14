@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import inu.travel.Model.Place;
+import inu.travel.Model.PlaceList;
 import inu.travel.R;
 import inu.travel.ViewHolder.PlaceViewHolder;
 

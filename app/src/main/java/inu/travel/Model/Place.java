@@ -11,6 +11,7 @@ public class Place {
     String contenttypeid;
     String mapx;
     String mapy;
+    String address;
 
     public Place(){}
 
@@ -54,5 +55,13 @@ public class Place {
 
     public void setMapy(String mapy) {
         this.mapy = mapy;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
