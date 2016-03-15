@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -615,10 +616,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         Log.i("MyLog:searchContent", searchContent);
 
         //키보드 내리기 -> 액션바 쓰면 자동으로 사라짐
-//        InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        mInputMethodManager.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
-//http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword? API 사용하여 키워드로 검색할것
-
+        InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         // 별도의 스레드로 검색한 지역의 좌표를 받아옴
         TMapData tmapdata = new TMapData();
@@ -880,6 +879,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             @Override
             public boolean onQueryTextChange(String newText) {
 //                Toast.makeText(SearchPlaceActivity.this, "test for TextChange", Toast.LENGTH_SHORT).show();
+                editSearch = newText;
                 return false;
             }
         });
