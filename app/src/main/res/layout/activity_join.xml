@@ -17,17 +17,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="60dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView1"
                 android:gravity="center"
                 android:text="아이디"/>
 
             <EditText
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editID"
                 android:gravity="center"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
                 android:hint="아이디를 입력하세요"/>
 
         </LinearLayout>
@@ -38,17 +40,20 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="60dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView2"
                 android:gravity="center"
                 android:text="비밀번호"/>
 
             <EditText
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editPass"
                 android:gravity="center"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
                 android:hint="비밀번호를 입력하세요" />
 
         </LinearLayout>
@@ -59,17 +64,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="60dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView3"
                 android:gravity="center"
                 android:text="이메일"/>
 
             <EditText
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/editEmail"
                 android:gravity="center"
+                android:singleLine="true"
+                android:inputType="textWebEmailAddress"
                 android:hint="이메일을 입력하세요     "  />
 
         </LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clickable="false"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/imageViewPlace"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_marginTop="15dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/img1" />
+
+    <LinearLayout
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_width="170dp"
+        android:layout_height="80dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView_place"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:paddingTop="10dp"
+            android:text="장소이름"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/textView_addr"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:paddingTop="10dp"
+            android:text="주소"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingTop="8dp"
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:orientation="vertical">
+
+        <Button
+            android:onClick="myClickHandler"
+            android:id="@+id/btnRemoveListPlace"
+            android:layout_marginBottom="5dp"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="삭제"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/btnDetailListPlace"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="상세보기"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+
+</LinearLayout>

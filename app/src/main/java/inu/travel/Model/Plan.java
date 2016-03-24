@@ -1,28 +1,18 @@
 package inu.travel.Model;
 
-public class PlanList  {
-
-
+/**
+ * Created by inhoi on 2016-02-01.
+ */
+public class Plan {
     String id;
     String name;
     String description;
-    int num;
 
-
-    public PlanList(String id,String name,String description){
-        this.id=id;
-        this.name=name;
-        this.description=description;
-        this.num=1;
+    public Plan(String id,String name,String description){
+        this.id = id;
+        this.name= name;
+        this.description = description;
     }
-    public PlanList(String id,String name){
-        this.id=id;
-        this.name=name;
-    }
-    public PlanList(){
-
-    }
-
 
     public String getDescription() {
         return description;
@@ -47,17 +37,4 @@ public class PlanList  {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getNum() {
-        return num;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
-
-
-
-
-
 }
