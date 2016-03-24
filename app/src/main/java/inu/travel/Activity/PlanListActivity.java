@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class PlanListActivity extends Activity {
     SharedPreferences pref;
     int PlanListLengh = 0;               //플랜 총 개수
     String user_id;                      //사용자 아이디
+    Button logoutBtn;                    //로그아웃 버튼
 
 
 
@@ -268,13 +270,23 @@ public class PlanListActivity extends Activity {
         gridView = (GridView) findViewById(R.id.gridView);
         editName_d = (EditText) findViewById(R.id.editName_d);
         editDetail_d = (EditText) findViewById(R.id.editDetail_d);
+        logoutBtn = (Button) findViewById(R.id.logoutBtn);
     }
 
     private void initSharedPre(){
-        pref = getSharedPreferences("login",0);
+        pref = getSharedPreferences("login", 0);
         user_id = pref.getString("id", "");                  //SharedPreferences을 통해 id를 받아온다.
         Toast.makeText(PlanListActivity.this, ""+user_id, Toast.LENGTH_SHORT).show();
 
+    }
+    public void logoutClick(View view){
+        pref = getSharedPreferences("login", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

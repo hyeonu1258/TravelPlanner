@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Pattern;
 
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Person;
@@ -27,6 +30,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
+
 public class LoginActivity extends Activity {
     EditText editID, editPass;
     Button btnLogin, btnJoin;                       //로그인버튼, 회원가입 버튼
@@ -36,6 +40,7 @@ public class LoginActivity extends Activity {
     String Userid;                      //사용자 아이디
     String Userpass;                    //사용자 비밀번호
     ProgressBar progressBar; // 로딩화면을 위한 변수
+    TextView loginText;
 
 
 
@@ -43,13 +48,14 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login2);
 
 
         initView();                 //view 초기화
         initNetworkService();       //Network 서버 연결
         initSharedPre();    //SharedPreferences 초기화
         loginTest(); //로그인 된적이 있는지를 검사하여서 바로 로그인 시킴
+        limitInput();
 
 
 
@@ -121,7 +127,18 @@ public class LoginActivity extends Activity {
             }
         });
 
+        /* 잠시만
         btnJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplication(), JoinActivity.class);
+                startActivity(intent);
+            }
+        });
+        */
+        loginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
@@ -137,6 +154,7 @@ public class LoginActivity extends Activity {
         editPass = (EditText) findViewById(R.id.editPass);
         btnJoin = (Button) findViewById(R.id.btnJoin);
         btnLogin = (Button) findViewById(R.id.btnLogin);
+        loginText = (TextView) findViewById(R.id.loginText);
     }
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
@@ -145,6 +163,7 @@ public class LoginActivity extends Activity {
             pref = getSharedPreferences("login",0);
             edit = pref.edit();
     }
+
 
     private void loginTest(){                               //로그인한적이 있는 검사하는 함수
         Userid = pref.getString("id", "null");              //SharedPreferences에서 아이디 가져옴
@@ -195,6 +214,30 @@ public class LoginActivity extends Activity {
             MD5 = null;
         }
         return MD5;
+    }
+
+
+    protected void limitInput(){                    //editText 한글 제한 함수
+        InputFilter filterAlphaNum = new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                Pattern ps = Pattern.compile("^[a-zA-Z0-9]*$");
+                if (!ps.matcher(source).matches()) {
+                    return "";
+                }
+                return null;
+            }
+        };
+
+        editID.setFilters(new InputFilter[]{filterAlphaNum}); // 영문+숫자 설정
+        editPass.setFilters(new InputFilter[]{filterAlphaNum}); // 영문+숫자 설정
+        editID.setPrivateImeOptions("defaultInputmode=english;"); //기본 키포드 영어설정
+        editPass.setPrivateImeOptions("defaultInputmode=english;"); //기본 키포드 영어설정
+
+    }
+    public void joinClick(View v){
+        Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplication(), JoinActivity.class);
+        startActivity(intent);
     }
 
 

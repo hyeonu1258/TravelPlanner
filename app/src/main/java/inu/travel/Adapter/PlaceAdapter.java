@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -47,13 +50,29 @@ public class PlaceAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
 
         PlaceViewHolder viewHolder = new PlaceViewHolder();
-
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.list_item_place, parent, false);
             viewHolder.txtNameItem = (TextView) convertView.findViewById(R.id.textView_place);
+            viewHolder.txtAddrItem = (TextView) convertView.findViewById(R.id.textView_addr);
+            viewHolder.btnRemove = (Button) convertView.findViewById(R.id.btnRemoveListPlace);
+            viewHolder.btnDetail = (Button) convertView.findViewById(R.id.btnDetailListPlace);
+
+            viewHolder.btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
+                }
+            });
+            viewHolder.btnDetail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
+                }
+            });
+            viewHolder.imgItem = (ImageView) convertView.findViewById(R.id.imageViewPlace);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (PlaceViewHolder) convertView.getTag();
@@ -61,7 +80,13 @@ public class PlaceAdapter extends BaseAdapter {
 
         Place place = placeDatas.get(position);
         viewHolder.txtNameItem.setText(place.getPlacename().toString());
+        viewHolder.txtAddrItem.setText(place.getAddress().toString());
+//        viewHolder.btnRemove.setText(place.getAddress().toString());
+//        viewHolder.btnDetail.setText(place.getAddress().toString());
+//        viewHolder.imgItem.setText(place.getAddress().toString());
 
         return convertView;
     }
+
+
 }

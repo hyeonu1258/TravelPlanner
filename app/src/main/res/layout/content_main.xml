@@ -23,28 +23,27 @@
 
         <Button
             android:id="@+id/btnMT"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
             android:text="숙박" />
 
         <Button
             android:id="@+id/btnTour"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/btnMT"
             android:text="관광지" />
 
         <Button
             android:id="@+id/btnEat"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/btnTour"
             android:text="맛집" />
 
-        //
-
+<!--
         <Button
             android:id="@+id/btnAddPlace"
             android:layout_width="80dp"
@@ -68,19 +67,52 @@
             android:layout_width="80dp"
             android:layout_height="50dp"
             android:layout_alignBottom="@+id/map_view"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="30dp"
             android:layout_toRightOf="@+id/btnRemovePlace"
             android:text="상세보기"
             android:textSize="15dp" />
-
+-->
         <Button
             android:id="@+id/btnComplete"
-            android:layout_width="80dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
-            android:layout_alignBottom="@+id/map_view"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/btnViewDetail"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/btnEat"
             android:text="완료"
             android:textSize="15dp" />
+
+        <SlidingDrawer
+            android:id="@+id/slide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:allowSingleTap="true"
+            android:animateOnClick="true"
+            android:bottomOffset="5dp"
+            android:content="@+id/content"
+            android:handle="@+id/handle"
+            android:orientation="vertical"
+            android:topOffset="250dp"
+            >
+            <ImageView
+                android:id="@+id/handle"
+                android:src="@drawable/ic_launcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFFFF"
+                android:orientation="vertical"
+                >
+                <ListView
+                    android:id="@+id/searchitemlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </ListView>
+            </LinearLayout>
+
+        </SlidingDrawer>
     </RelativeLayout>
 </LinearLayout>

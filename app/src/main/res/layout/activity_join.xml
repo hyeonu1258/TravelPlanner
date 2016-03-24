@@ -53,6 +53,7 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
+                android:inputType="textPassword"
                 android:hint="비밀번호를 입력하세요" />
 
         </LinearLayout>
@@ -75,6 +76,7 @@
                 android:id="@+id/editEmail"
                 android:gravity="center"
                 android:singleLine="true"
+                android:inputType="textWebEmailAddress"
                 android:hint="이메일을 입력하세요     "  />
 
         </LinearLayout>
