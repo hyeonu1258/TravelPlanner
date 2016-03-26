@@ -1,6 +1,7 @@
 package inu.travel.ViewHolder;
 
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -11,4 +12,5 @@ public class SearchPlaceViewHolder {
     public TextView txtAddrItem;
     public Button btnAddPlace;
     public Button btnViewDetail;
+    public ImageView imageViewThumbnail;
 }

@@ -17,10 +17,12 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import inu.travel.Adapter.PlanAdapter;
 import inu.travel.Component.ApplicationController;
+import inu.travel.Model.Place;
 import inu.travel.Model.PlanList;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.R;
@@ -44,9 +46,6 @@ public class PlanListActivity extends Activity {
     Button logoutBtn;                    //로그아웃 버튼
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +56,7 @@ public class PlanListActivity extends Activity {
         makePlusButton();       // +버튼 만들기
         initNetworkService();   //Network 서버 연결
         initSharedPre();        //SharedPreferences 초기화, 유저 아이디 얻어온다.
-                                //플랜 만들 때, 삭제할 때 유저 아이디가 필요
+        //플랜 만들 때, 삭제할 때 유저 아이디가 필요
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,25 +65,58 @@ public class PlanListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final PlanList Plan_temp = (PlanList) adapter.getItem(position);
-                String temp_str = Plan_temp.getName();
+                final String planName = Plan_temp.getName();
                 String temp1_str = Plan_temp.getDescription();
                 long PlanID = Plan_temp.getNum();
                 // gridview 상에서 클릭한 플랜의 이름, 설명, 번호를 받아온다.
 
-                Toast.makeText(PlanListActivity.this, "" + position + temp_str + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlanListActivity.this, "" + position + planName + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
 
                 if (PlanID == PlanListLengh) {                      // +버튼을 클릭했을 때
                     makePlan();
                 } else {                                            // 플랜을 선택했을 때
-                    Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
-                    intent.putExtra("Userid", user_id);
-                    intent.putExtra("PlanName",temp_str);
-                    //김진규한테 플랜이름, 아이디 보냄
-                    startActivity(intent);
+                    //종민이한테 보내서 수정화면 / 완료화면 결정하기
+                    HashMap<String, String> param = new HashMap<>();
+                    param.put("id", user_id);
+                    param.put("planname", planName);
+
+                    final Call<ArrayList<Place>> getPlaceList = awsNetworkService.getPlaceList(param);
+                    getPlaceList.enqueue(new Callback<ArrayList<Place>>() {
+                        @Override
+                        public void onResponse(Response<ArrayList<Place>> response, Retrofit retrofit) {
+                            if (response.code() == 200) {
+                                // ResultActivity (결과 엑티비티로 이동)
+                                System.out.println("완료로이동");
+                                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                                intent.putExtra("Userid", user_id);
+                                intent.putExtra("PlanName", planName);
+                                startActivity(intent);
+                            } else if (response.code() == 404) {
+                                System.out.println("수정으로이동");
+                                Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
+                                intent.putExtra("Userid", user_id);
+                                intent.putExtra("PlanName", planName);
+                                //김진규한테 플랜이름, 아이디 보냄
+                                startActivity(intent);
+                            } else if (response.code() == 503)
+                            {
+                                int statusCode = response.code();
+                                Log.i("MyTag", "응답코드 : " + statusCode);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+                            Log.i("MyTag", "에러내용 : " + t.getMessage());
+                        }
+
+                    });
+
+
                 }
             }
         });// gridView.setOnItemClickListener close
-
 
 
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -182,7 +214,7 @@ public class PlanListActivity extends Activity {
         });
 
 
-}
+    }
 
 
     @Override
@@ -198,11 +230,11 @@ public class PlanListActivity extends Activity {
     }
 
     private void makePlusButton() {                         // + 버튼 만드는 함수
-            PlanList plan = new PlanList();
-            plan.setNum(PlanListLengh);                     //PlanListLengh 번호를 통해 마지막에 생기게 함
-            plan.setName("+");
-            planDatas.add(plan);
-            adapter.notifyDataSetChanged();
+        PlanList plan = new PlanList();
+        plan.setNum(PlanListLengh);                     //PlanListLengh 번호를 통해 마지막에 생기게 함
+        plan.setName("+");
+        planDatas.add(plan);
+        adapter.notifyDataSetChanged();
     }
 
     void makePlan() {
@@ -262,7 +294,7 @@ public class PlanListActivity extends Activity {
     }
 
 
-    private void initNetworkService(){
+    private void initNetworkService() {
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
 
@@ -273,13 +305,14 @@ public class PlanListActivity extends Activity {
         logoutBtn = (Button) findViewById(R.id.logoutBtn);
     }
 
-    private void initSharedPre(){
+    private void initSharedPre() {
         pref = getSharedPreferences("login", 0);
         user_id = pref.getString("id", "");                  //SharedPreferences을 통해 id를 받아온다.
-        Toast.makeText(PlanListActivity.this, ""+user_id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(PlanListActivity.this, "" + user_id, Toast.LENGTH_SHORT).show();
 
     }
-    public void logoutClick(View view){
+
+    public void logoutClick(View view) {
         pref = getSharedPreferences("login", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.clear();

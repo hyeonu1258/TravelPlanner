@@ -12,6 +12,7 @@ public class Place {
     String mapx;
     String mapy;
     String address;
+    public String imgpath;
 
     public Place(){}
 
@@ -63,5 +64,13 @@ public class Place {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getImgpath() {
+        return imgpath;
+    }
+
+    public void setImgpath(String imgpath) {
+        this.imgpath = imgpath;
     }
 }

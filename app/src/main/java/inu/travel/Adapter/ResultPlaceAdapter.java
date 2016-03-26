@@ -3,7 +3,6 @@ package inu.travel.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +23,14 @@ import inu.travel.R;
 import inu.travel.ViewHolder.SearchPlaceViewHolder;
 
 /**
- * Created by kimjongmin on 2016. 3. 21..
+ * Created by kimjongmin on 2016. 3. 26..
  */
-public class SearchPlaceAdapter extends BaseAdapter {
+public class ResultPlaceAdapter extends BaseAdapter {
     Handler handler = new Handler();  // 외부쓰레드 에서 메인 UI화면을 그릴때 사용
     private ArrayList<TMapPOIItem> placeDatas;
     LayoutInflater layoutInflater;
 
-    public SearchPlaceAdapter(ArrayList<TMapPOIItem> placeDatas, Context context) {
+    public ResultPlaceAdapter(ArrayList<TMapPOIItem> placeDatas, Context context) {
         this.placeDatas = placeDatas;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -54,15 +53,15 @@ public class SearchPlaceAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
+        // SearchPlaceViewHolder 재활용
         SearchPlaceViewHolder viewHolder = new SearchPlaceViewHolder();
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_searchplace, parent, false);
-            viewHolder.txtNameItem = (TextView) convertView.findViewById(R.id.textView_place);
-            viewHolder.txtAddrItem = (TextView) convertView.findViewById(R.id.textView_addr);
-            viewHolder.btnAddPlace = (Button) convertView.findViewById(R.id.btnAddPlace);
-            viewHolder.btnViewDetail = (Button) convertView.findViewById(R.id.btnViewDetail);
-            viewHolder.imageViewThumbnail = (ImageView) convertView.findViewById(R.id.imageViewThumbnail);
+            convertView = layoutInflater.inflate(R.layout.list_item_resultplace, parent, false);
+            viewHolder.txtNameItem = (TextView) convertView.findViewById(R.id.textViewCompleteplace);
+            viewHolder.txtAddrItem = (TextView) convertView.findViewById(R.id.textViewCompleteaddr);
+            viewHolder.btnViewDetail = (Button) convertView.findViewById(R.id.btnCompleteViewDetail);
+            viewHolder.imageViewThumbnail = (ImageView) convertView.findViewById(R.id.completeListThumbnail);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (SearchPlaceViewHolder) convertView.getTag();
@@ -80,7 +79,6 @@ public class SearchPlaceAdapter extends BaseAdapter {
                     URL url = new URL(place.bizCatName);
                     InputStream is = url.openStream();
                     final Bitmap bm = BitmapFactory.decodeStream(is);
-//                    bm.setHeight(50);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {  // 화면에 그려줄 작업
@@ -96,13 +94,6 @@ public class SearchPlaceAdapter extends BaseAdapter {
         t.start();
 
         // 각 리스트 마다 버튼 이벤트
-        viewHolder.btnAddPlace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
-            }
-        });
-
         viewHolder.btnViewDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

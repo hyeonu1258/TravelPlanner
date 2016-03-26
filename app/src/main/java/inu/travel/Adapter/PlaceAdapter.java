@@ -1,6 +1,9 @@
 package inu.travel.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +13,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
 import inu.travel.R;
 import inu.travel.ViewHolder.PlaceViewHolder;
+import inu.travel.ViewHolder.SearchPlaceViewHolder;
 
 /**
  * Created by Hyeonu on 2016-03-09.
  */
 public class PlaceAdapter extends BaseAdapter {
-
+    Handler handler = new Handler();  // 외부쓰레드 에서 메인 UI화면을 그릴때 사용
     private ArrayList<Place> placeDatas;
     LayoutInflater layoutInflater;
 
@@ -72,18 +78,37 @@ public class PlaceAdapter extends BaseAdapter {
                     ((ListView) parent).performItemClick(v, position, 0); // Let the event be handled in onItemClick()
                 }
             });
-            viewHolder.imgItem = (ImageView) convertView.findViewById(R.id.imageViewPlace);
+            viewHolder.savedListThumbnail = (ImageView) convertView.findViewById(R.id.savedListThumbnail);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (PlaceViewHolder) convertView.getTag();
         }
 
-        Place place = placeDatas.get(position);
+        final Place place = placeDatas.get(position);
         viewHolder.txtNameItem.setText(place.getPlacename().toString());
         viewHolder.txtAddrItem.setText(place.getAddress().toString());
-//        viewHolder.btnRemove.setText(place.getAddress().toString());
-//        viewHolder.btnDetail.setText(place.getAddress().toString());
-//        viewHolder.imgItem.setText(place.getAddress().toString());
+        final PlaceViewHolder finalViewHolder = viewHolder;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {    // 오래 걸릴 작업을 구현한다
+                // Auto-generated method stub
+                try {
+                    URL url = new URL(place.imgpath);
+                    InputStream is = url.openStream();
+                    final Bitmap bm = BitmapFactory.decodeStream(is);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {  // 화면에 그려줄 작업
+                            finalViewHolder.savedListThumbnail.setImageBitmap(bm);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        t.start();
 
         return convertView;
     }

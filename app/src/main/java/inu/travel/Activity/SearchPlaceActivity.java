@@ -104,15 +104,15 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     private String planname;
 
     //지도 위 버튼들
-    Button btnMT;
-    Button btnTour;
-    Button btnEat;
+//    Button btnMT;
+//    Button btnTour;
+//    Button btnEat;
 //    Button btnAddPlace;
 //    Button btnRemovePlace;
 //    Button btnViewDetail;
     Button btnComplete;
 
-    Button btnSearch;
+//    Button btnSearch;
 
     // 슬라이딩 버튼
     Button btnSlidingClose;
@@ -376,6 +376,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         item.name = placeList.getItem().get(i).getPlacename(); //장소명
                         item.address = placeList.getItem().get(i).getAddress(); //주소
                         item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
+                        item.bizCatName= placeList.getItem().get(i).getImgpath();
 
                         //저장된 장소 리스트에 넣기
                         savedPOIPlaceList.add(item);
@@ -418,33 +419,33 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     }
 
     private void btnClickEvent() {
-        btnMT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "숙박", Toast.LENGTH_SHORT).show();
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
-                searchArea("32");
-            }
-        });
+//        btnMT.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(getApplicationContext(), "숙박", Toast.LENGTH_SHORT).show();
+//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
+//                searchArea("32");
+//            }
+//        });
 
-        btnTour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "관광지", Toast.LENGTH_SHORT).show();
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+//        btnTour.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(getApplicationContext(), "관광지", Toast.LENGTH_SHORT).show();
+//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+//
+//                searchArea("12");
+//            }
+//        });
 
-                searchArea("12");
-            }
-        });
-
-        btnEat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "맛집", Toast.LENGTH_SHORT).show();
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
-                searchArea("39");
-            }
-        });
+//        btnEat.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(getApplicationContext(), "맛집", Toast.LENGTH_SHORT).show();
+//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
+//                searchArea("39");
+//            }
+//        });
 
 //        btnAddPlace.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -524,6 +525,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
                             // ResultActivity (결과 엑티비티로 이동)
                             Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                            intent.putExtra("Userid", id);
+                            intent.putExtra("PlanName", planname);
                             startActivity(intent);
                             finish();
                         } else if (response.code() == 503) {
@@ -571,7 +574,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         place.setMapx(this.selectedPOIItem.noorLon);
         place.setMapy(this.selectedPOIItem.noorLat);
         place.setAddress(this.selectedPOIItem.address);
+        place.setImgpath(this.selectedPOIItem.bizCatName);
         placeList.getItem().add(place);
+        System.out.println("이미지경로 = " + this.selectedPOIItem.bizCatName);
         savedPOIPlaceList.add(this.selectedPOIItem);
         System.out.println("장소리스트 개수 : " + placeList.getItem().size());
         System.out.println("추가한 장소 : " + placeList.getItem().get(placeList.getItem().size() - 1).getPlacename());
@@ -758,7 +763,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         try {
             searchContent = editSearch;
             Log.i("MyLog:searchContent", searchContent);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -907,6 +912,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             item.name = searchPlace.get(i).title; //장소명
             item.address = searchPlace.get(i).addr1; //주소
             item.setID(searchPlace.get(i).contentid); //자세히보기 API 요청시 필요함
+            item.bizCatName = searchPlace.get(i).firstimage2;//POI아무변수에 썸네일저장 (리스트뷰에 보여짐)
             tMapPOISearchItems.add(j, item);
             tMapPoints.add(j, item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
             j++;
@@ -920,7 +926,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
         //TODO: DB에서 가져온 장소 리스트에 추가시키기
 
-        //맵에 POI 띄우기
+        //맵에 POI 띄우기 => 검색한거 먼저 띄우고 저장된거 띄워서 겹치면 덮어쓰기
         mMapView.addTMapPOIItem(tMapPOISearchItems);
         mMapView.addTMapPOIItem(savedPOIPlaceList);
 
@@ -940,9 +946,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
     private void initView() {
         //버튼들
-        btnMT = (Button) findViewById(R.id.btnMT);
-        btnTour = (Button) findViewById(R.id.btnTour);
-        btnEat = (Button) findViewById(R.id.btnEat);
+//        btnMT = (Button) findViewById(R.id.btnMT);
+//        btnTour = (Button) findViewById(R.id.btnTour);
+//        btnEat = (Button) findViewById(R.id.btnEat);
 //        btnAddPlace = (Button) findViewById(R.id.btnAddPlace);
 //        btnRemovePlace = (Button) findViewById(R.id.btnRemovePlace);
 //        btnViewDetail = (Button) findViewById(R.id.btnViewDetail);
@@ -961,6 +967,18 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("onStop실행");
 
     }
 
@@ -980,11 +998,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     */
     @Override
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> poiArrayList, TMapPoint tMapPoint, PointF pointF) {
-
-        if (SlidingDrawer.isOpened())
-            SlidingDrawer.animateClose();
         if (!poiArrayList.isEmpty()) { //장소를 클릭했을 경우
-
             //저장된것 검사해서 넘어감
             for (int i = 0; i < poiArrayList.size(); i++) {
                 for (int j = 0; j < savedPOIPlaceList.size(); j++) {
@@ -996,27 +1010,45 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 }
             }
 
-            if (poiArrayList.get(0).Icon == selectedBitmap) { //같은장소를 또 클릭햇을 경우 선택을 해제한다.
-                selectedPOIItem.Icon = defaultBitmap;
-                mMapView.addTMapPOIItem(poiArrayList); //이미지를 초기화 해준뒤
-                selectedPOIItem = null; //임시저장된것 삭제
-            } else {//다른장소를 선택할 경우 이전의 것 이미지 초기화 해준뒤 선택한 장소 이미지 바꾸고 임시저장
-                //get(0)으로 첫번째 거만 클릭이벤트 처리함
-                Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
-
-                if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
+            try {
+                if (poiArrayList.get(0).Icon == selectedBitmap) { //같은장소를 또 클릭햇을 경우 선택을 해제한다.
                     selectedPOIItem.Icon = defaultBitmap;
                     mMapView.addTMapPOIItem(poiArrayList); //이미지를 초기화 해준뒤
                     selectedPOIItem = null; //임시저장된것 삭제
-                }
+                } else {//다른장소를 선택할 경우 이전의 것 이미지 초기화 해준뒤 선택한 장소 이미지 바꾸고 임시저장
+                    //get(0)으로 첫번째 거만 클릭이벤트 처리함
+                    Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
-                //선택된 POI를 임시로 저장 -> 나중에 장소 추가, 자세히 보기 할때 저장할 데이터
-                selectedPOIItem = poiArrayList.get(0);
-                selectedPOIItem.Icon = selectedBitmap;
-                mMapView.addTMapPOIItem(poiArrayList); //갱신
+                    if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
+                        selectedPOIItem.Icon = defaultBitmap;
+                        mMapView.addTMapPOIItem(poiArrayList); //이미지를 초기화 해준뒤
+                        selectedPOIItem = null; //임시저장된것 삭제
+                    }
+
+                    //선택된 POI를 임시로 저장 -> 나중에 장소 추가, 자세히 보기 할때 저장할 데이터
+                    selectedPOIItem = poiArrayList.get(0);
+                    selectedPOIItem.Icon = selectedBitmap;
+                    mMapView.addTMapPOIItem(poiArrayList); //갱신
 //                mMapView.setIconVisibility(true); //SKT타워에 마커가 자꾸 생김
+
+                    //클릭한것 스크롤뷰로 이동
+                    int position = 0;
+                    int listViewSize = tMapPOISearchItems.size();
+                    for (int i = 0; i < listViewSize; i++) {
+                        if (selectedPOIItem.getPOIID() == tMapPOISearchItems.get(i).getPOIID())
+                            position = i;
+                    }
+                    if (!SlidingDrawer.isOpened())
+                        SlidingDrawer.animateOpen();
+                    searchPlaceListView.smoothScrollToPositionFromTop(position, 0);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }
+            }else{
+                if (SlidingDrawer.isOpened())
+                    SlidingDrawer.animateClose();
+            }
         return false;
     }
 

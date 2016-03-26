@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class PlaceViewHolder {
     public TextView txtNameItem;
     public TextView txtAddrItem;
-    public ImageView imgItem;
+    public ImageView savedListThumbnail;
     public Button btnRemove;
     public Button btnDetail;
 }
