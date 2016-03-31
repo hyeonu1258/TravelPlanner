@@ -103,6 +103,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     private String id;
     private String planname;
 
+    //류땅
+    private String planexplain; //플랜설명
     //지도 위 버튼들
 //    Button btnMT;
 //    Button btnTour;
@@ -128,8 +130,11 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     Toolbar toolbar;
     ActionBarDrawerToggle toggle;
     NavigationView navigationView;
-    NavigationView navigationView3;
     ListView listView;
+    TextView txtPlanName;
+    TextView txtPlanExplain;
+    TextView logoutTxt;
+    TextView settingTxt;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -182,9 +187,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         disableOverScroll(navigationView);
-        navigationView3 = (NavigationView) findViewById(R.id.nav_view3);
-        disableOverScroll(navigationView3);
-        navigationView3.setNavigationItemSelectedListener(this);
 
         getUser();
         initPlaceList();
@@ -224,6 +226,27 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
         SlidingDrawer = (SlidingDrawer) findViewById(R.id.slide);
 
+        //류땅
+        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+        txtPlanName.setText(planname);
+        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+        txtPlanExplain.setText(planexplain);
+
+        logoutTxt = (TextView) findViewById(R.id.logout_txt);
+        settingTxt = (TextView) findViewById(R.id.setting_txt);
+
+        logoutTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        settingTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -338,6 +361,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         Intent i = getIntent();
         id = i.getStringExtra("Userid");
         planname = i.getStringExtra("PlanName");
+        planexplain = i.getStringExtra("PlanExplain");
     }
 
     private void initPlaceList() {

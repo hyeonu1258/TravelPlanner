@@ -76,8 +76,11 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     Toolbar toolbar;
     ActionBarDrawerToggle toggle;
     NavigationView navigationView;
-    NavigationView navigationView3;
     ListView listView;
+    TextView txtPlanName;
+    TextView txtPlanExplain;
+    TextView logoutTxt;
+    TextView settingTxt;
 
     //수정버튼
     private Button btnEdit;
@@ -85,6 +88,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     //id, planname
     private String id;
     private String planname;
+    private String planexplain; //플랜설명
 
     private PlaceList placeList;
     private ArrayList<TMapPOIItem> savedPOIPlaceList;
@@ -111,6 +115,29 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         getUser();
         initPlaceList();
         getPlaceList();
+
+        //류땅
+        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+        txtPlanName.setText("플랜이름 : " + planname);
+        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+        txtPlanExplain.setText("설명 : " + planexplain);
+
+        logoutTxt = (TextView) findViewById(R.id.logout_txt);
+        settingTxt = (TextView) findViewById(R.id.setting_txt);
+
+        logoutTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        settingTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void initListView() {
@@ -135,7 +162,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             point = savedPOIPlaceList.get(i).getPOIPoint();
             polyLine.addLinePoint(point);
             polyLineArrayList.add(polyLine);
-            String strID = String.format("line%d", mLineID++);
+            String strID = savedPOIPlaceList.get(i).getPOIID();
             mMapView.addTMapPolyLine(strID, polyLine);
             mArrayLineID.add(strID);
         }
@@ -147,6 +174,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     }
 
     private void initButton() {
+        System.out.println("버튼초기화");
         btnEdit = (Button) findViewById(R.id.btnEdit);
     }
 
@@ -159,8 +187,10 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Intent intent = new Intent(getApplicationContext(), SearchPlaceActivity.class);
                 intent.putExtra("Userid", id);
                 intent.putExtra("PlanName", planname);
+                intent.putExtra("PlanExplain", planexplain);
                 startActivity(intent);
                 finish();
+
             }
         });
     }
@@ -171,6 +201,12 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     @Override
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+//        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
+//
+//        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
+//        System.out.println("선ID = " + polyline.getID());
+//        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
+//        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
         return false;
     }
 
@@ -197,12 +233,12 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
      */
     private void initNaviView() {
         //툴바 생성
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         toolbar.showOverflowMenu();
 
         //토글 생성
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
@@ -213,11 +249,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         drawer.setDrawerListener(toggle);
         toggle.syncState(); //토글스위치 이미지 전환
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view2);
         disableOverScroll(navigationView);
-        navigationView3 = (NavigationView) findViewById(R.id.nav_view3);
-        disableOverScroll(navigationView3);
-        navigationView3.setNavigationItemSelectedListener(this);
     }
 
     /*
@@ -247,6 +280,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         Intent i = getIntent();
         id = i.getStringExtra("Userid");
         planname = i.getStringExtra("PlanName");
+        planexplain = i.getStringExtra("PlanExplain");
     }
 
     private void initPlaceList() {
@@ -461,7 +495,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 long viewId = view.getId();
                 TMapPOIItem selectedPOIItem = tMapPOIItems.get(position);
 
-                if (viewId == R.id.btnViewDetail) {
+                if (viewId == R.id.btnCompleteViewDetail) {
                     Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
                     viewDetail(selectedPOIItem);
                 }

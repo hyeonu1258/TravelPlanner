@@ -66,11 +66,11 @@ public class PlanListActivity extends Activity {
 
                 final PlanList Plan_temp = (PlanList) adapter.getItem(position);
                 final String planName = Plan_temp.getName();
-                String temp1_str = Plan_temp.getDescription();
+                final String temp1_str = Plan_temp.getDescription();
                 long PlanID = Plan_temp.getNum();
                 // gridview 상에서 클릭한 플랜의 이름, 설명, 번호를 받아온다.
 
-                Toast.makeText(PlanListActivity.this, "" + position + planName + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PlanListActivity.this, "플랜설명" + position + planName + temp1_str + PlanID, Toast.LENGTH_SHORT).show();
 
                 if (PlanID == PlanListLengh) {                      // +버튼을 클릭했을 때
                     makePlan();
@@ -90,12 +90,14 @@ public class PlanListActivity extends Activity {
                                 Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
                                 intent.putExtra("Userid", user_id);
                                 intent.putExtra("PlanName", planName);
+                                intent.putExtra("PlanExplain", temp1_str);
                                 startActivity(intent);
                             } else if (response.code() == 404) {
                                 System.out.println("수정으로이동");
                                 Intent intent = new Intent(PlanListActivity.this, SearchPlaceActivity.class);
                                 intent.putExtra("Userid", user_id);
                                 intent.putExtra("PlanName", planName);
+                                intent.putExtra("PlanExplain", temp1_str);
                                 //김진규한테 플랜이름, 아이디 보냄
                                 startActivity(intent);
                             } else if (response.code() == 503)
