@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="inu.travel.Activity.RouteActivity">
 
     <LinearLayout
+        android:id="@+id/topLinear"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal">
@@ -27,54 +27,27 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@+id/topLinear"
         android:background="@android:color/darker_gray"/>
 
     <RelativeLayout
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="420dp">
-
-        <SlidingDrawer
-            android:id="@+id/slide"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="350dp"
-            android:allowSingleTap="true"
-            android:animateOnClick="true"
-            android:bottomOffset="5dp"
-            android:content="@+id/content"
-            android:handle="@+id/handle"
-            android:orientation="vertical"
-            android:topOffset="370dp"
-            >
-
-            <Button
-                android:id="@+id/handle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="상세"/>
-
-            <LinearLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFFFFFFF"
-                android:orientation="vertical">
-            </LinearLayout>
-
-        </SlidingDrawer>
-
-
+        android:layout_height="420dp"
+        android:layout_marginTop="51dp">
     </RelativeLayout>
 
     <View
+        android:id="@+id/bottom_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignBottom="@+id/map_view"
         android:background="@android:color/darker_gray"/>
 
     <LinearLayout
+        android:layout_below="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
@@ -116,6 +89,89 @@
             android:layout_marginTop="10dp"
             android:textSize="15dp"
             android:text="주유비 약 xxx원"/>
+    </LinearLayout>
 
-  </LinearLayout>
-</LinearLayout>
+    <SlidingDrawer
+        android:id="@+id/slide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:allowSingleTap="true"
+        android:animateOnClick="true"
+        android:topOffset="30dp"
+        android:bottomOffset="0dp"
+        android:content="@+id/content"
+        android:handle="@+id/handle"
+        android:orientation="vertical"
+        >
+
+        <Button
+            android:id="@+id/handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="상세"/>
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:textSize="20dp"
+                    android:text="약 xx분"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20dp"
+                    android:text="약 x.xxKm"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:text="택시비 약 x,xxx원"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:text="주유비 약 xxx원"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <ListView
+                android:id="@+id/routeitemlist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </ListView>
+        </LinearLayout>
+    </SlidingDrawer>
+
+</RelativeLayout>
+
+
+
