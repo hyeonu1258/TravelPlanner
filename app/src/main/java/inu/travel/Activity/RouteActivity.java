@@ -6,11 +6,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
 
+import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapView;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 
@@ -27,6 +31,9 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     private RelativeLayout mMainRelativeLayout = null;
     private TMapView mMapView = null;
 
+    // Sliding을 위한 자원
+    private SlidingDrawer slidingLayout = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +41,18 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
 
         initNetworkService();
         initTMap();
+
+        TMapPoint start_point = new TMapPoint(126.7636062976, 37.5026717226);
+        TMapPoint end_point = new TMapPoint(126.9835815178, 37.5718842715);
+
+        TMapData tmapdata = new TMapData();
+        tmapdata.findPathDataAll(start_point, end_point, new TMapData.FindPathDataAllListenerCallback() {
+            @Override
+            public void onFindPathDataAll(Document document) {
+                System.out.print(document);
+            }
+        });
+
     }
 
     /*
