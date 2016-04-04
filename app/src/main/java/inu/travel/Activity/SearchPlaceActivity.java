@@ -92,6 +92,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
     //클릭하여 선택된 장소 임시저장객체
     private TMapPOIItem selectedPOIItem = null; //TMAP에서 쓰일 객체
+    private Place startPlace; //출발지 도착지 저장
+    private Place endPlace;
+
 
     //장소들을 담을 자료구조. db에서 받아와서 저장하고, 장소추가로 저장할 곳
     private PlaceList placeList;
@@ -113,7 +116,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 //    Button btnRemovePlace;
 //    Button btnViewDetail;
     Button btnComplete;
-
+    Button btnZoomOut;
+    Button btnZoomIn;
 //    Button btnSearch;
 
     // 슬라이딩 버튼
@@ -140,6 +144,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private int zoomLevel;
+
 
     /**
      * onCreate()
@@ -400,7 +406,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         item.name = placeList.getItem().get(i).getPlacename(); //장소명
                         item.address = placeList.getItem().get(i).getAddress(); //주소
                         item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
-                        item.bizCatName= placeList.getItem().get(i).getImgpath();
+                        item.bizCatName = placeList.getItem().get(i).getImgpath();
 
                         //저장된 장소 리스트에 넣기
                         savedPOIPlaceList.add(item);
@@ -511,59 +517,144 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(placeList.getItem().size()==0)
+                    return;
                 Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
-                //TODO : 종민이한테 리스트를 넘겨줄것
+                LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
+                View dialogLayout = layoutInflater.inflate(R.layout.dialog_set, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
+                AlertDialog.Builder builder = new AlertDialog.Builder(SearchPlaceActivity.this);
+                builder.setTitle("출발점을 선택하시오");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
+
+
+                builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
+
+
+                String temp[] = new String[placeList.getItem().size()];
+
                 for (int i = 0; i < placeList.getItem().size(); i++)
-                    System.out.println(placeList.getItem().get(i).getPlacename());
+                    temp[i] = placeList.getItem().get(i).getPlacename();
 
-                System.out.println("아이디 : " + id + "planname : " + planname);
 
-//                JSONObject obj = new JSONObject();
-//                try {
-//                    JSONArray jArray = new JSONArray();//배열이 필요할때
-//                    for (int i = 0; i < placeList.size(); i++)//배열
-//                    {
-//                        JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
-//                        sObject.put("contentid", placeList.get(i).getContentid());
-//                        sObject.put("contenttypeid", placeList.get(i).getContenttypeid());
-//                        sObject.put("mapx", placeList.get(i).getMapx());
-//                        sObject.put("mapy", placeList.get(i).getMapy());
-//                        jArray.put(sObject);
-//                    }
-//                    obj.put("planname", "플랜명");
-//                    obj.put("id", "유저아이디");
-//                    obj.put("item", jArray);//배열을 넣음
-//
-//                    System.out.println(obj.toString());
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                startPlace = placeList.getItem().get(0);
 
-                Call<Object> addPlace = awsNetworkService.addPlace(placeList);
-                addPlace.enqueue(new Callback<Object>() {
-                    @Override
-                    public void onResponse(Response<Object> response, Retrofit retrofit) {
-                        if (response.code() == 200) {
-                            Log.i("완료 => ", "성공");
+                //출발지
+                builder.setSingleChoiceItems(temp, 0,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // 각 리스트를 선택했을때
+                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+                                startPlace = placeList.getItem().get(whichButton);
+                            }
+                        }).setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                            // ResultActivity (결과 엑티비티로 이동)
-                            Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-                            intent.putExtra("Userid", id);
-                            intent.putExtra("PlanName", planname);
-                            startActivity(intent);
-                            finish();
-                        } else if (response.code() == 503) {
-                            int statusCode = response.code();
-                            Log.i("MyTag", "응답코드 : " + statusCode);
-                        }
-                    }
+                                String temp[] = new String[placeList.getItem().size()];
+                                for (int i = 0; i < placeList.getItem().size(); i++)
+                                    temp[i] = placeList.getItem().get(i).getPlacename();
 
-                    @Override
-                    public void onFailure(Throwable t) {
 
-                    }
-                });
+                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+                                LayoutInflater layoutInflater2 = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
+                                View dialogLayout = layoutInflater2.inflate(R.layout.dialog_set, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
+                                AlertDialog.Builder builder2 = new AlertDialog.Builder(SearchPlaceActivity.this);
+                                builder2.setTitle("도착점을 선택하시오");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
+
+                                builder2.setView(dialogLayout);
+                                endPlace = placeList.getItem().get(0);
+                                builder2.setSingleChoiceItems(temp, 0,
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                // 각 리스트를 선택했을때
+                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+                                                endPlace = placeList.getItem().get(whichButton);
+                                            }
+                                        }).setPositiveButton("Ok",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+
+                                                placeList.getItem().add(startPlace);
+                                                placeList.getItem().add(endPlace);
+                                                System.out.println("끝! " + endPlace.getPlacename());
+                                                //TODO : 종민이한테 리스트를 넘겨줄것
+                                                for (int i = 0; i < placeList.getItem().size(); i++)
+                                                    System.out.println(placeList.getItem().get(i).getPlacename());
+
+
+                                                System.out.println("아이디 : " + id + "planname : " + planname);
+
+                                                Call<Object> addPlace = awsNetworkService.addPlace(placeList);
+                                                addPlace.enqueue(new Callback<Object>() {
+                                                    @Override
+                                                    public void onResponse(Response<Object> response, Retrofit retrofit) {
+                                                        if (response.code() == 200) {
+                                                            Log.i("완료 => ", "성공");
+
+                                                            // ResultActivity (결과 엑티비티로 이동)
+                                                            Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                                                            intent.putExtra("Userid", id);
+                                                            intent.putExtra("PlanName", planname);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        } else if (response.code() == 503) {
+                                                            int statusCode = response.code();
+                                                            Log.i("MyTag", "응답코드 : " + statusCode);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Throwable t) {
+
+                                                    }
+                                                });
+                                            }
+                                        }).setNegativeButton("Cancel",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                // Cancel 버튼 클릭시
+                                                return;
+                                            }
+                                        });
+                                AlertDialog alertDialog = builder2.create(); //만들어놓은 AlertDialog.Builder인 builder를 이용해서 새로운 AlertDialog를 만듭니다.
+                                alertDialog.show(); //다이얼로그를 띄웁니다.
+
+                            }
+                        }).setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // Cancel 버튼 클릭시
+                                return;
+                            }
+                        });
+                AlertDialog alertDialog = builder.create(); //만들어놓은 AlertDialog.Builder인 builder를 이용해서 새로운 AlertDialog를 만듭니다.
+                alertDialog.show(); //다이얼로그를 띄웁니다.
+
+
+            }
+        });
+
+        btnZoomIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zoomLevel = mMapView.getZoomLevel();
+                zoomLevel += 2;
+                if (zoomLevel < 19)
+                    mMapView.setZoomLevel(zoomLevel);
+                else
+                    mMapView.setZoomLevel(19);
+            }
+        });
+
+        btnZoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zoomLevel = mMapView.getZoomLevel();
+                zoomLevel -= 2;
+                if (zoomLevel > 7)
+                    mMapView.setZoomLevel(zoomLevel);
+                else
+                    mMapView.setZoom(7);
             }
         });
 
@@ -985,6 +1076,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
         savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.save);
 
+        btnZoomOut = (Button) findViewById(R.id.btn_zoom_out);
+        btnZoomIn = (Button) findViewById(R.id.btn_zoom_in);
 
     }
 
@@ -1066,13 +1159,13 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         SlidingDrawer.animateOpen();
                     searchPlaceListView.smoothScrollToPositionFromTop(position, 0);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            }else{
-                if (SlidingDrawer.isOpened())
-                    SlidingDrawer.animateClose();
-            }
+        } else {
+            if (SlidingDrawer.isOpened())
+                SlidingDrawer.animateClose();
+        }
         return false;
     }
 

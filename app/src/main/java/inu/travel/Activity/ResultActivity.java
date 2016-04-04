@@ -268,7 +268,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             System.out.println("마커가눌림");
             Intent intent = new Intent(getApplicationContext(), RouteActivity.class);
 //            intent.putExtra("Userid", id);
-//            intent.putExtra("PlanName", planname);
+//            intent.pufetExtra("PlanName", planname);
             startActivity(intent);
         }
         return false;
