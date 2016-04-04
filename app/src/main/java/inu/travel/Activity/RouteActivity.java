@@ -42,14 +42,14 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         initNetworkService();
         initTMap();
 
-        TMapPoint start_point = new TMapPoint(126.7636062976, 37.5026717226);
-        TMapPoint end_point = new TMapPoint(126.9835815178, 37.5718842715);
+        TMapPoint start_point = new TMapPoint(37.5678348289, 37.9884423006);
+        TMapPoint end_point = new TMapPoint(37.5752366988, 126.9857645568);
 
         TMapData tmapdata = new TMapData();
         tmapdata.findPathDataAll(start_point, end_point, new TMapData.FindPathDataAllListenerCallback() {
             @Override
             public void onFindPathDataAll(Document document) {
-                System.out.print(document);
+                System.out.println("다큐먼트 : " + document);
             }
         });
 

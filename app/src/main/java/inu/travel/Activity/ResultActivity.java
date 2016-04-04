@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapInfo;
 import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
@@ -149,27 +150,83 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         mLineID = 0;
 
         ArrayList<TMapPolyLine> polyLineArrayList = new ArrayList<>();
-
+        TMapPoint startPoint, endPoint;
+        TMapPoint centerPoint = new TMapPoint(0,0);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher);
+        //다중경로test
+//        final TMapData tmapdata = new TMapData();
+//        final ArrayList<TMapPoint> tmapPoints = new ArrayList<>();
+//        final TMapPoint p1 = savedPOIPlaceList.get(0).getPOIPoint(); //출발지
+//        final TMapPoint p2 = savedPOIPlaceList.get(savedPOIPlaceList.size()-1).getPOIPoint(); //목적지
+        //
 
         System.out.println("선그리기 => 장소갯수 : " + savedPOIPlaceList.size());
-        TMapPoint point;
+
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
             polyLine.setLineColor(0xFF5CD1E5);
             polyLine.setLineWidth(5);
-            point = savedPOIPlaceList.get(i-1).getPOIPoint();
-            polyLine.addLinePoint(point);
-            point = savedPOIPlaceList.get(i).getPOIPoint();
-            polyLine.addLinePoint(point);
+            //시작점
+            startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
+            polyLine.addLinePoint(startPoint);
+            //도착점
+            endPoint = savedPOIPlaceList.get(i).getPOIPoint();
+            polyLine.addLinePoint(endPoint);
             polyLineArrayList.add(polyLine);
             String strID = savedPOIPlaceList.get(i).getPOIID();
             mMapView.addTMapPolyLine(strID, polyLine);
             mArrayLineID.add(strID);
-        }
 
-        for(int i=0; i<polyLineArrayList.size(); i++){
-            System.out.println("선" +i + "의 출발 좌표 = " + polyLineArrayList.get(i).getLinePoint().get(0).getLatitude());
-            System.out.println("선" +i + "의 도착 좌표 = " + polyLineArrayList.get(i).getLinePoint().get(1).getLatitude());
+            //중간지점에 마커생성
+            TMapMarkerItem markeritem = new TMapMarkerItem();
+            System.out.println("start좌표 : " + startPoint.getLatitude() + ", " + startPoint.getLongitude());
+            System.out.println("end좌표 : " + endPoint.getLatitude() + ", " + endPoint.getLongitude());
+            centerPoint.setLatitude((endPoint.getLatitude() + startPoint.getLatitude()) / 2);
+            centerPoint.setLongitude((endPoint.getLongitude() + startPoint.getLongitude()) / 2);
+//            centerPoint.setLatitude(Math.abs(endPoint.getLatitude() - startPoint.getLatitude()));
+//            centerPoint.setLongitude(Math.abs(endPoint.getLongitude() - startPoint.getLongitude()));
+            markeritem.setName("경로보기");
+            markeritem.setTMapPoint(centerPoint);
+            System.out.println("좌표2 : " + markeritem.getTMapPoint().getLatitude() + ", " + markeritem.getTMapPoint().getLongitude());
+            markeritem.setVisible(TMapMarkerItem.VISIBLE);
+
+
+            markeritem.setIcon(bitmap);
+
+            mMapView.addMarkerItem(strID, markeritem);
+
+        }
+//
+
+//        //다중경로
+//        for (int i = 1; i < savedPOIPlaceList.size()-1; i++) {
+//            TMapPolyLine polyLine = new TMapPolyLine();
+//            //다중경로test
+////            tmapPoints.add(savedPOIPlaceList.get(i).getPOIPoint());
+//
+//        }
+
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {    // 오래 걸릴 작업을 구현한다
+//                // Auto-generated method stub
+//                try {
+//                    TMapPolyLine tMapPolyLine = tmapdata.findMultiPointPathData(p1, p2, tmapPoints, 0);
+//                    mMapView.addTMapPath(tMapPolyLine); //출발지 도착지 경유지 표시
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        t.start();
+
+
+//
+
+        for (int i = 0; i < polyLineArrayList.size(); i++) {
+            System.out.println("선" + i + "의 출발 좌표 = " + polyLineArrayList.get(i).getLinePoint().get(0).getLatitude());
+            System.out.println("선" + i + "의 도착 좌표 = " + polyLineArrayList.get(i).getLinePoint().get(1).getLatitude());
         }
     }
 
@@ -207,6 +264,13 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 //        System.out.println("선ID = " + polyline.getID());
 //        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
 //        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
+        if(arrayList.size()>0){
+            System.out.println("마커가눌림");
+            Intent intent = new Intent(getApplicationContext(), RouteActivity.class);
+//            intent.putExtra("Userid", id);
+//            intent.putExtra("PlanName", planname);
+            startActivity(intent);
+        }
         return false;
     }
 
@@ -432,7 +496,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                         item.name = placeList.getItem().get(i).getPlacename(); //장소명
                         item.address = placeList.getItem().get(i).getAddress(); //주소
                         item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
-                        item.bizCatName=placeList.getItem().get(i).getImgpath();
+                        item.bizCatName = placeList.getItem().get(i).getImgpath();
 
                         //저장된 장소 리스트에 넣기
                         savedPOIPlaceList.add(item);
