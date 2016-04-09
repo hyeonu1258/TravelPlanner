@@ -23,9 +23,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.WindowManager.LayoutParams;
+import android.widget.PopupWindow;
 
 import com.google.gson.Gson;
 import com.skp.Tmap.TMapData;
@@ -151,14 +154,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
         ArrayList<TMapPolyLine> polyLineArrayList = new ArrayList<>();
         TMapPoint startPoint, endPoint;
-        TMapPoint centerPoint = new TMapPoint(0,0);
+        TMapPoint centerPoint = new TMapPoint(0, 0);
         Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher);
-        //다중경로test
-//        final TMapData tmapdata = new TMapData();
-//        final ArrayList<TMapPoint> tmapPoints = new ArrayList<>();
-//        final TMapPoint p1 = savedPOIPlaceList.get(0).getPOIPoint(); //출발지
-//        final TMapPoint p2 = savedPOIPlaceList.get(savedPOIPlaceList.size()-1).getPOIPoint(); //목적지
-        //
 
         System.out.println("선그리기 => 장소갯수 : " + savedPOIPlaceList.size());
 
@@ -195,34 +192,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
             mMapView.addMarkerItem(strID, markeritem);
 
+
         }
-//
-
-//        //다중경로
-//        for (int i = 1; i < savedPOIPlaceList.size()-1; i++) {
-//            TMapPolyLine polyLine = new TMapPolyLine();
-//            //다중경로test
-////            tmapPoints.add(savedPOIPlaceList.get(i).getPOIPoint());
-//
-//        }
-
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {    // 오래 걸릴 작업을 구현한다
-//                // Auto-generated method stub
-//                try {
-//                    TMapPolyLine tMapPolyLine = tmapdata.findMultiPointPathData(p1, p2, tmapPoints, 0);
-//                    mMapView.addTMapPath(tMapPolyLine); //출발지 도착지 경유지 표시
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//
-//        t.start();
-
-
-//
 
         for (int i = 0; i < polyLineArrayList.size(); i++) {
             System.out.println("선" + i + "의 출발 좌표 = " + polyLineArrayList.get(i).getLinePoint().get(0).getLatitude());
@@ -247,7 +218,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 intent.putExtra("PlanExplain", planexplain);
                 startActivity(intent);
                 finish();
-
             }
         });
     }
@@ -258,164 +228,215 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     @Override
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-//        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
-//
-//        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
-//        System.out.println("선ID = " + polyline.getID());
-//        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
-//        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
-        if(arrayList.size()>0){
-            System.out.println("마커가눌림");
-            Intent intent = new Intent(getApplicationContext(), RouteActivity.class);
-//            intent.putExtra("Userid", id);
-//            intent.pufetExtra("PlanName", planname);
-            startActivity(intent);
-        }
+
         return false;
     }
 
     @Override
     public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+        //        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
+//
+//        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
+//        System.out.println("선ID = " + polyline.getID());
+//        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
+//        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
+        if (arrayList.size() > 0) {
+            System.out.println("중간지점이 눌림");
+            //출발지, 도착지 좌표저장
+            TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList.get(0).getID()); //마커의 id를 line아이디와 같게해서 찾음
+            double startX, startY, endX, endY;
+            startX = polyline.getLinePoint().get(0).getLatitude();
+            startY = polyline.getLinePoint().get(0).getLongitude();
+            endX = polyline.getLinePoint().get(1).getLatitude();
+            endY = polyline.getLinePoint().get(1).getLongitude();
+            System.out.println("startX : " + startX);
+            Intent intent = new Intent(getApplicationContext(), RouteActivity.class);
+//            intent.putExtra("Userid", id);
+            intent.putExtra("startX", startX);
+            intent.putExtra("startY", startY);
+            intent.putExtra("endX", endX);
+            intent.putExtra("endY", endY);
+            startActivity(intent);
+        }
+//
+//        if (arrayList1.isEmpty() == false) {
+//            System.out.println("장소가눌림");
+//            popupOption(mMapView);
+//        }
         return false;
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+//    private void popupOption(View v) {
+//
+//
+//        View popupView = getLayoutInflater().inflate(R.layout.popup_option, null);
+//
+//        PopupWindow mPopupWindow = new PopupWindow(popupView,
+//                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//
+//        /**
+//         * PopupWindow Show 메서드
+//         * showAsDropDown(anchor, xoff, yoff)
+//         * @View anchor : anchor View를 기준으로 PopupWindow 표시 (상,하)
+//         * PopupWindow가 최대한 화면에 표시되도록 시스템이 설정해 준다.
+//         * xoff, yoff : anchor View를 기준으로 PopupWindow를 표시된것을
+//         * 기준으로 xoff는 x좌표, yoff는 y좌표 만큼 이동 한다.
+//         * @int xoff : -숫자(화면 왼쪽으로 이동), +숫자(화면 오른쪽으로 이동)
+//         * @int yoff : -숫자(화면 위쪽으로 이동), +숫자(화면 아래쪽으로 이동)
+//         * achor View 를 덮는 것도 가능
+//         * 화면바깥 좌우, 위아래로 이동 가능 (짤린 상태로 표시됨)
+//         */
+////                    mPopupWindow.setAnimationStyle(0); // 애니메이션 설정(-1:설정안함, 0:설정)
+//        mPopupWindow.showAsDropDown(v, 200, 200);
+//
+//        /**
+//         * update() 메서드를 통해 PopupWindow의 좌우 사이즈, x좌표, y좌표
+//         * anchor View까지 재설정 해줄수 있습니다.
+//         */
+////         mPopupWindow.update(anchor, xoff, yoff, width, height)(width, height);
+//
+//
+//
+//
+//}
+
+@Override
+public boolean onNavigationItemSelected(MenuItem item){
         return false;
-    }
+        }
 
     /*
      * 네트워크 통신을 위해 초기화
      */
-    private void initNetworkService() {
-        tourNetworkService = ApplicationController.getInstance().getTourNetwork();
-        awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
-    }
+private void initNetworkService(){
+        tourNetworkService=ApplicationController.getInstance().getTourNetwork();
+        awsNetworkService=ApplicationController.getInstance().getAwsNetwork();
+        }
 
     /*
      * 네비게이션 뷰 사용을 위한 초기화
      */
-    private void initNaviView() {
+private void initNaviView(){
         //툴바 생성
-        toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        toolbar=(Toolbar)findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         toolbar.showOverflowMenu();
 
         //토글 생성
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
-        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-            }
+        drawer=(DrawerLayout)findViewById(R.id.drawer_layout2);
+        toggle=new ActionBarDrawerToggle(this,drawer,toolbar,
+        R.string.navigation_drawer_open,R.string.navigation_drawer_close){
+@Override
+public void onDrawerSlide(View drawerView,float slideOffset){
+        super.onDrawerSlide(drawerView,slideOffset);
+        }
         };
         drawer.setDrawerListener(toggle);
         toggle.syncState(); //토글스위치 이미지 전환
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view2);
+        navigationView=(NavigationView)findViewById(R.id.nav_view2);
         disableOverScroll(navigationView);
-    }
+        }
 
     /*
      * 네비게이션 뷰 관련 메소
      */
-    private void disableOverScroll(NavigationView navigationView) {
-        if (navigationView != null) {
-            NavigationMenuView navigationMenuView = (NavigationMenuView) navigationView.getChildAt(0);
-            if (navigationMenuView != null) {
-                navigationMenuView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            }
+private void disableOverScroll(NavigationView navigationView){
+        if(navigationView!=null){
+        NavigationMenuView navigationMenuView=(NavigationMenuView)navigationView.getChildAt(0);
+        if(navigationMenuView!=null){
+        navigationMenuView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         }
-    }
+        }
+        }
 
     /*
      * Tmap 사용을 위한 초기화
      */
-    private void initTMap() {
-        mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
-        mMapView = new TMapView(this);
+private void initTMap(){
+        mMainRelativeLayout=(RelativeLayout)findViewById(R.id.map_view);
+        mMapView=new TMapView(this);
         mMapView.setSKPMapApiKey("8818efcf-6165-3d1c-a056-93025f8b06c3"); //SDK 인증키입력
         mMainRelativeLayout.addView(mMapView);
         mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
-    }
+        }
 
-    private void getUser() {
-        Intent i = getIntent();
-        id = i.getStringExtra("Userid");
-        planname = i.getStringExtra("PlanName");
-        planexplain = i.getStringExtra("PlanExplain");
-    }
+private void getUser(){
+        Intent i=getIntent();
+        id=i.getStringExtra("Userid");
+        planname=i.getStringExtra("PlanName");
+        planexplain=i.getStringExtra("PlanExplain");
+        }
 
-    private void initPlaceList() {
-        placeList = new PlaceList();
+private void initPlaceList(){
+        placeList=new PlaceList();
         placeList.setId(id);
         placeList.setPname(planname);
-        savedPOIPlaceList = new ArrayList<>();
-    }
+        savedPOIPlaceList=new ArrayList<>();
+        }
 
-    //상세히보기
-    private void viewDetail(TMapPOIItem item) {
+//상세히보기
+private void viewDetail(TMapPOIItem item){
         // getDetailCommon API 사용하여 상세정보 뽑기
-        HashMap<String, String> parameters = new HashMap<>();
+        HashMap<String, String>parameters=new HashMap<>();
 
-        parameters.put("MobileOS", "AND");
-        parameters.put("contentId", item.getPOIID()); //콘텐트ID
-        parameters.put("defaultYN", "Y"); //기본정보
-        parameters.put("firstImageYN", "Y"); //이미지
-        parameters.put("addrinfoYN", "Y"); //주소
-        parameters.put("overviewYN", "Y"); //개요
+        parameters.put("MobileOS","AND");
+        parameters.put("contentId",item.getPOIID()); //콘텐트ID
+        parameters.put("defaultYN","Y"); //기본정보
+        parameters.put("firstImageYN","Y"); //이미지
+        parameters.put("addrinfoYN","Y"); //주소
+        parameters.put("overviewYN","Y"); //개요
 
         // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
 
-        Call<Object> dataCall = tourNetworkService.getDetailCommon(parameters);
-        dataCall.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Response<Object> response, Retrofit retrofit) {
-                int statusCode = response.code();
-                if (response.isSuccess()) {
-                    Gson gson = new Gson();
-                    String jsonString = gson.toJson(response.body());
+        Call<Object>dataCall=tourNetworkService.getDetailCommon(parameters);
+        dataCall.enqueue(new Callback<Object>(){
+@Override
+public void onResponse(Response<Object>response,Retrofit retrofit){
+        int statusCode=response.code();
+        if(response.isSuccess()){
+        Gson gson=new Gson();
+        String jsonString=gson.toJson(response.body());
 
-                    try {
-                        JSONObject jsonObject = new JSONObject(jsonString);
-                        jsonObject = jsonObject.getJSONObject("response").getJSONObject("body").getJSONObject("items");
-                        SearchPlace searchPlace = gson.fromJson(jsonObject.getJSONObject("item").toString(), SearchPlace.class);
+        try{
+        JSONObject jsonObject=new JSONObject(jsonString);
+        jsonObject=jsonObject.getJSONObject("response").getJSONObject("body").getJSONObject("items");
+        SearchPlace searchPlace=gson.fromJson(jsonObject.getJSONObject("item").toString(),SearchPlace.class);
 
-                        Log.i("MyLog:jsonObject", jsonObject.toString());
-                        Log.i("MyLog:SearchPlace", searchPlace.toString());
+        Log.i("MyLog:jsonObject",jsonObject.toString());
+        Log.i("MyLog:SearchPlace",searchPlace.toString());
 
-                        //상세히 보기 다이얼 로그 띄우기
-                        showDetailView(searchPlace);
+        //상세히 보기 다이얼 로그 띄우기
+        showDetailView(searchPlace);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.i("MyLog", "실패 : " + statusCode);
-                }
-            }
+        }catch(JSONException e){
+        e.printStackTrace();
+        }
+        }else{
+        Log.i("MyLog","실패 : "+statusCode);
+        }
+        }
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.i("MyLog", t.getMessage());
-            }
+@Override
+public void onFailure(Throwable t){
+        Log.i("MyLog",t.getMessage());
+        }
         });
-    }
+        }
 
-    //상세정보를 띄움
-    private void showDetailView(final SearchPlace searchPlace) {
-        LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater();
-        final View dialogLayout = layoutInflater.inflate(R.layout.detail_view, null);
+//상세정보를 띄움
+private void showDetailView(final SearchPlace searchPlace){
+        LayoutInflater layoutInflater=(LayoutInflater)getLayoutInflater();
+final View dialogLayout=layoutInflater.inflate(R.layout.detail_view,null);
 
-        //데이터 findByid
-        final ImageView imageViewDetailPicture = (ImageView) dialogLayout.findViewById(R.id.imageViewDetailPicture);
-        Button btnDetailClose = (Button) dialogLayout.findViewById(R.id.btnDetailClose);
-        TextView txtDetailName = (TextView) dialogLayout.findViewById(R.id.txtDetailName);
-        TextView txtDetailAddr = (TextView) dialogLayout.findViewById(R.id.txtDetailAddr);
-        TextView txtDetailHomepage = (TextView) dialogLayout.findViewById(R.id.txtDetailHomepage);
-        TextView txtDetailTel = (TextView) dialogLayout.findViewById(R.id.txtDetailTel);
-        TextView txtDetailOverview = (TextView) dialogLayout.findViewById(R.id.txtDetailOverview);
+//데이터 findByid
+final ImageView imageViewDetailPicture=(ImageView)dialogLayout.findViewById(R.id.imageViewDetailPicture);
+        Button btnDetailClose=(Button)dialogLayout.findViewById(R.id.btnDetailClose);
+        TextView txtDetailName=(TextView)dialogLayout.findViewById(R.id.txtDetailName);
+        TextView txtDetailAddr=(TextView)dialogLayout.findViewById(R.id.txtDetailAddr);
+        TextView txtDetailHomepage=(TextView)dialogLayout.findViewById(R.id.txtDetailHomepage);
+        TextView txtDetailTel=(TextView)dialogLayout.findViewById(R.id.txtDetailTel);
+        TextView txtDetailOverview=(TextView)dialogLayout.findViewById(R.id.txtDetailOverview);
 
         //핸들러사용
         // 인터넷 상의 이미지 보여주기
@@ -424,147 +445,147 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
 
         //Thread t = new Thread(Runnable 객체를 만든다);
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {    // 오래 걸릴 작업을 구현한다
-                // Auto-generated method stub
-                try {
-                    URL url = new URL(searchPlace.firstimage);
-                    InputStream is = url.openStream();
-                    final Bitmap bm = BitmapFactory.decodeStream(is);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {  // 화면에 그려줄 작업
-                            imageViewDetailPicture.setImageBitmap(bm);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        Thread t=new Thread(new Runnable(){
+@Override
+public void run(){    // 오래 걸릴 작업을 구현한다
+        // Auto-generated method stub
+        try{
+        URL url=new URL(searchPlace.firstimage);
+        InputStream is=url.openStream();
+final Bitmap bm=BitmapFactory.decodeStream(is);
+        handler.post(new Runnable(){
+@Override
+public void run(){  // 화면에 그려줄 작업
+        imageViewDetailPicture.setImageBitmap(bm);
+        }
+        });
+        }catch(Exception e){
+        e.printStackTrace();
+        }
+        }
         });
         t.start();
 
-        try {
-            txtDetailName.setText(searchPlace.title);
-            txtDetailAddr.setText(searchPlace.addr1);
-            txtDetailAddr.append(searchPlace.addr1);
-            txtDetailHomepage.setText(Html.fromHtml(searchPlace.homepage));
-            txtDetailTel.setText(searchPlace.tel);
-            txtDetailOverview.setText(Html.fromHtml(searchPlace.overview));
-        } catch (Exception e) {
-            e.printStackTrace();
+        try{
+        txtDetailName.setText(searchPlace.title);
+        txtDetailAddr.setText(searchPlace.addr1);
+        txtDetailAddr.append(searchPlace.addr1);
+        txtDetailHomepage.setText(Html.fromHtml(searchPlace.homepage));
+        txtDetailTel.setText(searchPlace.tel);
+        txtDetailOverview.setText(Html.fromHtml(searchPlace.overview));
+        }catch(Exception e){
+        e.printStackTrace();
         }
 
         //다이얼로그를 만들기 위한 빌더를 만들어줍니다. 이 때 인자는 해당 액티비티.this 로 해야합니다. 다이얼로그를 만들기 위한 틀입니다.
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(ResultActivity.this);
         builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
-        final DialogInterface mPopupDlg = builder.show();
-        btnDetailClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupDlg.dismiss();
-            }
+final DialogInterface mPopupDlg=builder.show();
+        btnDetailClose.setOnClickListener(new View.OnClickListener(){
+@Override
+public void onClick(View v){
+        mPopupDlg.dismiss();
+        }
         });
-    }
+        }
 
-    private void getPlaceList() {
+private void getPlaceList(){
 
-        HashMap<String, String> param = new HashMap<>();
-        param.put("id", id);
-        param.put("planname", planname);
+        HashMap<String, String>param=new HashMap<>();
+        param.put("id",id);
+        param.put("planname",planname);
 
-        final Call<ArrayList<Place>> getPlaceList = awsNetworkService.getPlaceList(param);
-        getPlaceList.enqueue(new Callback<ArrayList<Place>>() {
-            @Override
-            public void onResponse(Response<ArrayList<Place>> response, Retrofit retrofit) {
+final Call<ArrayList<Place>>getPlaceList=awsNetworkService.getPlaceList(param);
+        getPlaceList.enqueue(new Callback<ArrayList<Place>>(){
+@Override
+public void onResponse(Response<ArrayList<Place>>response,Retrofit retrofit){
 
-                if (response.code() == 200) {
-                    System.out.println("Result:디비로딩성공");
-                    //System.out.println(response.body());
+        if(response.code()==200){
+        System.out.println("Result:디비로딩성공");
+        //System.out.println(response.body());
 
-                    placeList.setItem(response.body());
+        placeList.setItem(response.body());
 
-                    ArrayList<TMapPoint> tMapPoints = new ArrayList<TMapPoint>();
+        ArrayList<TMapPoint>tMapPoints=new ArrayList<TMapPoint>();
 
-                    //TODO placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
-                    for (int i = 0; i < placeList.getItem().size(); i++) {
-                        TMapPOIItem item = new TMapPOIItem();
-                        item.Icon = savedBitmap;
-                        item.noorLon = placeList.getItem().get(i).getMapx();
-                        item.noorLat = placeList.getItem().get(i).getMapy();
-                        item.name = placeList.getItem().get(i).getPlacename(); //장소명
-                        item.address = placeList.getItem().get(i).getAddress(); //주소
-                        item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
-                        item.bizCatName = placeList.getItem().get(i).getImgpath();
+        //TODO placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
+        for(int i=0;i<placeList.getItem().size();i++){
+        TMapPOIItem item=new TMapPOIItem();
+        item.Icon=savedBitmap;
+        item.noorLon=placeList.getItem().get(i).getMapx();
+        item.noorLat=placeList.getItem().get(i).getMapy();
+        item.name=placeList.getItem().get(i).getPlacename(); //장소명
+        item.address=placeList.getItem().get(i).getAddress(); //주소
+        item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
+        item.bizCatName=placeList.getItem().get(i).getImgpath();
 
-                        //저장된 장소 리스트에 넣기
-                        savedPOIPlaceList.add(item);
+        //저장된 장소 리스트에 넣기
+        savedPOIPlaceList.add(item);
 
-                        tMapPoints.add(i, item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
-                    }
+        tMapPoints.add(i,item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
+        }
 
-                    //이미 표시된 POI 지우기
-                    mMapView.removeAllTMapPOIItem();
+        //이미 표시된 POI 지우기
+        mMapView.removeAllTMapPOIItem();
 
-                    //TODO: DB에서 가져온 장소 리스트에 추가시키기
+        //TODO: DB에서 가져온 장소 리스트에 추가시키기
 
-                    //맵에 POI 띄우기
-                    mMapView.addTMapPOIItem(savedPOIPlaceList);
+        //맵에 POI 띄우기
+        mMapView.addTMapPOIItem(savedPOIPlaceList);
 
-                    //위치찾기
-                    TMapInfo info = mMapView.getDisplayTMapInfo(tMapPoints);
-                    mMapView.setCenterPoint(info.getTMapPoint().getLongitude(), info.getTMapPoint().getLatitude(), true);
-                    mMapView.setZoomLevel(info.getTMapZoomLevel());
-                    initLine();
+        //위치찾기
+        TMapInfo info=mMapView.getDisplayTMapInfo(tMapPoints);
+        mMapView.setCenterPoint(info.getTMapPoint().getLongitude(),info.getTMapPoint().getLatitude(),true);
+        mMapView.setZoomLevel(info.getTMapZoomLevel());
+        initLine();
 
-                    // 받아온 장소들 리스트뷰에 띄우기
-                    makeResultPlaceAdapter(savedPOIPlaceList);
-                    resultPlaceAdapter.notifyDataSetChanged();
+        // 받아온 장소들 리스트뷰에 띄우기
+        makeResultPlaceAdapter(savedPOIPlaceList);
+        resultPlaceAdapter.notifyDataSetChanged();
 
-                } else if (response.code() == 404) {
-                    System.out.println("해당플랜에 장소가 없음!");
-                } else if (response.code() == 503) {
-                    int statusCode = response.code();
-                    Log.i("MyTag", "응답코드 : " + statusCode);
-                }
-            }
+        }else if(response.code()==404){
+        System.out.println("해당플랜에 장소가 없음!");
+        }else if(response.code()==503){
+        int statusCode=response.code();
+        Log.i("MyTag","응답코드 : "+statusCode);
+        }
+        }
 
-            @Override
-            public void onFailure(Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
-                Log.i("MyTag", "에러내용 : " + t.getMessage());
-            }
+@Override
+public void onFailure(Throwable t){
+        Toast.makeText(getApplicationContext(),"Failed to load place",Toast.LENGTH_LONG).show();
+        Log.i("MyTag","에러내용 : "+t.getMessage());
+        }
         });
-    }
+        }
 
-    // TODO : 종민
-    // 리스트뷰 어뎁터
-    private void makeResultPlaceAdapter(final ArrayList<TMapPOIItem> tMapPOIItems) {
-        resultPlaceAdapter = new ResultPlaceAdapter(tMapPOIItems, getApplicationContext());
+// TODO : 종민
+// 리스트뷰 어뎁터
+private void makeResultPlaceAdapter(final ArrayList<TMapPOIItem>tMapPOIItems){
+        resultPlaceAdapter=new ResultPlaceAdapter(tMapPOIItems,getApplicationContext());
         resultPlaceListView.setAdapter(resultPlaceAdapter);
 
         // 리스트 항목 클릭시 발생 이벤트
-        resultPlaceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //위치찾기
-                double x = Double.parseDouble(tMapPOIItems.get(position).noorLon);
-                double y = Double.parseDouble(tMapPOIItems.get(position).noorLat);
-                System.out.println("y좌표는 : " + y);
+        resultPlaceListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+@Override
+public void onItemClick(AdapterView<?>parent,View view,int position,long id){
+        //위치찾기
+        double x=Double.parseDouble(tMapPOIItems.get(position).noorLon);
+        double y=Double.parseDouble(tMapPOIItems.get(position).noorLat);
+        System.out.println("y좌표는 : "+y);
 
-                mMapView.setCenterPoint(x, y, true);
-                mMapView.setZoomLevel(15);
+        mMapView.setCenterPoint(x,y,true);
+        mMapView.setZoomLevel(15);
 
-                long viewId = view.getId();
-                TMapPOIItem selectedPOIItem = tMapPOIItems.get(position);
+        long viewId=view.getId();
+        TMapPOIItem selectedPOIItem=tMapPOIItems.get(position);
 
-                if (viewId == R.id.btnCompleteViewDetail) {
-                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
-                    viewDetail(selectedPOIItem);
-                }
-            }
+        if(viewId==R.id.btnCompleteViewDetail){
+        Toast.makeText(getApplicationContext(),"상세보기 clicked",Toast.LENGTH_SHORT).show();
+        viewDetail(selectedPOIItem);
+        }
+        }
         });
-    }
+        }
 
-}
+        }
