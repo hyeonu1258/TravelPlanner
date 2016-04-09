@@ -16,9 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -103,6 +106,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     private Bitmap savedBitmap; //장소추가했을때
 
+    //팝업
+    PopupWindow mPopupWindow;
+    Display display;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +121,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initTMap();
         initButton();
         btnClickEvent();
+        initWindowSize();
 
         getUser();
         initPlaceList();
@@ -142,6 +149,10 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             }
         });
 
+    }
+
+    private void initWindowSize() {
+        display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
     }
 
     private void initListView() {
@@ -228,12 +239,17 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     @Override
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-
+        if(mPopupWindow!=null){
+            System.out.println("디스미스");
+            mPopupWindow.dismiss();
+            mPopupWindow=null;
+        }
         return false;
     }
 
     @Override
     public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+
         //        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
 //
 //        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
@@ -258,47 +274,50 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             intent.putExtra("endY", endY);
             startActivity(intent);
         }
-//
-//        if (arrayList1.isEmpty() == false) {
-//            System.out.println("장소가눌림");
-//            popupOption(mMapView);
-//        }
+
+        if (arrayList1.isEmpty() == false) {
+            System.out.println("장소가눌림");
+            popupOption(mMapView);
+        }
         return false;
     }
 
-//    private void popupOption(View v) {
-//
-//
-//        View popupView = getLayoutInflater().inflate(R.layout.popup_option, null);
-//
-//        PopupWindow mPopupWindow = new PopupWindow(popupView,
-//                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//
-//        /**
-//         * PopupWindow Show 메서드
-//         * showAsDropDown(anchor, xoff, yoff)
-//         * @View anchor : anchor View를 기준으로 PopupWindow 표시 (상,하)
-//         * PopupWindow가 최대한 화면에 표시되도록 시스템이 설정해 준다.
-//         * xoff, yoff : anchor View를 기준으로 PopupWindow를 표시된것을
-//         * 기준으로 xoff는 x좌표, yoff는 y좌표 만큼 이동 한다.
-//         * @int xoff : -숫자(화면 왼쪽으로 이동), +숫자(화면 오른쪽으로 이동)
-//         * @int yoff : -숫자(화면 위쪽으로 이동), +숫자(화면 아래쪽으로 이동)
-//         * achor View 를 덮는 것도 가능
-//         * 화면바깥 좌우, 위아래로 이동 가능 (짤린 상태로 표시됨)
-//         */
-////                    mPopupWindow.setAnimationStyle(0); // 애니메이션 설정(-1:설정안함, 0:설정)
-//        mPopupWindow.showAsDropDown(v, 200, 200);
-//
-//        /**
-//         * update() 메서드를 통해 PopupWindow의 좌우 사이즈, x좌표, y좌표
-//         * anchor View까지 재설정 해줄수 있습니다.
-//         */
-////         mPopupWindow.update(anchor, xoff, yoff, width, height)(width, height);
-//
-//
-//
-//
-//}
+    private void popupOption(TMapView v) {
+
+        if(mPopupWindow == null) {
+            System.out.println("들어갔다");
+            View popupView = getLayoutInflater().inflate(R.layout.popup_option, null);
+            mPopupWindow = new PopupWindow(popupView,
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.showAsDropDown(v, display.getWidth(), -200);
+
+        }else{
+            System.out.println("빠졌다");
+        }
+        /**
+         * PopupWindow Show 메서드
+         * showAsDropDown(anchor, xoff, yoff)
+         * @View anchor : anchor View를 기준으로 PopupWindow 표시 (상,하)
+         * PopupWindow가 최대한 화면에 표시되도록 시스템이 설정해 준다.
+         * xoff, yoff : anchor View를 기준으로 PopupWindow를 표시된것을
+         * 기준으로 xoff는 x좌표, yoff는 y좌표 만큼 이동 한다.
+         * @int xoff : -숫자(화면 왼쪽으로 이동), +숫자(화면 오른쪽으로 이동)
+         * @int yoff : -숫자(화면 위쪽으로 이동), +숫자(화면 아래쪽으로 이동)
+         * achor View 를 덮는 것도 가능
+         * 화면바깥 좌우, 위아래로 이동 가능 (짤린 상태로 표시됨)
+         */
+//                    mPopupWindow.setAnimationStyle(0); // 애니메이션 설정(-1:설정안함, 0:설정)
+
+        /**
+         * update() 메서드를 통해 PopupWindow의 좌우 사이즈, x좌표, y좌표
+         * anchor View까지 재설정 해줄수 있습니다.
+         */
+//         mPopupWindow.update(anchor, xoff, yoff, width, height)(width, height);
+
+
+
+
+}
 
 @Override
 public boolean onNavigationItemSelected(MenuItem item){
