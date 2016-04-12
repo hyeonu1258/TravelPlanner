@@ -21,8 +21,8 @@ public interface AwsNetworkService {
     //String baseUrl = "http//52.34.206.80:3000";
 //    String baseUrl = "http://192.168.1.103:3000";
 //    String baseUrl = "http://117.16.198.47:3000";
-//    String baseUrl = "http://52.34.245.130:3000";
-    String baseUrl = "http://192.168.43.251:3000";
+    String baseUrl = "http://52.34.245.130:3000";
+//    String baseUrl = "http://192.168.43.251:3000";
 
     // TODO: 1. 서버와 네트워킹을 하기 위한 서비스(인터페이스로 구현)
 
