@@ -109,6 +109,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     //팝업
     PopupWindow mPopupWindow;
     Display display;
+    //클릭한 장소 좌표
+    private double mapX;
+    private double mapY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,9 +293,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             View popupView = getLayoutInflater().inflate(R.layout.popup_option, null);
             mPopupWindow = new PopupWindow(popupView,
                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            double x = item.getPOIPoint().getLongitude();
-            double y = item.getPOIPoint().getLatitude();
-            mMapView.setCenterPoint(x, y, true);
+            mapX = item.getPOIPoint().getLongitude();
+            mapY = item.getPOIPoint().getLatitude();
+            mMapView.setCenterPoint(mapX, mapY, false);
             mPopupWindow.showAsDropDown(v, display.getWidth() / 2, -500);
 //
 
@@ -610,4 +613,14 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         });
     }
 
+    public void btnClick(View v){
+        switch (v.getId()){
+            case R.id.btnInfo: //주변정보
+                Intent intent = new Intent(getApplicationContext(), FacilityActivity.class);
+                intent.putExtra("mapX", mapX);
+                intent.putExtra("mapY", mapY);
+                startActivity(intent);
+                break;
+        }
+    }
 }

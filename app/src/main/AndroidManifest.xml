@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.FacilityActivity" />
         <activity android:name=".Activity.JoinActivity" />
         <activity android:name=".Activity.PlanListActivity" />
         <activity android:name=".Activity.SearchPlaceActivity"></activity>
