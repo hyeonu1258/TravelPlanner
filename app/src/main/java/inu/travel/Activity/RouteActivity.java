@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
 
@@ -42,6 +43,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import inu.travel.Adapter.NaviListAdapter;
 import inu.travel.Component.ApplicationController;
 import inu.travel.Network.TourNetworkService;
 import inu.travel.R;
@@ -63,6 +65,9 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     private TMapPoint startPoint = new TMapPoint(0, 0);
     private TMapPoint endPoint = new TMapPoint(0, 0);
 
+    //네비리스트 아답터
+    private NaviListAdapter naviListAdapter;
+    private ListView naviListView;
 
     // Sliding을 위한 자원
     private SlidingDrawer slidingLayout = null;
@@ -83,6 +88,8 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
                 public void run() {
                     try {
                         TMapData tmapdata = new TMapData();
+                        System.out.println("시작점좌표 = " + startPoint.getLongitude() + ", " + startPoint.getLatitude());
+                        System.out.println("도착점좌표 = " + endPoint.getLongitude() + ", " + endPoint.getLatitude());
                         Document pathDoc = tmapdata.findPathDataAll(startPoint, endPoint);
 
                         //xml to string
@@ -111,33 +118,40 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     }
 
     private void parseXML(Document pathDoc) {
-            pathDoc.getDocumentElement().normalize();
-            System.out.println("Root element :" + pathDoc.getDocumentElement().getNodeName());
-            NodeList nList = pathDoc.getElementsByTagName("Placemark");
-            System.out.println("----------------------------");
-            System.out.println("doc길이 : " + nList.getLength());
+        pathDoc.getDocumentElement().normalize();
+        System.out.println("Root element :" + pathDoc.getDocumentElement().getNodeName());
+        System.out.println("총 거리 : " + pathDoc.getElementsByTagName("tmap:totalDistance").item(0).getTextContent());
+        System.out.println("총 시간 : " + pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent());
+        System.out.println("택시 요금 : " + pathDoc.getElementsByTagName("tmap:taxiFare").item(0).getTextContent());
+        System.out.println("스타트포인트 : " + pathDoc.getElementById("startPointStyle").getElementsByTagName("href").item(0).getTextContent());
+        NodeList nList = pathDoc.getElementsByTagName("Placemark");
+        System.out.println("----------------------------");
+        System.out.println("doc길이 : " + nList.getLength());
 
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);
-                System.out.println("\nCurrent Element :" + nNode.getNodeName());
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    try { //항목이 null인 것도 있음
-                        System.out.println("name : " + eElement.getElementsByTagName("name").item(0).getTextContent());
-                        System.out.println("tmap:pointIndex : " + eElement.getElementsByTagName("tmap:pointIndex").item(0).getTextContent());
-                        System.out.println("description : " + eElement.getElementsByTagName("description").item(0).getTextContent());
-                        System.out.println("styleUrl : " + eElement.getElementsByTagName("styleUrl").item(0).getTextContent());
-                        System.out.println("tmap:nextRoadName : " + eElement.getElementsByTagName("tmap:nextRoadName").item(0).getTextContent());
-                        System.out.println("tmap:nodeType : " + eElement.getElementsByTagName("tmap:nodeType").item(0).getTextContent());
-                        System.out.println("tmap:turnType : " + eElement.getElementsByTagName("tmap:turnType").item(0).getTextContent());
-                        System.out.println("tmap:pointType : " + eElement.getElementsByTagName("tmap:pointType").item(0).getTextContent());
-//                    System.out.println("coordinates : " + eElement.getElementsByTagName("coordinates").item(0).getTextContent());
-                    }catch (Exception e ){
-                        e.printStackTrace();
-                    }
-                    System.out.println("----------------------------");
-                }
-            }
+        makeNaviListAdapter(nList);
+        naviListAdapter.notifyDataSetChanged();
+
+//        for (int temp = 0; temp < nList.getLength(); temp++) {
+//            Node nNode = nList.item(temp);
+//            System.out.println("\nCurrent Element :" + nNode.getNodeName());
+//            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+//                Element eElement = (Element) nNode;
+//                try { //항목이 null인 것도 있음
+//                    System.out.println("name : " + eElement.getElementsByTagName("name").item(0).getTextContent());
+//                    System.out.println("tmap:pointIndex : " + eElement.getElementsByTagName("tmap:pointIndex").item(0).getTextContent());
+//                    System.out.println("description : " + eElement.getElementsByTagName("description").item(0).getTextContent());
+//                    System.out.println("styleUrl : " + eElement.getElementsByTagName("styleUrl").item(0).getTextContent());
+//                    System.out.println("tmap:nextRoadName : " + eElement.getElementsByTagName("tmap:nextRoadName").item(0).getTextContent());
+//                    System.out.println("tmap:nodeType : " + eElement.getElementsByTagName("tmap:nodeType").item(0).getTextContent());
+//                    System.out.println("tmap:turnType : " + eElement.getElementsByTagName("tmap:turnType").item(0).getTextContent());
+//                    System.out.println("tmap:pointType : " + eElement.getElementsByTagName("tmap:pointType").item(0).getTextContent());
+////                    System.out.println("coordinates : " + eElement.getElementsByTagName("coordinates").item(0).getTextContent());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                System.out.println("----------------------------");
+//            }
+//        }
     }
 
     private void initPoint() {
@@ -195,6 +209,11 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         mMapView.setSKPMapApiKey("8818efcf-6165-3d1c-a056-93025f8b06c3"); //SDK 인증키입력
         mMainRelativeLayout.addView(mMapView);
         mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
+    }
+
+    private void makeNaviListAdapter(NodeList nList) {
+        naviListAdapter = new NaviListAdapter(nList, getApplicationContext());
+        naviListView.setAdapter(naviListAdapter);
     }
 
     @Override
