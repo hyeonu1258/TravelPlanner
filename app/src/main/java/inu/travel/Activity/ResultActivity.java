@@ -80,7 +80,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     Toolbar toolbar;
     ActionBarDrawerToggle toggle;
     NavigationView navigationView;
-    ListView listView;
     TextView txtPlanName;
     TextView txtPlanExplain;
     TextView logoutTxt;
@@ -610,8 +609,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         });
     }
 
-    public void btnClick(View v){
-        switch (v.getId()){
+    public void btnClick(View v) {
+        switch (v.getId()) {
             case R.id.btnInfo: //주변정보
                 Intent intent = new Intent(getApplicationContext(), FacilityActivity.class);
                 intent.putExtra("mapX", mapX);
