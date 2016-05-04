@@ -94,6 +94,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     private String planname;
     private String planexplain; //플랜설명
 
+    //TODO: 나중에 전체 시간 전체 거리 넣기
     private TextView txtResultKm;
     private TextView txtResultTime;
 

@@ -80,7 +80,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
     //지도 위 버튼들
     Button btnMT;
     Button btnEat;
-    Button btnViewDetail;
+    Button btnEdit;
 
     //관광지좌표
     double mapX;
@@ -102,8 +102,6 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         mMainRelativeLayout = (RelativeLayout) findViewById(R.id.map_view);
         mMapView = new TMapView(this);
         mMainRelativeLayout.addView(mMapView);
-//        mMapView.setSKPMapApiKey("8818efcf-6165-3d1c-a056-93025f8b06c3"); //SDK 인증키입력
-//        mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
 
         initPlace();
         initView();
@@ -180,7 +178,6 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnMT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "숙박", Toast.LENGTH_SHORT).show();
                 defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
                 searchArea("32");
             }
@@ -189,21 +186,18 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnEat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "맛집", Toast.LENGTH_SHORT).show();
                 defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
                 searchArea("39");
             }
         });
 
-//        btnViewDetail.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (selectedPOIItem != null) //선택된게 있으면 실행
-//                    viewDetail(selectedPOIItem);
-//                else
-//                    Toast.makeText(getApplicationContext(), "선택된 장소가 없습니다.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //상세히보기
@@ -441,6 +435,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         //버튼들
         btnMT = (Button) findViewById(R.id.btnMT);
         btnEat = (Button) findViewById(R.id.btnEat);
+        btnEdit = (Button) findViewById(R.id.btnEdit);
         listView = (ListView) findViewById(R.id.facilityItemListView);
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
         tourBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
