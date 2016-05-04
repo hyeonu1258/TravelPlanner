@@ -96,17 +96,6 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         initTMap();
         initPoint();
 
-        /*
-        ArrayList<NaviDescript> tmpArrayList = new ArrayList<>();
-        NaviDescript tmpNaviDescript = new NaviDescript();
-        tmpNaviDescript.setDescription("Test");
-        tmpArrayList.add(tmpNaviDescript);
-
-        makeNaviListAdapter(tmpArrayList);
-        naviListAdapter.notifyDataSetChanged();
-        */
-
-
         try {
             Thread getPathThread = new Thread(new Runnable() {
                 @Override
@@ -155,7 +144,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         System.out.println("총 시간 : " + pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent());
         System.out.println("택시 요금 : " + pathDoc.getElementsByTagName("tmap:taxiFare").item(0).getTextContent());
         System.out.println("스타트포인트 : " + pathDoc.getElementById("startPointStyle").getElementsByTagName("href").item(0).getTextContent());
-        int totalTime = Integer.parseInt(pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent());
+        int totalTime = Integer.parseInt(pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent())/60;
         double totalDistance = Double.parseDouble(pathDoc.getElementsByTagName("tmap:totalDistance").item(0).getTextContent())/1000;
         int totalTaxi = Integer.parseInt(pathDoc.getElementsByTagName("tmap:taxiFare").item(0).getTextContent());
 
@@ -173,19 +162,11 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
                 try { //항목이 null인 것도 있음
-//                    System.out.println("name : " + eElement.getElementsByTagName("name").item(0).getTextContent());
-//                    System.out.println("tmap:pointIndex : " + eElement.getElementsByTagName("tmap:pointIndex").item(0).getTextContent());
                     System.out.println("description : " + eElement.getElementsByTagName("description").item(0).getTextContent());
                     NaviDescript item = new NaviDescript();
                     item.setDescription(eElement.getElementsByTagName("description").item(0).getTextContent());
                     itemDatas.add(item);
 
-//                    System.out.println("styleUrl : " + eElement.getElementsByTagName("styleUrl").item(0).getTextContent());
-//                    System.out.println("tmap:nextRoadName : " + eElement.getElementsByTagName("tmap:nextRoadName").item(0).getTextContent());
-//                    System.out.println("tmap:nodeType : " + eElement.getElementsByTagName("tmap:nodeType").item(0).getTextContent());
-//                    System.out.println("tmap:turnType : " + eElement.getElementsByTagName("tmap:turnType").item(0).getTextContent());
-//                    System.out.println("tmap:pointType : " + eElement.getElementsByTagName("tmap:pointType").item(0).getTextContent());
-//                    System.out.println("coordinates : " + eElement.getElementsByTagName("coordinates").item(0).getTextContent());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -193,8 +174,6 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
             }
         }
 
-//        makeNaviListAdapter(itemDatas);
-//        naviListAdapter.notifyDataSetChanged();
     }
 
     private void initPoint() {
@@ -262,9 +241,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
 
     private void makeNaviListAdapter(ArrayList<NaviDescript> items)
     {
-//        System.out.println("@@@@"+items.get(0).getDescription() + items.size());
         naviListAdapter = new NaviListAdapter(items, getApplicationContext());
-
         naviListView.setAdapter(naviListAdapter);
     }
 

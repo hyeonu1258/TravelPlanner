@@ -41,6 +41,7 @@ import com.skp.Tmap.TMapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -93,6 +94,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     private String planname;
     private String planexplain; //플랜설명
 
+    private TextView txtResultKm;
+    private TextView txtResultTime;
+
     private PlaceList placeList;
     private ArrayList<TMapPOIItem> savedPOIPlaceList;
 
@@ -127,6 +131,12 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initPlaceList();
         getPlaceList();
 
+        initView();
+
+
+    }
+
+    private void initView() {
         //류땅
         txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
         txtPlanName.setText("플랜이름 : " + planname);
@@ -148,6 +158,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
+        txtResultKm = (TextView) findViewById(R.id.txtResultKm);
+        txtResultTime = (TextView) findViewById(R.id.txtResultTime);
 
     }
 
@@ -249,13 +261,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     @Override
     public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-
-        //        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
-//
-//        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
-//        System.out.println("선ID = " + polyline.getID());
-//        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
-//        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
         if (arrayList.size() > 0) {
             System.out.println("중간지점이 눌림");
             //출발지, 도착지 좌표저장

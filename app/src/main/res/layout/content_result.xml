@@ -101,6 +101,7 @@
                         android:textSize="20dp"
                         android:text="총 거리" />
                     <TextView
+                        android:id="@+id/txtResultKm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -121,6 +122,7 @@
                         android:textSize="20dp"
                         android:text="총 시간" />
                     <TextView
+                        android:id="@+id/txtResultTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
