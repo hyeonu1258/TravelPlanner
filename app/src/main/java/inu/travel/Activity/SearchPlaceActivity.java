@@ -29,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
@@ -139,12 +140,16 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     TextView txtPlanExplain;
     TextView logoutTxt;
     TextView settingTxt;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
     private int zoomLevel;
+
+    //inhoi listView set background
+    View preView;
 
 
     /**
@@ -323,11 +328,25 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         searchPlaceAdapter = new SearchPlaceAdapter(tMapPOIItems, getApplicationContext());
         searchPlaceListView.setAdapter(searchPlaceAdapter);
 
+
         // 리스트 항목 클릭시 발생 이벤트
         searchPlaceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
+
+
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //위치찾기
+                LinearLayout linearLayout;
+                if(preView != null) {
+                    linearLayout = (LinearLayout) preView.findViewById(R.id.tempLinear);
+                    linearLayout.setBackgroundResource(0);
+                }
+
+                linearLayout = (LinearLayout) view.findViewById(R.id.tempLinear);
+                linearLayout.setBackgroundResource(R.drawable.layout_border);
+
+                preView = view;
+
                 double x = Double.parseDouble(tMapPOIItems.get(position).noorLon);
                 double y = Double.parseDouble(tMapPOIItems.get(position).noorLat) - 0.005;
                 System.out.println("y좌표는 : " + y);
@@ -1122,6 +1141,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     if (poiArrayList.get(i).getPOIID() == savedPOIPlaceList.get(j).getPOIID()) {
                         System.out.println("저장된것클릭");
                         selectedPOIItem = poiArrayList.get(0);
+
                         return false;
                     }
                 }
@@ -1158,6 +1178,18 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     if (!SlidingDrawer.isOpened())
                         SlidingDrawer.animateOpen();
                     searchPlaceListView.smoothScrollToPositionFromTop(position, 0);
+
+
+
+
+
+                    /*
+                    View convertView = new View(getApplicationContext());
+                    LinearLayout layout;
+                    layout = (LinearLayout) searchPlaceAdapter.getView(position, convertView, searchPlaceListView).findViewById(R.id.tempLinear);
+                    layout.setBackgroundResource(R.drawable.layout_border);
+                    */
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

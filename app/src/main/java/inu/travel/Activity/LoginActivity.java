@@ -49,7 +49,7 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login2);
-
+        //Font.setGlobalFont(this, getWindow().getDecorView());
 
         initView();                 //view 초기화
         initNetworkService();       //Network 서버 연결

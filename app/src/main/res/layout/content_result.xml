@@ -31,7 +31,20 @@
                 android:layout_marginLeft="20dp"
                 android:text="수정"
                 android:textSize="15dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/topLinear"
+                android:background="@android:color/darker_gray"/>
+
         </RelativeLayout>
+        <View
+            android:id="@+id/bottom_line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/map_view"
+            android:background="@android:color/darker_gray"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,11 +52,17 @@
             android:orientation="horizontal"
             android:layout_weight="6">
 
+
             <ListView
                 android:id="@+id/resultitemlist"
                 android:layout_width="240dp"
                 android:layout_height="match_parent">
             </ListView>
+            <View
+                android:id="@+id/bottom_line3"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/darker_gray"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -110,6 +129,7 @@
                         android:text="xx시 xx분"/>
                 </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

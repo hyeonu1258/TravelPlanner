@@ -8,48 +8,94 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
 
-    android:background="#ffffff">
+    android:background="@mipmap/login_01">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:padding="10dp"
         >
 
         <EditText
+            android:layout_marginTop="200dp"
             android:id="@+id/editID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:padding="10dp"
             android:hint="iD"
+            android:textColor="#F6F7F7"
+            android:gravity="center"
             android:textColorHint="#cccccc"
             android:singleLine="true"
             android:imeOptions="actionNext"
-            android:drawableLeft="@drawable/person"/>
+            android:background="@mipmap/login_02"
+            />
         <EditText
             android:id="@+id/editPass"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-2dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="20dp"
             android:padding="10dp"
             android:hint="Password"
+            android:textColor="#F6F7F7"
+            android:gravity="center"
             android:textColorHint="#cccccc"
             android:password="true"
             android:singleLine="true"
             android:imeOptions="actionDone"
             android:inputType= "textPassword"
-            android:drawableLeft="@drawable/pass"/>
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:padding="10dp"
-            android:layout_margin="4dp"
-            android:text="Sign In"
+            android:background="@mipmap/login_03"
             />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:text="아이디 찾기 | "
+                android:textColor="#F6F7F7"
+                android:typeface="sans"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text=" 비밀번호 찾기 | "
+                android:textColor="#F6F7F7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text=" 회원가입"
+                android:typeface="monospace"
+                android:textColor="#FADE25"
+                android:layout_width="wrap_content"
+                android:onClick="joinClick"
+                android:id="@+id/loginText"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="25dp"
+            android:layout_height="wrap_content">
+
+
+            <Button
+
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:padding="10dp"
+                android:layout_margin="4dp"
+                android:background="@mipmap/login_05"
+                />
+
+        </LinearLayout>
+
+
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="150dp"
@@ -61,27 +107,10 @@
             android:progress="0"
             android:visibility="gone"
             />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="70dp"
-                android:text="If you want to register,"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:text=" Click"
-                android:textColor="#0000FF"
-                android:layout_width="wrap_content"
-                android:onClick="joinClick"
-                android:id="@+id/loginText"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:text=" here"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
+
     </LinearLayout>
+
 
 
 </RelativeLayout>

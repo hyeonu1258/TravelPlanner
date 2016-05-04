@@ -1,66 +1,65 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
-
+    android:orientation="vertical"
+    tools:context=".Activity.JoinActivity"
     android:background="#ffffff">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@mipmap/join_01"
+        android:layout_height="70dp"/>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:padding="10dp"
-        >
-
-
+        android:padding="10dp" >
         <EditText
             android:id="@+id/editID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-2dp"
-            android:padding="10dp"
-            android:hint="User Id"
-            android:textColorHint="#bbbbbb"
+            android:layout_width="320dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="70dp"
+            android:paddingLeft="50dp"
+            android:layout_marginLeft="15dp"
+            android:hint="아이디를 입력해주세요."
+            android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:imeOptions="actionNext"
-            android:drawableLeft="@drawable/person"/>
+            android:background="@mipmap/join_03"/>
         <EditText
             android:id="@+id/editPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-2dp"
-            android:padding="10dp"
-            android:hint="Password"
-            android:textColorHint="#bbbbbb"
+            android:layout_width="320dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="50dp"
+            android:layout_marginLeft="15dp"
+            android:hint="비밀번호를 입력해주세요.(4자 이상)"
+            android:textColorHint="#b1b1b1"
             android:password="true"
             android:singleLine="true"
             android:imeOptions="actionNext"
             android:inputType="textPassword"
-            android:drawableLeft="@drawable/pass"/>
+            android:background="@mipmap/join_04"/>
         <EditText
             android:id="@+id/editEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:hint="  Email"
-            android:textColorHint="#bbbbbb"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="15dp"
+            android:paddingLeft="50dp"
+            android:hint="이메일을 입력해주세요."
+            android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:inputType="textWebEmailAddress"
-            android:drawableLeft="@drawable/email"/>
+            android:background="@mipmap/join_05"/>
         <Button
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_margin="4dp"
-            android:text="Sign Up"
-            />
+            android:layout_marginTop="160dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/join_06" />
     </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>
