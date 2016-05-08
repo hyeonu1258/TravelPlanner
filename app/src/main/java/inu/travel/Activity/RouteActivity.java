@@ -9,6 +9,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
@@ -26,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -62,10 +65,6 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     private RelativeLayout mMainRelativeLayout = null;
     private TMapView mMapView = null;
 
-    // Tmap Line
-    private ArrayList<String> mArrayLineID;
-    private static int mLineID;
-
     //네비경로를 그릴 두 좌표값
     private TMapPoint startPoint = new TMapPoint(0, 0);
     private TMapPoint endPoint = new TMapPoint(0, 0);
@@ -74,13 +73,14 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     private NaviListAdapter naviListAdapter;
     private ListView naviListView;
 
-    // Sliding을 위한 자원
-    private SlidingDrawer slidingLayout = null;
-
     //거리정보
-    private TextView txtRouteTime;
-    private TextView txtRouteKm;
-    private TextView txtRouteTaxi;
+    private TextView txtRouteTime, txtRouteTime2;
+    private TextView txtRouteKm, txtRouteKm2;
+    private TextView txtRouteTaxi, txtRouteTaxi2;
+
+    private TextView txtStartEndPlace;
+
+    private Button btnBackRoute;
 
     // tmp
     ArrayList<NaviDescript> itemDatas = new ArrayList<NaviDescript>();
@@ -95,6 +95,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         initNetworkService();
         initTMap();
         initPoint();
+        btnClickEvent();
 
         try {
             Thread getPathThread = new Thread(new Runnable() {
@@ -130,11 +131,25 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
 
     }
 
+    private void btnClickEvent() {
+        btnBackRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
     private void initView() {
         txtRouteTime = (TextView) findViewById(R.id.txtRouteTime);
         txtRouteKm = (TextView) findViewById(R.id.txtRouteKm);
         txtRouteTaxi = (TextView) findViewById(R.id.txtRouteTaxi);
+        txtRouteTime2 = (TextView) findViewById(R.id.txtRouteTime2);
+        txtRouteKm2 = (TextView) findViewById(R.id.txtRouteKm2);
+        txtRouteTaxi2 = (TextView) findViewById(R.id.txtRouteTaxi2);
+        txtStartEndPlace = (TextView) findViewById(R.id.txtStartEndPlace);
         naviListView = (ListView) findViewById(R.id.routeitemlist);
+        btnBackRoute = (Button) findViewById(R.id.btnBackRoute);
     }
 
     private void parseXML(Document pathDoc) {
@@ -144,13 +159,17 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         System.out.println("총 시간 : " + pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent());
         System.out.println("택시 요금 : " + pathDoc.getElementsByTagName("tmap:taxiFare").item(0).getTextContent());
         System.out.println("스타트포인트 : " + pathDoc.getElementById("startPointStyle").getElementsByTagName("href").item(0).getTextContent());
-        int totalTime = Integer.parseInt(pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent())/60;
-        double totalDistance = Double.parseDouble(pathDoc.getElementsByTagName("tmap:totalDistance").item(0).getTextContent())/1000;
+
+        int totalTime = Integer.parseInt(pathDoc.getElementsByTagName("tmap:totalTime").item(0).getTextContent()) / 60;
+        double totalDistance = Double.parseDouble(pathDoc.getElementsByTagName("tmap:totalDistance").item(0).getTextContent()) / 1000;
         int totalTaxi = Integer.parseInt(pathDoc.getElementsByTagName("tmap:taxiFare").item(0).getTextContent());
 
-        txtRouteTime.setText(totalTime + "분");
-        txtRouteKm.setText(totalDistance + "Km");
-        txtRouteTaxi.setText(totalTaxi + "원");
+        txtRouteTime.setText("소요시간 : " + totalTime + "분");
+        txtRouteKm.setText("거리 : " + totalDistance + "Km");
+        txtRouteTaxi.setText("택시비 : " + totalTaxi + "원");
+        txtRouteTime2.setText("소요시간 : " + totalTime + "분");
+        txtRouteKm2.setText("거리 : " + totalDistance + "Km");
+        txtRouteTaxi2.setText("택시비 : " + totalTaxi + "원");
 
         NodeList nList = pathDoc.getElementsByTagName("Placemark");
         System.out.println("----------------------------");
@@ -182,15 +201,16 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         double startY = i.getDoubleExtra("startY", 000.000D);
         double endX = i.getDoubleExtra("endX", 000.000D);
         double endY = i.getDoubleExtra("endY", 000.000D);
+        String startName = i.getStringExtra("startName");
+        String endName = i.getStringExtra("endName");
         startPoint.setLatitude(startX);
         startPoint.setLongitude(startY);
         endPoint.setLatitude(endX);
         endPoint.setLongitude(endY);
+        txtStartEndPlace.setText(startName + " -> " + endName);
     }
 
     private void initLine() {
-        mArrayLineID = new ArrayList<String>();
-        mLineID = 0;
 
         Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher);
 
@@ -239,8 +259,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
     }
 
-    private void makeNaviListAdapter(ArrayList<NaviDescript> items)
-    {
+    private void makeNaviListAdapter(ArrayList<NaviDescript> items) {
         naviListAdapter = new NaviListAdapter(items, getApplicationContext());
         naviListView.setAdapter(naviListAdapter);
     }

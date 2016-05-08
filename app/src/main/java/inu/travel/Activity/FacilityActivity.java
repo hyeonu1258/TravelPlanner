@@ -194,8 +194,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
     }
@@ -446,7 +445,8 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
+        searchArea("39");
     }
 
     private void initNetworkService() {
