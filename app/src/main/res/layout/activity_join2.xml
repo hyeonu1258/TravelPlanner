@@ -8,7 +8,6 @@
     android:background="#ffffff">
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="@mipmap/join_01"
         android:layout_height="70dp"/>
 
     <LinearLayout
@@ -28,7 +27,7 @@
             android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:imeOptions="actionNext"
-            android:background="@mipmap/join_03"/>
+            />
         <EditText
             android:id="@+id/editPass"
             android:layout_width="320dp"
@@ -42,7 +41,7 @@
             android:singleLine="true"
             android:imeOptions="actionNext"
             android:inputType="textPassword"
-            android:background="@mipmap/join_04"/>
+            />
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="320dp"
@@ -54,12 +53,12 @@
             android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:inputType="textWebEmailAddress"
-            android:background="@mipmap/join_05"/>
+            />
         <Button
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_marginTop="160dp"
             android:layout_height="50dp"
-            android:background="@mipmap/join_06" />
+            />
     </LinearLayout>
 </LinearLayout>

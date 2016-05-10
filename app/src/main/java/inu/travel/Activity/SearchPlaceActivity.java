@@ -501,6 +501,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                                         tmpPlaceList.getItem().add(placeList.getItem().get(i));
                                                 }
                                                 tmpPlaceList.getItem().add(endPlace);
+                                                tmpPlaceList.setId(id);
+                                                tmpPlaceList.setPname(planname);
 
                                                 //TODO : 종민이한테 리스트를 넘겨줄것
                                                 for (int i = 0; i < placeList.getItem().size(); i++)
