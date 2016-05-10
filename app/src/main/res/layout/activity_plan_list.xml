@@ -4,10 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="inu.travel.Activity.PlanListActivity">
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="@mipmap/plan_01"
         android:gravity="center"
         android:layout_height="70dp">
     <Button
@@ -15,7 +14,6 @@
         android:layout_width="70dp"
         android:id="@+id/logoutBtn"
         android:layout_height="25dp"
-        android:background="@mipmap/plan_02"
         android:onClick="logoutClick" />
     </LinearLayout>
 

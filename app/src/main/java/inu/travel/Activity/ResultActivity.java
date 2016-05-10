@@ -41,6 +41,7 @@ import com.skp.Tmap.TMapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -85,13 +86,14 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     TextView logoutTxt;
     TextView settingTxt;
 
-    //수정버튼
-    private Button btnEdit;
-
     //id, planname
     private String id;
     private String planname;
     private String planexplain; //플랜설명
+
+    //TODO: 나중에 전체 시간 전체 거리 넣기
+    private TextView txtResultKm;
+    private TextView txtResultTime;
 
     private PlaceList placeList;
     private ArrayList<TMapPOIItem> savedPOIPlaceList;
@@ -119,14 +121,18 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initListView();
         initIcon();
         initTMap();
-        initButton();
-        btnClickEvent();
         initWindowSize();
 
         getUser();
         initPlaceList();
         getPlaceList();
 
+        initView();
+
+
+    }
+
+    private void initView() {
         //류땅
         txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
         txtPlanName.setText("플랜이름 : " + planname);
@@ -148,6 +154,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
+        txtResultKm = (TextView) findViewById(R.id.txtResultKm);
+        txtResultTime = (TextView) findViewById(R.id.txtResultTime);
 
     }
 
@@ -194,6 +202,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 //            centerPoint.setLatitude(Math.abs(endPoint.getLatitude() - startPoint.getLatitude()));
 //            centerPoint.setLongitude(Math.abs(endPoint.getLongitude() - startPoint.getLongitude()));
             markeritem.setName("경로보기");
+            markeritem.setCalloutTitle(savedPOIPlaceList.get(i - 1).name); //출발위치
+            markeritem.setCalloutSubTitle(savedPOIPlaceList.get(i).name); //도착위치
+
             markeritem.setTMapPoint(centerPoint);
             System.out.println("좌표2 : " + markeritem.getTMapPoint().getLatitude() + ", " + markeritem.getTMapPoint().getLongitude());
             markeritem.setVisible(TMapMarkerItem.VISIBLE);
@@ -212,27 +223,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         }
     }
 
-    private void initButton() {
-        System.out.println("버튼초기화");
-        btnEdit = (Button) findViewById(R.id.btnEdit);
-    }
-
-    private void btnClickEvent() {
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), SearchPlaceActivity.class);
-                intent.putExtra("Userid", id);
-                intent.putExtra("PlanName", planname);
-                intent.putExtra("PlanExplain", planexplain);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }
-
     private void initIcon() {
         savedBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.save);
     }
@@ -249,18 +239,16 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     @Override
     public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-
-        //        TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList1.get(0).getPOIID());
-//
-//        System.out.println("라인포인트리스트 = " + polyline.getLinePoint().size());
-//        System.out.println("선ID = " + polyline.getID());
-//        System.out.println("선"  + polyline.getID() + "의 출발 좌표 = " + polyline.getLinePoint().get(0).getLatitude());
-//        System.out.println("선"  + polyline.getID() + "의 도착 좌표 = " + polyline.getLinePoint().get(1).getLatitude());
         if (arrayList.size() > 0) {
             System.out.println("중간지점이 눌림");
             //출발지, 도착지 좌표저장
             TMapPolyLine polyline = mMapView.getPolyLineFromID(arrayList.get(0).getID()); //마커의 id를 line아이디와 같게해서 찾음
             double startX, startY, endX, endY;
+            String startName =  arrayList.get(0).getCalloutTitle();
+            String endName =  arrayList.get(0).getCalloutSubTitle();
+            System.out.println("시작위치 : " + startName);
+            System.out.println("도착위치 : " + endName);
+
             startX = polyline.getLinePoint().get(0).getLatitude();
             startY = polyline.getLinePoint().get(0).getLongitude();
             endX = polyline.getLinePoint().get(1).getLatitude();
@@ -272,6 +260,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             intent.putExtra("startY", startY);
             intent.putExtra("endX", endX);
             intent.putExtra("endY", endY);
+            intent.putExtra("startName", startName);
+            intent.putExtra("endName", endName);
             startActivity(intent);
         }
 
@@ -408,7 +398,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         parameters.put("addrinfoYN", "Y"); //주소
         parameters.put("overviewYN", "Y"); //개요
 
-        // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
+        //NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
 
         Call<Object> dataCall = tourNetworkService.getDetailCommon(parameters);
         dataCall.enqueue(new Callback<Object>() {
@@ -450,7 +440,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater();
         final View dialogLayout = layoutInflater.inflate(R.layout.detail_view, null);
 
-//데이터 findByid
+        //데이터 findByid
         final ImageView imageViewDetailPicture = (ImageView) dialogLayout.findViewById(R.id.imageViewDetailPicture);
         Button btnDetailClose = (Button) dialogLayout.findViewById(R.id.btnDetailClose);
         TextView txtDetailName = (TextView) dialogLayout.findViewById(R.id.txtDetailName);
@@ -459,13 +449,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         TextView txtDetailTel = (TextView) dialogLayout.findViewById(R.id.txtDetailTel);
         TextView txtDetailOverview = (TextView) dialogLayout.findViewById(R.id.txtDetailOverview);
 
-        //핸들러사용
-        // 인터넷 상의 이미지 보여주기
-        // 1. 권한을 획득한다 (인터넷에 접근할수 있는 권한을 획득한다)  - 메니페스트 파일
-        // 2. Thread 에서 웹의 이미지를 받아온다 - honeycomb(3.0) 버젼 부터 바뀜
-        // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
-
-        //Thread t = new Thread(Runnable 객체를 만든다);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {    // 오래 걸릴 작업을 구현한다
@@ -529,7 +512,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
                     ArrayList<TMapPoint> tMapPoints = new ArrayList<TMapPoint>();
 
-                    //TODO placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
+                    //placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
                     for (int i = 0; i < placeList.getItem().size(); i++) {
                         TMapPOIItem item = new TMapPOIItem();
                         item.Icon = savedBitmap;
@@ -549,7 +532,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     //이미 표시된 POI 지우기
                     mMapView.removeAllTMapPOIItem();
 
-                    //TODO: DB에서 가져온 장소 리스트에 추가시키기
+                    //DB에서 가져온 장소 리스트에 추가시키기
 
                     //맵에 POI 띄우기
                     mMapView.addTMapPOIItem(savedPOIPlaceList);
@@ -580,8 +563,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         });
     }
 
-    // TODO : 종민
-// 리스트뷰 어뎁터
+    // 리스트뷰 어뎁터
     private void makeResultPlaceAdapter(final ArrayList<TMapPOIItem> tMapPOIItems) {
         resultPlaceAdapter = new ResultPlaceAdapter(tMapPOIItems, getApplicationContext());
         resultPlaceListView.setAdapter(resultPlaceAdapter);
@@ -617,6 +599,15 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 intent.putExtra("mapY", mapY);
                 startActivity(intent);
                 break;
+            case R.id.btnEdit: //수정버튼
+                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
+                Intent intent2 = new Intent(getApplicationContext(), SearchPlaceActivity.class);
+                intent2.putExtra("Userid", id);
+                intent2.putExtra("PlanName", planname);
+                intent2.putExtra("PlanExplain", planexplain);
+                startActivity(intent2);
+                finish();
+                //TODO : 자동차 대중교통 버튼 추가
         }
     }
 }

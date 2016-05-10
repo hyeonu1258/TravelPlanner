@@ -1,5 +1,6 @@
 package inu.travel.Activity;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.internal.NavigationMenuView;
@@ -110,19 +112,10 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     //류땅
     private String planexplain; //플랜설명
     //지도 위 버튼들
-//    Button btnMT;
-//    Button btnTour;
-//    Button btnEat;
-//    Button btnAddPlace;
-//    Button btnRemovePlace;
-//    Button btnViewDetail;
     Button btnComplete;
     Button btnZoomOut;
     Button btnZoomIn;
-//    Button btnSearch;
 
-    // 슬라이딩 버튼
-    Button btnSlidingClose;
     ListView searchPlaceListView;
     SlidingDrawer SlidingDrawer;
 
@@ -141,11 +134,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     TextView logoutTxt;
     TextView settingTxt;
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
     private int zoomLevel;
 
     //inhoi listView set background
@@ -213,27 +201,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         mMainRelativeLayout.addView(mMapView);
         mMapView.setSKPMapApiKey("8818efcf-6165-3d1c-a056-93025f8b06c3"); //SDK 인증키입력
         mMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
-
-//        //이미지 추가하는 방법
-////        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.ic_launcher);
-////        mMapView.setIcon(bitmap);
-////        mMapView.setIconVisibility(true);
-//
-//        //마커 표시
-//        TMapPoint tpoint = new TMapPoint(37.570841, 126.985302);
-//        TMapMarkerItem tItem = new TMapMarkerItem();
-//        tItem.setTMapPoint(tpoint);
-//        tItem.setPlacename("관광지1");
-//        tItem.setVisible(TMapMarkerItem.VISIBLE);
-//
-//        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-//        tItem.setIcon(bitmap);
-//
-//        tItem.setPosition(0.5f, 1.0f);
-//        mMapView.addMarkerItem("tour1", tItem);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         SlidingDrawer = (SlidingDrawer) findViewById(R.id.slide);
 
@@ -336,16 +303,16 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //위치찾기
-                LinearLayout linearLayout;
-                if(preView != null) {
-                    linearLayout = (LinearLayout) preView.findViewById(R.id.tempLinear);
-                    linearLayout.setBackgroundResource(0);
-                }
+//                LinearLayout linearLayout;
+//                if(preView != null) {
+//                    linearLayout = (LinearLayout) preView.findViewById(R.id.tempLinear);
+//                    linearLayout.setBackgroundResource(0);
+//                }
+//
+//                linearLayout = (LinearLayout) view.findViewById(R.id.tempLinear);
+//                linearLayout.setBackgroundResource(R.drawable.layout_border);
 
-                linearLayout = (LinearLayout) view.findViewById(R.id.tempLinear);
-                linearLayout.setBackgroundResource(R.drawable.layout_border);
-
-                preView = view;
+//                preView = view;
 
                 double x = Double.parseDouble(tMapPOIItems.get(position).noorLon);
                 double y = Double.parseDouble(tMapPOIItems.get(position).noorLat) - 0.005;
@@ -371,10 +338,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 selectedPOIItem = tMapPOISearchItems.get(position);
 
                 if (viewId == R.id.btnAddPlace) {
-                    Toast.makeText(getApplicationContext(), "장소추가 clicked", Toast.LENGTH_SHORT).show();
+                    System.out.println("장소추가");
                     addPlace(selectedPOIItem);
                 } else if (viewId == R.id.btnViewDetail) {
-                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
                     viewDetail(selectedPOIItem);
                 }
 //                drawer.closeDrawers();
@@ -468,75 +434,10 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     }
 
     private void btnClickEvent() {
-//        btnMT.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "숙박", Toast.LENGTH_SHORT).show();
-//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
-//                searchArea("32");
-//            }
-//        });
-
-//        btnTour.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "관광지", Toast.LENGTH_SHORT).show();
-//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-//
-//                searchArea("12");
-//            }
-//        });
-
-//        btnEat.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "맛집", Toast.LENGTH_SHORT).show();
-//                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
-//                searchArea("39");
-//            }
-//        });
-
-//        btnAddPlace.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addPlace(selectedPOIItem);
-//            }
-//        });
-//
-//        btnRemovePlace.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "장소삭제", Toast.LENGTH_SHORT).show();
-//                if (selectedPOIItem == null || placeList.getItem().isEmpty())
-//                    return;
-//
-//                for (int i = 0; i < placeList.getItem().size(); i++) {
-//                    if (placeList.getItem().get(i).getContentid().equals(selectedPOIItem.id)) {
-//                        System.out.println("삭제할 장소 : " + placeList.getItem().get(i).getPlacename());
-//                        placeList.getItem().remove(i);
-//                        System.out.println("삭제성공");
-//                        printArray();
-//                    }
-//
-//                }
-//            }
-//        });
-//
-//        btnViewDetail.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                if (selectedPOIItem != null) //선택된게 있으면 실행
-//                    viewDetail(selectedPOIItem);
-//                else
-//                    Toast.makeText(getApplicationContext(), "선택된 장소가 없습니다.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(placeList.getItem().size()==0)
+                if (placeList.getItem().size() == 0)
                     return;
                 Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
                 LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
@@ -593,17 +494,21 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
 
-                                                placeList.getItem().add(startPlace);
-                                                placeList.getItem().add(endPlace);
-                                                System.out.println("끝! " + endPlace.getPlacename());
+                                                PlaceList tmpPlaceList = new PlaceList(); //출발지와 도착지를 셋팅한 리스트
+                                                tmpPlaceList.getItem().add(startPlace);
+                                                for (int i = 0; i < placeList.getItem().size(); i++) {
+                                                    if (placeList.getItem().get(i) != startPlace && placeList.getItem().get(i) != endPlace)
+                                                        tmpPlaceList.getItem().add(placeList.getItem().get(i));
+                                                }
+                                                tmpPlaceList.getItem().add(endPlace);
+                                                tmpPlaceList.setId(id);
+                                                tmpPlaceList.setPname(planname);
+
                                                 //TODO : 종민이한테 리스트를 넘겨줄것
                                                 for (int i = 0; i < placeList.getItem().size(); i++)
-                                                    System.out.println(placeList.getItem().get(i).getPlacename());
+                                                    System.out.println(tmpPlaceList.getItem().get(i).getPlacename());
 
-
-                                                System.out.println("아이디 : " + id + "planname : " + planname);
-
-                                                Call<Object> addPlace = awsNetworkService.addPlace(placeList);
+                                                Call<Object> addPlace = awsNetworkService.addPlace(tmpPlaceList);
                                                 addPlace.enqueue(new Callback<Object>() {
                                                     @Override
                                                     public void onResponse(Response<Object> response, Retrofit retrofit) {
@@ -1078,21 +983,17 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     }
 
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void initView() {
         //버튼들
-//        btnMT = (Button) findViewById(R.id.btnMT);
-//        btnTour = (Button) findViewById(R.id.btnTour);
-//        btnEat = (Button) findViewById(R.id.btnEat);
-//        btnAddPlace = (Button) findViewById(R.id.btnAddPlace);
-//        btnRemovePlace = (Button) findViewById(R.id.btnRemovePlace);
-//        btnViewDetail = (Button) findViewById(R.id.btnViewDetail);
+
         btnComplete = (Button) findViewById(R.id.btnComplete);
 
         listView = (ListView) findViewById(R.id.listView);
 
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
-        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.travel_app_8_8_01);
+        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.travel_app_7_1_01);
         savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.save);
 
         btnZoomOut = (Button) findViewById(R.id.btn_zoom_out);
@@ -1221,7 +1122,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             //검색할 시 호출되는 함수
             @Override
             public boolean onQueryTextSubmit(String query) {
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
                 editSearch = query;
                 searchArea("12"); //default로 관광지
                 return false;

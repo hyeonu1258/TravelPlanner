@@ -25,6 +25,7 @@
             android:layout_weight="4"
             android:orientation="horizontal">
             <Button
+                android:onClick="btnClick"
                 android:id="@+id/btnEdit"
                 android:layout_width="70dp"
                 android:layout_height="50dp"
@@ -76,12 +77,16 @@
                     android:weightSum="1">
 
                     <Button
+                        android:onClick="btnClick"
+                        android:id="@+id/btnCar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:textSize="8dp"
                         android:text="자동차"/>
                     <Button
+                        android:id="@+id/btnPublic"
+                        android:onClick="btnClick"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
@@ -101,6 +106,7 @@
                         android:textSize="20dp"
                         android:text="총 거리" />
                     <TextView
+                        android:id="@+id/txtResultKm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -121,6 +127,7 @@
                         android:textSize="20dp"
                         android:text="총 시간" />
                     <TextView
+                        android:id="@+id/txtResultTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
