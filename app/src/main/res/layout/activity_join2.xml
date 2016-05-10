@@ -8,6 +8,7 @@
     android:background="#ffffff">
     <LinearLayout
         android:layout_width="match_parent"
+        android:background="@mipmap/bar_title"
         android:layout_height="70dp"/>
 
     <LinearLayout
@@ -27,6 +28,7 @@
             android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:imeOptions="actionNext"
+            android:background="@mipmap/icon_id"
             />
         <EditText
             android:id="@+id/editPass"
@@ -41,6 +43,7 @@
             android:singleLine="true"
             android:imeOptions="actionNext"
             android:inputType="textPassword"
+            android:background="@mipmap/icon_pw"
             />
         <EditText
             android:id="@+id/editEmail"
@@ -53,12 +56,13 @@
             android:textColorHint="#b1b1b1"
             android:singleLine="true"
             android:inputType="textWebEmailAddress"
-            />
+            android:background="@mipmap/icon_email"/>
         <Button
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_marginTop="160dp"
             android:layout_height="50dp"
+            android:background="@mipmap/btn_join"
             />
     </LinearLayout>
 </LinearLayout>

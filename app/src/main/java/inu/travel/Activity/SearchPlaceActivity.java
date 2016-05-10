@@ -31,15 +31,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.skp.Tmap.TMapData;
@@ -993,7 +990,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
-        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.selectedPlace);
+        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.selected_place);
         savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.save);
 
         btnZoomOut = (Button) findViewById(R.id.btn_zoom_out);
