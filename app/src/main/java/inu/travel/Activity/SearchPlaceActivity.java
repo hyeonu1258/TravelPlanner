@@ -992,8 +992,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         listView = (ListView) findViewById(R.id.listView);
 
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
-        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.travel_app_8_8_01);
-        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.travel_app_7_1_01);
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
+        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.selectedPlace);
         savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.save);
 
         btnZoomOut = (Button) findViewById(R.id.btn_zoom_out);
