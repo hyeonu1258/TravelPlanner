@@ -21,84 +21,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></RelativeLayout>
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp">
 
             <Button
                 android:id="@+id/btn_zoom_out"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:text="-"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/search_04"
                 android:textSize="25dp" />
 
             <Button
                 android:id="@+id/btn_zoom_in"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="20dp"
-                android:text="+"
-                android:textSize="25dp" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/search_03"
+                />
         </LinearLayout>
-        <!--<Button-->
-            <!--android:id="@+id/btnMT"-->
-            <!--android:layout_width="70dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:text="숙박" />-->
 
-        <!--<Button-->
-            <!--android:id="@+id/btnTour"-->
-            <!--android:layout_width="70dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_toRightOf="@+id/btnMT"-->
-            <!--android:text="관광지" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btnEat"-->
-            <!--android:layout_width="70dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_toRightOf="@+id/btnTour"-->
-            <!--android:text="맛집" />-->
-
-<!--
-        <Button
-            android:id="@+id/btnAddPlace"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
-            android:layout_alignBottom="@+id/map_view"
-            android:text="장소추가"
-            android:textSize="15dp" />
-
-        <Button
-            android:id="@+id/btnRemovePlace"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
-            android:layout_alignBottom="@+id/map_view"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/btnAddPlace"
-            android:text="장소삭제"
-            android:textSize="15dp" />
-
-        <Button
-            android:id="@+id/btnViewDetail"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
-            android:layout_alignBottom="@+id/map_view"
-            android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@+id/btnRemovePlace"
-            android:text="상세보기"
-            android:textSize="15dp" />
--->
         <Button
             android:id="@+id/btnComplete"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="20dp"
-            android:text="완료"
+            android:background="@drawable/search_02"
             android:textSize="15dp" />
 
         <SlidingDrawer

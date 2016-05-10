@@ -398,7 +398,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         parameters.put("addrinfoYN", "Y"); //주소
         parameters.put("overviewYN", "Y"); //개요
 
-        // TODO: NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
+        //NetworkService에 정의된 메소드를 사용하여 서버에서 데이터를 받아옴(비동기식)
 
         Call<Object> dataCall = tourNetworkService.getDetailCommon(parameters);
         dataCall.enqueue(new Callback<Object>() {
@@ -512,7 +512,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
                     ArrayList<TMapPoint> tMapPoints = new ArrayList<TMapPoint>();
 
-                    //TODO placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
+                    //placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
                     for (int i = 0; i < placeList.getItem().size(); i++) {
                         TMapPOIItem item = new TMapPOIItem();
                         item.Icon = savedBitmap;
@@ -532,7 +532,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     //이미 표시된 POI 지우기
                     mMapView.removeAllTMapPOIItem();
 
-                    //TODO: DB에서 가져온 장소 리스트에 추가시키기
+                    //DB에서 가져온 장소 리스트에 추가시키기
 
                     //맵에 POI 띄우기
                     mMapView.addTMapPOIItem(savedPOIPlaceList);
@@ -563,8 +563,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         });
     }
 
-    // TODO : 종민
-// 리스트뷰 어뎁터
+    // 리스트뷰 어뎁터
     private void makeResultPlaceAdapter(final ArrayList<TMapPOIItem> tMapPOIItems) {
         resultPlaceAdapter = new ResultPlaceAdapter(tMapPOIItems, getApplicationContext());
         resultPlaceListView.setAdapter(resultPlaceAdapter);
@@ -608,6 +607,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 intent2.putExtra("PlanExplain", planexplain);
                 startActivity(intent2);
                 finish();
+                //TODO : 자동차 대중교통 버튼 추가
         }
     }
 }

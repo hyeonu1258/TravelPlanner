@@ -77,12 +77,16 @@
                     android:weightSum="1">
 
                     <Button
+                        android:onClick="btnClick"
+                        android:id="@+id/btnCar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:textSize="8dp"
                         android:text="자동차"/>
                     <Button
+                        android:id="@+id/btnPublic"
+                        android:onClick="btnClick"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
