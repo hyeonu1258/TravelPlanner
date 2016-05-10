@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:text="New Text"
         android:textSize="13sp"
-        android:textColor="#808080"
+        android:textColor="#8CFFFFFF"
         android:id="@+id/txtDescription_item" />
 
 </LinearLayout>

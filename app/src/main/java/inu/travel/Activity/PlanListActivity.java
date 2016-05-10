@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class PlanListActivity extends Activity {
     int PlanListLengh = 0;               //플랜 총 개수
     String user_id;                      //사용자 아이디
     Button logoutBtn;                    //로그아웃 버튼
+    TextView txtTitle_item;
+    TextView txtDescription_item;
 
 
     @Override
@@ -224,11 +227,14 @@ public class PlanListActivity extends Activity {
         super.onResume();
         loadServer();               //서버로부터 플랜목록을 받아옴
         makeList();
+
+
     }
 
     private void makeList() {
         adapter = new PlanAdapter(planDatas, getApplicationContext());
         gridView.setAdapter(adapter);
+
     }
 
     private void makePlusButton() {                         // + 버튼 만드는 함수
@@ -237,6 +243,7 @@ public class PlanListActivity extends Activity {
         plan.setName("+");
         planDatas.add(plan);
         adapter.notifyDataSetChanged();
+
     }
 
     void makePlan() {
@@ -305,6 +312,10 @@ public class PlanListActivity extends Activity {
         editName_d = (EditText) findViewById(R.id.editName_d);
         editDetail_d = (EditText) findViewById(R.id.editDetail_d);
         logoutBtn = (Button) findViewById(R.id.logoutBtn);
+
+        txtTitle_item = (TextView)findViewById(R.id.txtTitle_item);
+        txtDescription_item = (TextView) findViewById(R.id.txtDescription_item);
+
     }
 
     private void initSharedPre() {

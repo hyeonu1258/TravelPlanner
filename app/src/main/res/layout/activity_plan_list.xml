@@ -18,19 +18,16 @@
         android:background="@mipmap/plan_02"
         android:onClick="logoutClick" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="match_parent">
+
     <GridView
         android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
         android:numColumns="2"
         android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gridView" />
 
-    </LinearLayout>
+
 
 </LinearLayout>

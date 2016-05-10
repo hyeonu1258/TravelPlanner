@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -41,6 +42,7 @@ public class LoginActivity extends Activity {
     String Userpass;                    //사용자 비밀번호
     ProgressBar progressBar; // 로딩화면을 위한 변수
     TextView loginText;
+    Typeface typeface;          //font 설정
 
 
 
@@ -155,13 +157,16 @@ public class LoginActivity extends Activity {
         btnJoin = (Button) findViewById(R.id.btnJoin);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         loginText = (TextView) findViewById(R.id.loginText);
+        typeface = Typeface.createFromAsset(getAssets(),"NanumBrush.ttf");
+        loginText.setTypeface(typeface);
+        //폰트
     }
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
     private void initSharedPre(){
-            pref = getSharedPreferences("login",0);
-            edit = pref.edit();
+        pref = getSharedPreferences("login",0);
+        edit = pref.edit();
     }
 
 

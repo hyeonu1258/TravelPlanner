@@ -2,6 +2,7 @@ package inu.travel.Adapter;
 
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,10 @@ public class PlanAdapter extends BaseAdapter {
 
     private List<PlanList> planDatas;
     LayoutInflater layoutInflater;
+    Context context;
 
     public PlanAdapter(List<PlanList> planDatas, Context context) {
+        this.context = context;
         this.planDatas = planDatas;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -63,6 +66,8 @@ public class PlanAdapter extends BaseAdapter {
             //viewHolder.txtId_item = (TextView)convertView.findViewById(R.id.txtAge);
             viewHolder.txtDescriptionItem = (TextView) convertView.findViewById(R.id.txtDescription_item);
 
+
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (PlanViewHolder) convertView.getTag();
@@ -70,8 +75,14 @@ public class PlanAdapter extends BaseAdapter {
 
         PlanList plan_temp = planDatas.get(position);
         viewHolder.txtNameItem.setText(plan_temp.getName().toString());
+
         //viewHolder.txtId_item.setText(String.valueOf(plan_temp.getId()));
         viewHolder.txtDescriptionItem.setText(plan_temp.getDescription());
+
+
+        //font 설정
+        viewHolder.txtNameItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
+        viewHolder.txtDescriptionItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
 
         return convertView;
     }
