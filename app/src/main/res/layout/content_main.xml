@@ -25,7 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp">
 
             <Button
                 android:id="@+id/btn_zoom_out"
@@ -49,7 +50,8 @@
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:layout_marginLeft="20dp"
-            android:background="@drawable/search_02"
+            android:layout_marginTop="20dp"
+            android:background="@mipmap/btn_complete"
             android:textSize="15dp" />
 
         <SlidingDrawer
