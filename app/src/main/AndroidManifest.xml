@@ -10,20 +10,23 @@
     <application
         android:name=".Component.ApplicationController"
         android:allowBackup="true"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.SplashActivity">
+
+        </activity>
+        <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.FacilityActivity" />
+        <activity android:name=".Activity.JoinActivity" />
+        <activity android:name=".Activity.PlanListActivity" />
+        <activity android:name=".Activity.SearchPlaceActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.LoginActivity" />
-        <activity android:name=".Activity.FacilityActivity" />
-        <activity android:name=".Activity.JoinActivity" />
-        <activity android:name=".Activity.PlanListActivity" />
-        <activity android:name=".Activity.SearchPlaceActivity"></activity>
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
