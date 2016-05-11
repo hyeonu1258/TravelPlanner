@@ -43,6 +43,9 @@ public class JoinActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join2);
 
+
+      //  Font.setGlobalFont(this, getWindow().getDecorView());
+
         initView();                 //View 초기화
         initNetworkService();       //Network,서버  연결
         initSharedPre();        //SharedPreferences 초기화
