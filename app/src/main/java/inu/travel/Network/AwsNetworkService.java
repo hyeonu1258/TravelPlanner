@@ -9,6 +9,7 @@ import java.util.List;
 import inu.travel.Model.Person;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
+import inu.travel.Model.Plan;
 import inu.travel.Model.PlanList;
 import retrofit.Call;
 import retrofit.http.Body;
@@ -55,6 +56,6 @@ public interface AwsNetworkService {
     @POST("/place/load")
     Call<ArrayList<Place>> getPlaceList(@QueryMap HashMap<String, String> param);
 
-    @POST("/plan/detail")
-    Call<ArrayList<Place>> getPlanInfo(@QueryMap HashMap<String, String> param);
+    @GET("/plan/detail/{id}/{plan}")
+    Call<Plan> getPlanInfo(@Path("id") String id, @Path("plan") String plan);
 }
