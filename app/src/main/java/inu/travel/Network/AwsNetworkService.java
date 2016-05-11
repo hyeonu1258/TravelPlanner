@@ -50,12 +50,15 @@ public interface AwsNetworkService {
     @POST("/plan/list/delete")
     Call<Object> removePlanList(@Body PlanList planList);
 
+    @POST("/plan/detail")
+    Call<Plan> getPlanInfo(@QueryMap HashMap<String, String> param);
+
     @POST("/place/add")
     Call<Object> addPlace(@Body PlaceList placeList);
 
     @POST("/place/load")
     Call<ArrayList<Place>> getPlaceList(@QueryMap HashMap<String, String> param);
 
-    @GET("/plan/detail/{id}/{plan}")
-    Call<Plan> getPlanInfo(@Path("id") String id, @Path("plan") String plan);
+//    @GET("/plan/detail/{id}/{plan}")
+//    Call<Plan> getPlanInfo(@Path("id") String id, @Path("plan") String plan);
 }

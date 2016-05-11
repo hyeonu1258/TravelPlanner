@@ -116,6 +116,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        initView();
+
         initNetworkService();
         initNaviView();
         initListView();
@@ -127,7 +129,6 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initPlaceList();
         getPlaceList();
 
-        initView();
 
 
     }
@@ -562,32 +563,29 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             }
         });
 
-        //총거리시간 받기
-        final Call<Plan> getPlanInfo = awsNetworkService.getPlanInfo(id, planname);
+        // 총거리 시간 받기
+        final Call<Plan> getPlanInfo = awsNetworkService.getPlanInfo(param);
         getPlanInfo.enqueue(new Callback<Plan>() {
             @Override
             public void onResponse(Response<Plan> response, Retrofit retrofit) {
                 if (response.code() == 200) {
-                    Plan tmpPlan = new Plan();
-                    tmpPlan = response.body();
-                    txtResultKm.setText(tmpPlan.alldistance);
-                    txtResultTime.setText(tmpPlan.alltime);
+
+                    Plan tmpPlan = response.body();
+                    txtResultKm.setText(Integer.parseInt(tmpPlan.alldistance)/1000 + "." + Integer.parseInt(tmpPlan.alldistance)%1000 + "Km");
+                    txtResultTime.setText(Integer.parseInt(tmpPlan.alltime)/60 + "분");
 
                 } else if (response.code() == 503) {
                     int statusCode = response.code();
                     Log.i("MyTag", "응답코드 : " + statusCode);
                 }
-
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+                Log.i("MyTag 총시간 ", "에러내용 : " + t.getMessage());
             }
         });
-//        final Call<Object> getPlanInfo = awsNetworkService.getPlanInfo(id, planname);
-//        getPlanInfo.enqueue(new Callback<Object>() {
-//        });
 
     }
 
