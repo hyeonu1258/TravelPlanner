@@ -3,6 +3,7 @@ package inu.travel.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -36,6 +37,7 @@ public class JoinActivity extends Activity {
     SharedPreferences pref;
     SharedPreferences.Editor edit;
     AwsNetworkService awsNetworkService;
+    Typeface typefaceRegular;
 
 
     @Override
@@ -134,10 +136,17 @@ public class JoinActivity extends Activity {
         editPass = (EditText) findViewById(R.id.editPass);
         editEmail = (EditText) findViewById(R.id.editEmail);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        changeFont();           //font
     }
 
     private void initNetworkService() {
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
+    }
+    private void changeFont(){
+        typefaceRegular = Typeface.createFromAsset(getAssets(),"NanumGothic.ttf");          //font
+        editID.setTypeface(typefaceRegular);
+        editPass.setTypeface(typefaceRegular);
+        editEmail.setTypeface(typefaceRegular);
     }
 
     private void initSharedPre() {

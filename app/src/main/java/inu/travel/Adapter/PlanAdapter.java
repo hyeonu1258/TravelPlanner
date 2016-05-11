@@ -81,8 +81,8 @@ public class PlanAdapter extends BaseAdapter {
 
 
         //font 설정
-        viewHolder.txtNameItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
-        viewHolder.txtDescriptionItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
+        viewHolder.txtNameItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumPen.ttf"));
+        viewHolder.txtDescriptionItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumPen.ttf"));
 
         return convertView;
     }

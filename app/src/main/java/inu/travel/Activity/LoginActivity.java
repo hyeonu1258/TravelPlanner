@@ -41,8 +41,11 @@ public class LoginActivity extends Activity {
     String Userid;                      //사용자 아이디
     String Userpass;                    //사용자 비밀번호
     ProgressBar progressBar; // 로딩화면을 위한 변수
-    TextView loginText;
-    Typeface typeface;          //font 설정
+    TextView joinText;
+    TextView idSearchText;
+    TextView passSearchText;
+    Typeface typefaceRegular;          //font 설정
+    Typeface typefaceBold;
 
 
 
@@ -140,7 +143,7 @@ public class LoginActivity extends Activity {
             }
         });
         */
-        loginText.setOnClickListener(new View.OnClickListener() {
+        joinText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
@@ -156,11 +159,21 @@ public class LoginActivity extends Activity {
         editPass = (EditText) findViewById(R.id.editPass);
         btnJoin = (Button) findViewById(R.id.btnJoin);
         btnLogin = (Button) findViewById(R.id.btnLogin);
-        loginText = (TextView) findViewById(R.id.loginText);
-        typeface = Typeface.createFromAsset(getAssets(),"NanumBrush.ttf");
-        loginText.setTypeface(typeface);
-        //폰트
+        joinText = (TextView) findViewById(R.id.joinText);
+        idSearchText= (TextView)findViewById(R.id.idSearchText);
+        passSearchText = (TextView)findViewById(R.id.passSearchText);
+        changeFont();                   //font
     }
+    private void changeFont(){
+        typefaceRegular = Typeface.createFromAsset(getAssets(),"NanumGothic.ttf");
+        typefaceBold = Typeface.createFromAsset(getAssets(),"NanumGothicBold.ttf");
+        joinText.setTypeface(typefaceBold);
+        idSearchText.setTypeface(typefaceRegular);
+        passSearchText.setTypeface(typefaceRegular);
+        editID.setTypeface(typefaceRegular);
+        editPass.setTypeface(typefaceRegular);
+    }
+
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
