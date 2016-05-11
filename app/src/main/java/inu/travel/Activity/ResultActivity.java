@@ -41,7 +41,6 @@ import com.skp.Tmap.TMapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -83,8 +82,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     NavigationView navigationView;
     TextView txtPlanName;
     TextView txtPlanExplain;
-    TextView logoutTxt;
-    TextView settingTxt;
+    TextView btnLogout;
+    TextView btnSetting;
 
     //id, planname
     private String id;
@@ -134,21 +133,21 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
     private void initView() {
         //류땅
-        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
-        txtPlanName.setText("플랜이름 : " + planname);
-        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
-        txtPlanExplain.setText("설명 : " + planexplain);
+//        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+//        txtPlanName.setText("플랜이름 : " + planname);
+//        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+//        txtPlanExplain.setText("설명 : " + planexplain);
 
-        logoutTxt = (TextView) findViewById(R.id.logout_txt);
-        settingTxt = (TextView) findViewById(R.id.setting_txt);
+        btnLogout = (Button) findViewById(R.id.btn_logout);
+        btnSetting = (Button) findViewById(R.id.btn_setting);
 
-        logoutTxt.setOnClickListener(new View.OnClickListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
-        settingTxt.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();

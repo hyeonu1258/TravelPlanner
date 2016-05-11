@@ -58,6 +58,7 @@ import java.util.List;
 import inu.travel.Adapter.PlaceAdapter;
 import inu.travel.Adapter.SearchPlaceAdapter;
 import inu.travel.Component.ApplicationController;
+import inu.travel.Model.Font;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
 import inu.travel.Model.SearchPlace;
@@ -128,8 +129,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     ListView listView;
     TextView txtPlanName;
     TextView txtPlanExplain;
-    TextView logoutTxt;
-    TextView settingTxt;
+    TextView btnLogout;
+    TextView btnSetting;
 
     private int zoomLevel;
 
@@ -143,6 +144,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        Font.setGlobalFont(this, getWindow().getDecorView());
 
         setContentView(R.layout.activity_search_place);
         initNetworkService();
@@ -202,21 +204,21 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         SlidingDrawer = (SlidingDrawer) findViewById(R.id.slide);
 
         //류땅
-        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
-        txtPlanName.setText(planname);
-        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
-        txtPlanExplain.setText(planexplain);
+//        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+//        txtPlanName.setText(planname);
+//        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+//        txtPlanExplain.setText(planexplain);
 
-        logoutTxt = (TextView) findViewById(R.id.logout_txt);
-        settingTxt = (TextView) findViewById(R.id.setting_txt);
+        btnLogout = (Button) findViewById(R.id.btn_logout);
+        btnSetting = (Button) findViewById(R.id.btn_setting);
 
-        logoutTxt.setOnClickListener(new View.OnClickListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
-        settingTxt.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
@@ -1119,6 +1121,19 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbar.setBackgroundResource(R.mipmap.bar_search_bar);
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                toolbar.setBackgroundResource(R.mipmap.bar_title);
+                return false;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             //검색할 시 호출되는 함수
             @Override
@@ -1136,6 +1151,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 return false;
             }
         });
+        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+        theTextArea.setTextColor(0xFF84C448);
+
         return true;
     }
 
