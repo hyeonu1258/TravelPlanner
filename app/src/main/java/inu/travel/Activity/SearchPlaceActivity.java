@@ -502,7 +502,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                                 tmpPlaceList.setPname(planname);
 
                                                 //TODO : 종민이한테 리스트를 넘겨줄것
-                                                for (int i = 0; i < placeList.getItem().size(); i++)
+                                                for (int i = 0; i < tmpPlaceList.getItem().size(); i++)
                                                     System.out.println(tmpPlaceList.getItem().get(i).getPlacename());
 
                                                 Call<Object> addPlace = awsNetworkService.addPlace(tmpPlaceList);
@@ -521,12 +521,16 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                                         } else if (response.code() == 503) {
                                                             int statusCode = response.code();
                                                             Log.i("MyTag", "응답코드 : " + statusCode);
+                                                        }else{
+                                                            System.out.println("에러1");
+
                                                         }
                                                     }
 
                                                     @Override
                                                     public void onFailure(Throwable t) {
-
+                                                        t.printStackTrace();
+                                                        System.out.println("에러2");
                                                     }
                                                 });
                                             }

@@ -55,4 +55,6 @@ public interface AwsNetworkService {
     @POST("/place/load")
     Call<ArrayList<Place>> getPlaceList(@QueryMap HashMap<String, String> param);
 
+    @POST("/plan/detail")
+    Call<ArrayList<Place>> getPlanInfo(@QueryMap HashMap<String, String> param);
 }

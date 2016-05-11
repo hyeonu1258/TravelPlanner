@@ -561,6 +561,70 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Log.i("MyTag", "에러내용 : " + t.getMessage());
             }
         });
+
+        //총거리시간 받기
+        final Call<ArrayList<Place>> getPlanInfo = awsNetworkService.getPlanInfo(param);
+        getPlaceList.enqueue(new Callback<ArrayList<Place>>() {
+            @Override
+            public void onResponse(Response<ArrayList<Place>> response, Retrofit retrofit) {
+
+                if (response.code() == 200) {
+                    System.out.println("Result:디비로딩성공");
+                    //System.out.println(response.body());
+
+                    placeList.setItem(response.body());
+
+                    ArrayList<TMapPoint> tMapPoints = new ArrayList<TMapPoint>();
+
+                    //placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
+                    for (int i = 0; i < placeList.getItem().size(); i++) {
+                        TMapPOIItem item = new TMapPOIItem();
+                        item.Icon = savedBitmap;
+                        item.noorLon = placeList.getItem().get(i).getMapx();
+                        item.noorLat = placeList.getItem().get(i).getMapy();
+                        item.name = placeList.getItem().get(i).getPlacename(); //장소명
+                        item.address = placeList.getItem().get(i).getAddress(); //주소
+                        item.setID(placeList.getItem().get(i).getContentid()); //자세히보기 API 요청시 필요함
+                        item.bizCatName = placeList.getItem().get(i).getImgpath();
+
+                        //저장된 장소 리스트에 넣기
+                        savedPOIPlaceList.add(item);
+
+                        tMapPoints.add(i, item.getPOIPoint()); //표시된 장소의 좌표를 기억해서 zoomLevel을 최적화
+                    }
+
+                    //이미 표시된 POI 지우기
+                    mMapView.removeAllTMapPOIItem();
+
+                    //DB에서 가져온 장소 리스트에 추가시키기
+
+                    //맵에 POI 띄우기
+                    mMapView.addTMapPOIItem(savedPOIPlaceList);
+
+                    //위치찾기
+                    TMapInfo info = mMapView.getDisplayTMapInfo(tMapPoints);
+                    mMapView.setCenterPoint(info.getTMapPoint().getLongitude(), info.getTMapPoint().getLatitude(), true);
+                    mMapView.setZoomLevel(info.getTMapZoomLevel());
+                    initLine();
+
+                    // 받아온 장소들 리스트뷰에 띄우기
+                    makeResultPlaceAdapter(savedPOIPlaceList);
+                    resultPlaceAdapter.notifyDataSetChanged();
+
+                } else if (response.code() == 404) {
+                    System.out.println("해당플랜에 장소가 없음!");
+                } else if (response.code() == 503) {
+                    int statusCode = response.code();
+                    Log.i("MyTag", "응답코드 : " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+                Log.i("MyTag", "에러내용 : " + t.getMessage());
+            }
+        });
     }
 
     // 리스트뷰 어뎁터
