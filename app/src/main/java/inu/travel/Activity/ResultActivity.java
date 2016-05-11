@@ -175,13 +175,13 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         ArrayList<TMapPolyLine> polyLineArrayList = new ArrayList<>();
         TMapPoint startPoint, endPoint;
         TMapPoint centerPoint = new TMapPoint(0, 0);
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.marker_route);
 
         System.out.println("선그리기 => 장소갯수 : " + savedPOIPlaceList.size());
 
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
-            polyLine.setLineColor(0xFF5CD1E5);
+            polyLine.setLineColor(0xFFFABE24);
             polyLine.setLineWidth(5);
             //시작점
             startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
@@ -225,7 +225,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     }
 
     private void initIcon() {
-        savedBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.save);
+        savedBitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place);
     }
 
     @Override
