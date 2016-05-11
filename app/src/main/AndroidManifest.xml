@@ -24,7 +24,9 @@
         <activity android:name=".Activity.FacilityActivity" />
         <activity android:name=".Activity.JoinActivity" />
         <activity android:name=".Activity.PlanListActivity" />
-        <activity android:name=".Activity.SearchPlaceActivity"></activity>
+        <activity android:name=".Activity.SearchPlaceActivity">
+
+        </activity>
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

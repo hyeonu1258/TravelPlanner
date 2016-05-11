@@ -41,7 +41,6 @@ import com.skp.Tmap.TMapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -52,6 +51,7 @@ import inu.travel.Adapter.ResultPlaceAdapter;
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
+import inu.travel.Model.Plan;
 import inu.travel.Model.SearchPlace;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.Network.TourNetworkService;
@@ -83,8 +83,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     NavigationView navigationView;
     TextView txtPlanName;
     TextView txtPlanExplain;
-    TextView logoutTxt;
-    TextView settingTxt;
+    TextView btnLogout;
+    TextView btnSetting;
 
     //id, planname
     private String id;
@@ -116,6 +116,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        initView();
+
         initNetworkService();
         initNaviView();
         initListView();
@@ -127,28 +129,27 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initPlaceList();
         getPlaceList();
 
-        initView();
 
 
     }
 
     private void initView() {
         //류땅
-        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
-        txtPlanName.setText("플랜이름 : " + planname);
-        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
-        txtPlanExplain.setText("설명 : " + planexplain);
+//        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+//        txtPlanName.setText("플랜이름 : " + planname);
+//        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+//        txtPlanExplain.setText("설명 : " + planexplain);
 
-        logoutTxt = (TextView) findViewById(R.id.logout_txt);
-        settingTxt = (TextView) findViewById(R.id.setting_txt);
+        btnLogout = (Button) findViewById(R.id.btn_logout);
+        btnSetting = (Button) findViewById(R.id.btn_setting);
 
-        logoutTxt.setOnClickListener(new View.OnClickListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
-        settingTxt.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
@@ -561,6 +562,31 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Log.i("MyTag", "에러내용 : " + t.getMessage());
             }
         });
+
+        // 총거리 시간 받기
+        final Call<Plan> getPlanInfo = awsNetworkService.getPlanInfo(param);
+        getPlanInfo.enqueue(new Callback<Plan>() {
+            @Override
+            public void onResponse(Response<Plan> response, Retrofit retrofit) {
+                if (response.code() == 200) {
+
+                    Plan tmpPlan = response.body();
+                    txtResultKm.setText(Integer.parseInt(tmpPlan.alldistance)/1000 + "." + Integer.parseInt(tmpPlan.alldistance)%1000 + "Km");
+                    txtResultTime.setText(Integer.parseInt(tmpPlan.alltime)/60 + "분");
+
+                } else if (response.code() == 503) {
+                    int statusCode = response.code();
+                    Log.i("MyTag", "응답코드 : " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+                Log.i("MyTag 총시간 ", "에러내용 : " + t.getMessage());
+            }
+        });
+
     }
 
     // 리스트뷰 어뎁터
