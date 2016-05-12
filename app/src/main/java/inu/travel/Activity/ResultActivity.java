@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -102,7 +103,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     private ListView resultPlaceListView;
     private ResultPlaceAdapter resultPlaceAdapter;
 
-    private Bitmap savedBitmap; //장소추가했을때
+    private Bitmap[] savedBitmap = new Bitmap[9]; //장소추가했을때
 
     //팝업
     PopupWindow mPopupWindow;
@@ -181,8 +182,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
-            polyLine.setLineColor(0xFFF5A620);
-            polyLine.setLineWidth(5);
+            polyLine.setLineColor(0x00F7EF04);
+//            polyLine.setLineWidth(10);
             //시작점
             startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
             polyLine.addLinePoint(startPoint);
@@ -225,7 +226,15 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     }
 
     private void initIcon() {
-        savedBitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place);
+        savedBitmap[0] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place1);
+        savedBitmap[1] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place2);
+        savedBitmap[2] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place3);
+        savedBitmap[3] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place4);
+        savedBitmap[4] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place5);
+        savedBitmap[5] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place6);
+        savedBitmap[6] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place7);
+        savedBitmap[7] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place8);
+        savedBitmap[8] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place9);
     }
 
     @Override
@@ -516,7 +525,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     //placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
                     for (int i = 0; i < placeList.getItem().size(); i++) {
                         TMapPOIItem item = new TMapPOIItem();
-                        item.Icon = savedBitmap;
+                        item.Icon = savedBitmap[i];
                         item.noorLon = placeList.getItem().get(i).getMapx();
                         item.noorLat = placeList.getItem().get(i).getMapy();
                         item.name = placeList.getItem().get(i).getPlacename(); //장소명
