@@ -181,7 +181,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
-            polyLine.setLineColor(0xFFFABE24);
+            polyLine.setLineColor(0xFFF5A620);
             polyLine.setLineWidth(5);
             //시작점
             startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
