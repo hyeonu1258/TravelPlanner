@@ -1045,7 +1045,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 for (int j = 0; j < savedPOIPlaceList.size(); j++) {
                     if (poiArrayList.get(i).getPOIID() == savedPOIPlaceList.get(j).getPOIID()) {
                         System.out.println("저장된것클릭");
-//                        Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
                         selectedPOIItem = poiArrayList.get(0);
 

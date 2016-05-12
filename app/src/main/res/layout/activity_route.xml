@@ -13,9 +13,10 @@
 
         <Button
             android:id="@+id/btnBackRoute"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:text="뒤로" />
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:background="@mipmap/btn_back"
+            />
 
         <TextView
             android:id="@+id/txtStartEndPlace"

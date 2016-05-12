@@ -344,16 +344,16 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         toolbar.showOverflowMenu();
 
         //토글 생성
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
-        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-            }
-        };
-        drawer.setDrawerListener(toggle);
-        toggle.syncState(); //토글스위치 이미지 전환
+//        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+//        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+//                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {
+//                super.onDrawerSlide(drawerView, slideOffset);
+//            }
+//        };
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState(); //토글스위치 이미지 전환
 
         navigationView = (NavigationView) findViewById(R.id.nav_view2);
         disableOverScroll(navigationView);
