@@ -75,7 +75,7 @@
                         android:id="@+id/btnPublic"
                         android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginLeft="1dp"
                         android:layout_weight="1"
                         android:background="@mipmap/btn_bus"
                         android:onClick="btnClick" />
@@ -93,7 +93,7 @@
                         android:gravity="center|end"
                         android:paddingEnd="10dp"
                         android:text="총 거리"
-                        android:textSize="20dp" />
+                        android:textSize="15dp" />
 
                     <TextView
                         android:id="@+id/txtResultKm"
@@ -112,7 +112,7 @@
                         android:gravity="center|end"
                         android:paddingEnd="10dp"
                         android:text="총 시간"
-                        android:textSize="20dp" />
+                        android:textSize="15dp" />
 
                     <TextView
                         android:id="@+id/txtResultTime"

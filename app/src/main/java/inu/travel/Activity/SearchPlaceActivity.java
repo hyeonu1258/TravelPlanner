@@ -147,6 +147,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 //        Font.setGlobalFont(this, getWindow().getDecorView());
 
         setContentView(R.layout.activity_search_place);
+        setTitle("");
         initNetworkService();
         mContext = this;
 
