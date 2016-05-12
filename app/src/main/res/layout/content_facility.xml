@@ -25,24 +25,28 @@
             android:orientation="horizontal">
             <Button
                 android:id="@+id/btnEdit"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="20dp"
-                android:text="뒤로"
+                android:layout_marginTop="20dp"
+                android:background="@mipmap/btn_back"
                 android:textSize="15dp" />
             <Button
                 android:id="@+id/btnMT"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="120dp"
-                android:text="숙박"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:background="@mipmap/btn_mt"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:textSize="15dp" />
             <Button
                 android:id="@+id/btnEat"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="220dp"
-                android:text="맛집"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:background="@mipmap/btn_eat"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/btnMT"
                 android:textSize="15dp" />
         </RelativeLayout>
 

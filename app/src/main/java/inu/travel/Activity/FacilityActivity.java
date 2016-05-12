@@ -483,7 +483,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
                     selectedPOIItem = null; //임시저장된것 삭제
                 } else {//다른장소를 선택할 경우 이전의 것 이미지 초기화 해준뒤 선택한 장소 이미지 바꾸고 임시저장
                     //get(0)으로 첫번째 거만 클릭이벤트 처리함
-                    Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
                     if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
                         selectedPOIItem.Icon = defaultBitmap;

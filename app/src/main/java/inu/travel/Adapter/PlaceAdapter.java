@@ -3,6 +3,7 @@ package inu.travel.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+
+import inu.travel.Model.Font;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
 import inu.travel.R;
@@ -29,10 +32,12 @@ public class PlaceAdapter extends BaseAdapter {
     Handler handler = new Handler();  // 외부쓰레드 에서 메인 UI화면을 그릴때 사용
     private ArrayList<Place> placeDatas;
     LayoutInflater layoutInflater;
+    Context context;
 
     public PlaceAdapter(ArrayList<Place> placeDatas, Context context) {
         this.placeDatas = placeDatas;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = context;
     }
 
     public void setSource(ArrayList<Place> placeDatas) {
@@ -84,6 +89,9 @@ public class PlaceAdapter extends BaseAdapter {
             viewHolder = (PlaceViewHolder) convertView.getTag();
         }
 
+//        Font.setGlobalFont(context, convertView);
+//        viewHolder.txtNameItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
+//        viewHolder.txtAddrItem.setTypeface(Typeface.createFromAsset(context.getAssets(), "NanumBrush.ttf"));
         final Place place = placeDatas.get(position);
         viewHolder.txtNameItem.setText(place.getPlacename().toString());
         viewHolder.txtAddrItem.setText(place.getAddress().toString());

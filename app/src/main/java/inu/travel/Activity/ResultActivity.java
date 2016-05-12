@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +42,6 @@ import com.skp.Tmap.TMapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -52,6 +52,7 @@ import inu.travel.Adapter.ResultPlaceAdapter;
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
+import inu.travel.Model.Plan;
 import inu.travel.Model.SearchPlace;
 import inu.travel.Network.AwsNetworkService;
 import inu.travel.Network.TourNetworkService;
@@ -83,8 +84,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     NavigationView navigationView;
     TextView txtPlanName;
     TextView txtPlanExplain;
-    TextView logoutTxt;
-    TextView settingTxt;
+    TextView btnLogout;
+    TextView btnSetting;
 
     //id, planname
     private String id;
@@ -102,7 +103,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     private ListView resultPlaceListView;
     private ResultPlaceAdapter resultPlaceAdapter;
 
-    private Bitmap savedBitmap; //장소추가했을때
+    private Bitmap[] savedBitmap = new Bitmap[9]; //장소추가했을때
 
     //팝업
     PopupWindow mPopupWindow;
@@ -116,6 +117,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        initView();
+
         initNetworkService();
         initNaviView();
         initListView();
@@ -127,31 +130,30 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         initPlaceList();
         getPlaceList();
 
-        initView();
 
 
     }
 
     private void initView() {
         //류땅
-        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
-        txtPlanName.setText("플랜이름 : " + planname);
-        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
-        txtPlanExplain.setText("설명 : " + planexplain);
+//        txtPlanName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_name);
+//        txtPlanName.setText("플랜이름 : " + planname);
+//        txtPlanExplain = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_plan_explain);
+//        txtPlanExplain.setText("설명 : " + planexplain);
 
-        logoutTxt = (TextView) findViewById(R.id.logout_txt);
-        settingTxt = (TextView) findViewById(R.id.setting_txt);
+        btnLogout = (Button) findViewById(R.id.btn_logout);
+        btnSetting = (Button) findViewById(R.id.btn_setting);
 
-        logoutTxt.setOnClickListener(new View.OnClickListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
-        settingTxt.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
         txtResultKm = (TextView) findViewById(R.id.txtResultKm);
@@ -174,14 +176,14 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         ArrayList<TMapPolyLine> polyLineArrayList = new ArrayList<>();
         TMapPoint startPoint, endPoint;
         TMapPoint centerPoint = new TMapPoint(0, 0);
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.mipmap.marker_route);
 
         System.out.println("선그리기 => 장소갯수 : " + savedPOIPlaceList.size());
 
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
-            polyLine.setLineColor(0xFF5CD1E5);
-            polyLine.setLineWidth(5);
+            polyLine.setLineColor(0x00F7EF04);
+//            polyLine.setLineWidth(10);
             //시작점
             startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
             polyLine.addLinePoint(startPoint);
@@ -224,7 +226,15 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     }
 
     private void initIcon() {
-        savedBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.save);
+        savedBitmap[0] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place1);
+        savedBitmap[1] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place2);
+        savedBitmap[2] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place3);
+        savedBitmap[3] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place4);
+        savedBitmap[4] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place5);
+        savedBitmap[5] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place6);
+        savedBitmap[6] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place7);
+        savedBitmap[7] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place8);
+        savedBitmap[8] = BitmapFactory.decodeResource(this.getResources(), R.mipmap.place9);
     }
 
     @Override
@@ -334,16 +344,16 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         toolbar.showOverflowMenu();
 
         //토글 생성
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
-        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-            }
-        };
-        drawer.setDrawerListener(toggle);
-        toggle.syncState(); //토글스위치 이미지 전환
+//        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
+//        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+//                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {
+//                super.onDrawerSlide(drawerView, slideOffset);
+//            }
+//        };
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState(); //토글스위치 이미지 전환
 
         navigationView = (NavigationView) findViewById(R.id.nav_view2);
         disableOverScroll(navigationView);
@@ -515,7 +525,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     //placeList를 TMAPPOIItem으로 바꿔서 맵에 표시하기
                     for (int i = 0; i < placeList.getItem().size(); i++) {
                         TMapPOIItem item = new TMapPOIItem();
-                        item.Icon = savedBitmap;
+                        item.Icon = savedBitmap[i];
                         item.noorLon = placeList.getItem().get(i).getMapx();
                         item.noorLat = placeList.getItem().get(i).getMapy();
                         item.name = placeList.getItem().get(i).getPlacename(); //장소명
@@ -561,6 +571,31 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 Log.i("MyTag", "에러내용 : " + t.getMessage());
             }
         });
+
+        // 총거리 시간 받기
+        final Call<Plan> getPlanInfo = awsNetworkService.getPlanInfo(param);
+        getPlanInfo.enqueue(new Callback<Plan>() {
+            @Override
+            public void onResponse(Response<Plan> response, Retrofit retrofit) {
+                if (response.code() == 200) {
+
+                    Plan tmpPlan = response.body();
+                    txtResultKm.setText(Integer.parseInt(tmpPlan.alldistance)/1000 + "." + Integer.parseInt(tmpPlan.alldistance)%1000 + "Km");
+                    txtResultTime.setText(Integer.parseInt(tmpPlan.alltime)/60 + "분");
+
+                } else if (response.code() == 503) {
+                    int statusCode = response.code();
+                    Log.i("MyTag", "응답코드 : " + statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), "Failed to load place", Toast.LENGTH_LONG).show();
+                Log.i("MyTag 총시간 ", "에러내용 : " + t.getMessage());
+            }
+        });
+
     }
 
     // 리스트뷰 어뎁터
@@ -584,7 +619,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 TMapPOIItem selectedPOIItem = tMapPOIItems.get(position);
 
                 if (viewId == R.id.btnCompleteViewDetail) {
-                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
                     viewDetail(selectedPOIItem);
                 }
             }
@@ -600,7 +635,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 startActivity(intent);
                 break;
             case R.id.btnEdit: //수정버튼
-                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
                 Intent intent2 = new Intent(getApplicationContext(), SearchPlaceActivity.class);
                 intent2.putExtra("Userid", id);
                 intent2.putExtra("PlanName", planname);

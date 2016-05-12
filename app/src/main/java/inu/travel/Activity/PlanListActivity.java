@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,9 +38,9 @@ public class PlanListActivity extends Activity {
     private List<PlanList> planDatas = new ArrayList<>();
 
     EditText editDetail_d;
+    EditText editName_d;
     GridView gridView;
     PlanAdapter adapter;
-    EditText editName_d;
     AwsNetworkService awsNetworkService;
     SharedPreferences pref;
     int PlanListLengh = 0;               //플랜 총 개수
@@ -47,6 +48,11 @@ public class PlanListActivity extends Activity {
     Button logoutBtn;                    //로그아웃 버튼
     TextView txtTitle_item;
     TextView txtDescription_item;
+    TextView dialogTitle;
+    TextView dialogDetail;
+    Typeface typefaceRegular;          //font 설정
+    Typeface typefaceBold;
+
 
 
     @Override
@@ -139,7 +145,7 @@ public class PlanListActivity extends Activity {
                     LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
                     View dialogLayout = layoutInflater.inflate(R.layout.dialog_remove_plan, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlanListActivity.this);
-                    builder.setTitle("삭제");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
+                    //builder.setTitle("삭제");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
                     builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
 
                     builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -148,7 +154,7 @@ public class PlanListActivity extends Activity {
 
                             PlanList temp_planList = new PlanList(user_id, temp_name);
                             //삭제할 PlanList의 객체 생성 아이디, 플랜이름
-                            Toast.makeText(PlanListActivity.this, "" + user_id + temp_name, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PlanListActivity.this, "" + user_id + temp_name, Toast.LENGTH_SHORT).show();
 
                             Call<Object> removePlanList = awsNetworkService.removePlanList(temp_planList);
                             removePlanList.enqueue(new Callback<Object>() {
@@ -156,7 +162,7 @@ public class PlanListActivity extends Activity {
                                 public void onResponse(Response<Object> response, Retrofit retrofit) {
                                     if (response.code() == 200) {
                                         onResume();
-                                        Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
                                     } else if (response.code() == 503) {
                                         Toast.makeText(PlanListActivity.this, "삭제실패", Toast.LENGTH_SHORT).show();
                                     }
@@ -176,7 +182,7 @@ public class PlanListActivity extends Activity {
                     builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), "취소되었습니다.", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "취소되었습니다.", Toast.LENGTH_SHORT).show();
                         }
 
                     });
@@ -192,7 +198,7 @@ public class PlanListActivity extends Activity {
 
     private void loadServer() {                         //서버로부터 플랜목록 받아옴
 
-        Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
 
         final Call<List<PlanList>> getPlanList = awsNetworkService.getPlanList(user_id);
 
@@ -201,7 +207,7 @@ public class PlanListActivity extends Activity {
             public void onResponse(Response<List<PlanList>> response, Retrofit retrofit) {
                 if (response.code() == 200) {
                     planDatas = response.body();
-                    Toast.makeText(PlanListActivity.this, "" + planDatas.size(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PlanListActivity.this, "" + planDatas.size(), Toast.LENGTH_SHORT).show();
                     PlanListLengh = planDatas.size();
                     makePlusButton();
                     adapter.setSource(planDatas);
@@ -213,7 +219,7 @@ public class PlanListActivity extends Activity {
 
             @Override
             public void onFailure(Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load thumbnails", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Failed to load thumbnails", Toast.LENGTH_LONG).show();
                 Log.i("MyTag", "에러내용 : " + t.getMessage());
             }
         });
@@ -250,11 +256,15 @@ public class PlanListActivity extends Activity {
         LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
         View dialogLayout = layoutInflater.inflate(R.layout.dialog_add_plan, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
         AlertDialog.Builder builder = new AlertDialog.Builder(PlanListActivity.this);
-        builder.setTitle("여행추가");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
+      //  builder.setTitle("여행추가");//다이얼로그의 상단에 표시되는 텍스트인 Title을 정해줍니다.
         builder.setView(dialogLayout); //layout(위에서 layoutInflater를 통해 인플레이트한)을 다이얼로그가 뷰의 형태로 가져옵니다.
 
+        dialogTitle = (TextView)dialogLayout.findViewById(R.id.planTitle_d);
+        dialogDetail = (TextView)dialogLayout.findViewById(R.id.planDetail_d);
         editName_d = (EditText) dialogLayout.findViewById(R.id.editName_d);
         editDetail_d = (EditText) dialogLayout.findViewById(R.id.editDetail_d);
+        changeFont();
+        //dialogFont
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -270,7 +280,7 @@ public class PlanListActivity extends Activity {
                     @Override
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
-                            Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
                             editName_d.setText("");
                             editDetail_d.setText("");
                             onResume();
@@ -300,6 +310,7 @@ public class PlanListActivity extends Activity {
 
         AlertDialog alertDialog = builder.create(); //만들어놓은 AlertDialog.Builder인 builder를 이용해서 새로운 AlertDialog를 만듭니다.
         alertDialog.show(); //다이얼로그를 띄웁니다.
+
     }
 
 
@@ -312,7 +323,6 @@ public class PlanListActivity extends Activity {
         editName_d = (EditText) findViewById(R.id.editName_d);
         editDetail_d = (EditText) findViewById(R.id.editDetail_d);
         logoutBtn = (Button) findViewById(R.id.logoutBtn);
-
         txtTitle_item = (TextView)findViewById(R.id.txtTitle_item);
         txtDescription_item = (TextView) findViewById(R.id.txtDescription_item);
 
@@ -321,7 +331,7 @@ public class PlanListActivity extends Activity {
     private void initSharedPre() {
         pref = getSharedPreferences("login", 0);
         user_id = pref.getString("id", "");                  //SharedPreferences을 통해 id를 받아온다.
-        Toast.makeText(PlanListActivity.this, "" + user_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(PlanListActivity.this, "" + user_id, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -333,6 +343,14 @@ public class PlanListActivity extends Activity {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+    private void changeFont(){
+        typefaceRegular = Typeface.createFromAsset(getAssets(),"NanumGothic.ttf");
+        typefaceBold = Typeface.createFromAsset(getAssets(),"NanumGothicBold.ttf");
+        editDetail_d.setTypeface(typefaceRegular);
+        editName_d.setTypeface(typefaceRegular);
+        dialogTitle.setTypeface(typefaceBold);
+        dialogDetail.setTypeface(typefaceBold);
     }
 
 }

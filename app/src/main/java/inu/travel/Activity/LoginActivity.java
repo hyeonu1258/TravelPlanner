@@ -41,8 +41,11 @@ public class LoginActivity extends Activity {
     String Userid;                      //사용자 아이디
     String Userpass;                    //사용자 비밀번호
     ProgressBar progressBar; // 로딩화면을 위한 변수
-    TextView loginText;
-    Typeface typeface;          //font 설정
+    TextView joinText;
+    TextView idSearchText;
+    TextView passSearchText;
+    Typeface typefaceRegular;          //font 설정
+    Typeface typefaceBold;
 
 
 
@@ -62,7 +65,7 @@ public class LoginActivity extends Activity {
 
 
 
-        Toast.makeText(getApplicationContext(), "로그인 화면입니다.", Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), "로그인 화면입니다.", Toast.LENGTH_LONG).show();
 
 
         editPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -92,9 +95,9 @@ public class LoginActivity extends Activity {
                 final String id = editID.getText().toString();
                 final String pass = editPass.getText().toString();
 
-                Toast.makeText(getApplicationContext(), "로그인 버튼이 눌렸습니다.\n"
-                        + "입력하신   아이디 : " + id + "\n"
-                        + "입력하신 비밀번호 : " + pass, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "로그인 버튼이 눌렸습니다.\n"
+//                        + "입력하신   아이디 : " + id + "\n"
+//                        + "입력하신 비밀번호 : " + pass, Toast.LENGTH_SHORT).show();
 
                 String Temp = testMD5(pass);
                 //temp 임시 암호화 변수
@@ -107,7 +110,7 @@ public class LoginActivity extends Activity {
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
                             ActivateProgressbar();      //로딩화면 활성화
-                            Toast.makeText(getApplicationContext(), "로그인 OK", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "로그인 OK", Toast.LENGTH_SHORT).show();
                             edit.putString("id", id);
                             edit.putString("pass", pass);
                             edit.commit();
@@ -140,7 +143,7 @@ public class LoginActivity extends Activity {
             }
         });
         */
-        loginText.setOnClickListener(new View.OnClickListener() {
+        joinText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
@@ -156,11 +159,21 @@ public class LoginActivity extends Activity {
         editPass = (EditText) findViewById(R.id.editPass);
         btnJoin = (Button) findViewById(R.id.btnJoin);
         btnLogin = (Button) findViewById(R.id.btnLogin);
-        loginText = (TextView) findViewById(R.id.loginText);
-        typeface = Typeface.createFromAsset(getAssets(),"NanumBrush.ttf");
-        loginText.setTypeface(typeface);
-        //폰트
+        joinText = (TextView) findViewById(R.id.joinText);
+        idSearchText= (TextView)findViewById(R.id.idSearchText);
+        passSearchText = (TextView)findViewById(R.id.passSearchText);
+        changeFont();                   //font
     }
+    private void changeFont(){
+        typefaceRegular = Typeface.createFromAsset(getAssets(),"NanumGothic.ttf");
+        typefaceBold = Typeface.createFromAsset(getAssets(),"NanumGothicBold.ttf");
+        joinText.setTypeface(typefaceBold);
+        idSearchText.setTypeface(typefaceRegular);
+        passSearchText.setTypeface(typefaceRegular);
+        editID.setTypeface(typefaceRegular);
+        editPass.setTypeface(typefaceRegular);
+    }
+
     private void initNetworkService(){
         awsNetworkService = ApplicationController.getInstance().getAwsNetwork();
     }
@@ -175,10 +188,10 @@ public class LoginActivity extends Activity {
         Userpass = pref.getString("pass", "null");          //SharedPreferences에서 비밀번호 가져옴
 
         if(!(Userid.equals("null"))){                       //null이 아니라면
-            Toast.makeText(LoginActivity.this, "로그인 기록이 있다."+ Userid + Userpass, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this, "로그인 기록이 있다."+ Userid + Userpass, Toast.LENGTH_SHORT).show();
             editID.setText(Userid);                         //아이디 설정
             editPass.setText(Userpass);                     //비밀번호 설정
-            Toast.makeText(LoginActivity.this, ""+btnLogin.getText()+editID.getText()+editPass.getText(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this, ""+btnLogin.getText()+editID.getText()+editPass.getText(), Toast.LENGTH_SHORT).show();
 
             btnLogin.post(new Runnable() {
                 @Override
@@ -188,7 +201,7 @@ public class LoginActivity extends Activity {
             });
 
         } else {
-            Toast.makeText(LoginActivity.this, "로그인 기록이 없다.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this, "로그인 기록이 없다.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -240,7 +253,7 @@ public class LoginActivity extends Activity {
 
     }
     public void joinClick(View v){
-        Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "회원가입 버튼이 눌렸습니다.", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplication(), JoinActivity.class);
         startActivity(intent);
     }
