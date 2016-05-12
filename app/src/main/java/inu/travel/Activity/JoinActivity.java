@@ -86,11 +86,11 @@ public class JoinActivity extends Activity {
                 pass = editPass.getText().toString();
                 email = editEmail.getText().toString();
                 if (!checkEmailForm(email)) {               //이메일 형시 검사
-                    Toast.makeText(JoinActivity.this, "email형식이 틀려", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(JoinActivity.this, "email형식이 틀려", Toast.LENGTH_SHORT).show();
                 } else {
                     String temp = testMD5(pass);            //MD5를 통해서 비밀번호 암호화
                     //temp 임시 암호화 변수
-                    Toast.makeText(JoinActivity.this, "" + testMD5(pass), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(JoinActivity.this, "" + testMD5(pass), Toast.LENGTH_SHORT).show();
 
                     //Person 객체 생성해서 서버로 보냄
                     Person person = new Person(id, temp, email);
@@ -99,7 +99,7 @@ public class JoinActivity extends Activity {
                         @Override
                         public void onResponse(Response<Object> response, Retrofit retrofit) {
                             if (response.code() == 200) {
-                                Toast.makeText(getApplicationContext(), "회원등록 OK", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplicationContext(), "회원등록 OK", Toast.LENGTH_SHORT).show();
                                 edit.putString("id", id);
                                 edit.putString("pass", pass);
                                 edit.commit();

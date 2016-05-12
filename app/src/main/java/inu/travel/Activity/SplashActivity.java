@@ -16,7 +16,7 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        Toast.makeText(getApplicationContext(), "로딩 화면입니다.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "로딩 화면입니다.", Toast.LENGTH_SHORT).show();
 
         handler.postDelayed(new Runnable() {
 

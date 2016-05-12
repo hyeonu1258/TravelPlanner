@@ -147,13 +147,13 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
         txtResultKm = (TextView) findViewById(R.id.txtResultKm);
@@ -619,7 +619,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 TMapPOIItem selectedPOIItem = tMapPOIItems.get(position);
 
                 if (viewId == R.id.btnCompleteViewDetail) {
-                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "상세보기 clicked", Toast.LENGTH_SHORT).show();
                     viewDetail(selectedPOIItem);
                 }
             }
@@ -635,7 +635,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 startActivity(intent);
                 break;
             case R.id.btnEdit: //수정버튼
-                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "수정", Toast.LENGTH_SHORT).show();
                 Intent intent2 = new Intent(getApplicationContext(), SearchPlaceActivity.class);
                 intent2.putExtra("Userid", id);
                 intent2.putExtra("PlanName", planname);
