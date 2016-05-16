@@ -154,7 +154,7 @@ public class PlanListActivity extends Activity {
 
                             PlanList temp_planList = new PlanList(user_id, temp_name);
                             //삭제할 PlanList의 객체 생성 아이디, 플랜이름
-                            Toast.makeText(PlanListActivity.this, "" + user_id + temp_name, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PlanListActivity.this, "" + user_id + temp_name, Toast.LENGTH_SHORT).show();
 
                             Call<Object> removePlanList = awsNetworkService.removePlanList(temp_planList);
                             removePlanList.enqueue(new Callback<Object>() {
@@ -162,7 +162,7 @@ public class PlanListActivity extends Activity {
                                 public void onResponse(Response<Object> response, Retrofit retrofit) {
                                     if (response.code() == 200) {
                                         onResume();
-                                        Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(PlanListActivity.this, "삭제성공", Toast.LENGTH_SHORT).show();
                                     } else if (response.code() == 503) {
                                         Toast.makeText(PlanListActivity.this, "삭제실패", Toast.LENGTH_SHORT).show();
                                     }
@@ -182,7 +182,7 @@ public class PlanListActivity extends Activity {
                     builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), "취소되었습니다.", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "취소되었습니다.", Toast.LENGTH_SHORT).show();
                         }
 
                     });
@@ -198,7 +198,7 @@ public class PlanListActivity extends Activity {
 
     private void loadServer() {                         //서버로부터 플랜목록 받아옴
 
-        Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(PlanListActivity.this, user_id, Toast.LENGTH_SHORT).show();
 
         final Call<List<PlanList>> getPlanList = awsNetworkService.getPlanList(user_id);
 
@@ -207,7 +207,7 @@ public class PlanListActivity extends Activity {
             public void onResponse(Response<List<PlanList>> response, Retrofit retrofit) {
                 if (response.code() == 200) {
                     planDatas = response.body();
-                    Toast.makeText(PlanListActivity.this, "" + planDatas.size(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PlanListActivity.this, "" + planDatas.size(), Toast.LENGTH_SHORT).show();
                     PlanListLengh = planDatas.size();
                     makePlusButton();
                     adapter.setSource(planDatas);
@@ -219,7 +219,7 @@ public class PlanListActivity extends Activity {
 
             @Override
             public void onFailure(Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load thumbnails", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Failed to load thumbnails", Toast.LENGTH_LONG).show();
                 Log.i("MyTag", "에러내용 : " + t.getMessage());
             }
         });
@@ -280,7 +280,7 @@ public class PlanListActivity extends Activity {
                     @Override
                     public void onResponse(Response<Object> response, Retrofit retrofit) {
                         if (response.code() == 200) {
-                            Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "등록 OK", Toast.LENGTH_SHORT).show();
                             editName_d.setText("");
                             editDetail_d.setText("");
                             onResume();
@@ -331,7 +331,7 @@ public class PlanListActivity extends Activity {
     private void initSharedPre() {
         pref = getSharedPreferences("login", 0);
         user_id = pref.getString("id", "");                  //SharedPreferences을 통해 id를 받아온다.
-        Toast.makeText(PlanListActivity.this, "" + user_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(PlanListActivity.this, "" + user_id, Toast.LENGTH_SHORT).show();
 
     }
 

@@ -147,6 +147,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 //        Font.setGlobalFont(this, getWindow().getDecorView());
 
         setContentView(R.layout.activity_search_place);
+        setTitle("");
         initNetworkService();
         mContext = this;
 
@@ -219,13 +220,13 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Logout btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Setting btn clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -255,7 +256,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     else
                         Toast.makeText(getApplicationContext(), "선택된 장소가 없습니다.", Toast.LENGTH_SHORT).show();
                 } else if (view.getId() == R.id.btnRemoveListPlace) {
-                    Toast.makeText(getApplicationContext(), "장소삭제", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "장소삭제", Toast.LENGTH_SHORT).show();
                     if (selectedPOIItem == null || placeList.getItem().isEmpty())
                         return;
 
@@ -442,7 +443,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             public void onClick(View v) {
                 if (placeList.getItem().size() == 0)
                     return;
-                Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "완료", Toast.LENGTH_SHORT).show();
                 LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
                 View dialogLayout = layoutInflater.inflate(R.layout.dialog_set, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
                 AlertDialog.Builder builder = new AlertDialog.Builder(SearchPlaceActivity.this);
@@ -465,7 +466,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // 각 리스트를 선택했을때
-                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
                                 startPlace = placeList.getItem().get(whichButton);
                             }
                         }).setPositiveButton("Ok",
@@ -477,7 +478,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                     temp[i] = placeList.getItem().get(i).getPlacename();
 
 
-                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
                                 LayoutInflater layoutInflater2 = (LayoutInflater) getLayoutInflater(); //LayoutInflater를 가져오기 위한 다른 방법입니다. LayoutInflater는 Layout을 View의 형태로 변형해주는 역할이라고 3차 세미나 때 배웠었죠?
                                 View dialogLayout = layoutInflater2.inflate(R.layout.dialog_set, null);//dialog_layout이라는 레이아웃을 만듭니다. 이를 뷰의 형태로 다이얼로그에 띄우기 위해 인플레이트 해줍니다.
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(SearchPlaceActivity.this);
@@ -489,13 +490,13 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 // 각 리스트를 선택했을때
-                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
                                                 endPlace = placeList.getItem().get(whichButton);
                                             }
                                         }).setPositiveButton("Ok",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
-                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(SearchPlaceActivity.this, "" + whichButton, Toast.LENGTH_SHORT).show();
 
                                                 PlaceList tmpPlaceList = new PlaceList(); //출발지와 도착지를 셋팅한 리스트
                                                 tmpPlaceList.getItem().add(startPlace);
@@ -599,7 +600,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     }
 
     private void addPlace(TMapPOIItem selectedPOIItem) {
-        Toast.makeText(getApplicationContext(), "장소추가", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "장소추가", Toast.LENGTH_SHORT).show();
         if (this.selectedPOIItem == null) {
             System.out.println("선택한장소가 없습니다.");
             return;
@@ -1001,7 +1002,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
         selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.selected_place);
-        savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.save);
+        savedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.saved_place);
 
         btnZoomOut = (Button) findViewById(R.id.btn_zoom_out);
         btnZoomIn = (Button) findViewById(R.id.btn_zoom_in);
@@ -1048,6 +1049,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 for (int j = 0; j < savedPOIPlaceList.size(); j++) {
                     if (poiArrayList.get(i).getPOIID() == savedPOIPlaceList.get(j).getPOIID()) {
                         System.out.println("저장된것클릭");
+                        Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+
                         selectedPOIItem = poiArrayList.get(0);
 
                         return false;
@@ -1062,7 +1065,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     selectedPOIItem = null; //임시저장된것 삭제
                 } else {//다른장소를 선택할 경우 이전의 것 이미지 초기화 해준뒤 선택한 장소 이미지 바꾸고 임시저장
                     //get(0)으로 첫번째 거만 클릭이벤트 처리함
-                    Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
                     if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
                         selectedPOIItem.Icon = defaultBitmap;
@@ -1167,9 +1170,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         int id = item.getItemId();
 
         if (id == R.id.nav_share) {
-            Toast.makeText(SearchPlaceActivity.this, "share is selected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(SearchPlaceActivity.this, "share is selected", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
-            Toast.makeText(SearchPlaceActivity.this, "send is selected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(SearchPlaceActivity.this, "send is selected", Toast.LENGTH_SHORT).show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

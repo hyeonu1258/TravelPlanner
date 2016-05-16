@@ -4,66 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:paddingTop="57dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="57dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="10"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="inu.travel.Activity.ResultActivity"
-        tools:showIn="@layout/app_bar_result"
-        android:orientation="vertical">
+        tools:showIn="@layout/app_bar_result">
 
         <RelativeLayout
             android:id="@+id/map_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="4"
             android:orientation="horizontal">
+
             <Button
-                android:onClick="btnClick"
                 android:id="@+id/btnEdit"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="20dp"
-                android:text="수정"
-                android:textSize="15dp" />
+                android:layout_marginTop="20dp"
+                android:background="@mipmap/btn_revise"
+                android:onClick="btnClick" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/topLinear"
-                android:background="@android:color/darker_gray"/>
-
+                android:background="@android:color/darker_gray" />
         </RelativeLayout>
+
         <View
             android:id="@+id/bottom_line2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignBottom="@+id/map_view"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="6">
-
-
-            <ListView
-                android:id="@+id/resultitemlist"
-                android:layout_width="240dp"
-                android:layout_height="match_parent">
-            </ListView>
-            <View
-                android:id="@+id/bottom_line3"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/darker_gray"/>
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,71 +61,81 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:orientation="horizontal">
 
                     <Button
-                        android:onClick="btnClick"
                         android:id="@+id/btnCar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:textSize="8dp"
-                        android:text="자동차"/>
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/btn_car"
+                        android:onClick="btnClick" />
+
                     <Button
                         android:id="@+id/btnPublic"
-                        android:onClick="btnClick"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:textSize="8dp"
-                        android:text="대중교통"/>
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/btn_bus"
+                        android:onClick="btnClick" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="총 거리" />
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center|end"
+                        android:paddingEnd="10dp"
+                        android:text="총 거리"
+                        android:textSize="15dp" />
+
                     <TextView
                         android:id="@+id/txtResultKm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_gravity="right"
-                        android:textSize="15dp"
-                        android:text="xxxKm"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical">
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center|start"
+                        android:paddingStart="10dp"
+                        android:text="xxxKm"
+                        android:textSize="15dp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="총 시간" />
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center|end"
+                        android:paddingEnd="10dp"
+                        android:text="총 시간"
+                        android:textSize="15dp" />
+
                     <TextView
                         android:id="@+id/txtResultTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_gravity="right"
-                        android:textSize="15dp"
-                        android:text="xx시 xx분"/>
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center|start"
+                        android:paddingStart="10dp"
+                        android:text="xx시 xx분"
+                        android:textSize="15dp" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+
+                    <ListView
+                        android:id="@+id/resultitemlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></ListView>
+
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

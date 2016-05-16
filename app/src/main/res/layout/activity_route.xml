@@ -13,9 +13,10 @@
 
         <Button
             android:id="@+id/btnBackRoute"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:text="뒤로" />
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:background="@mipmap/btn_back"
+            />
 
         <TextView
             android:id="@+id/txtStartEndPlace"
@@ -36,7 +37,17 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="420dp"
-        android:layout_marginTop="51dp"></RelativeLayout>
+        android:layout_marginTop="51dp">
+
+        <Button
+            android:id="@+id/btnGoToTmap"
+            android:layout_width="85dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@mipmap/btn_tmap" />
+    </RelativeLayout>
 
     <View
         android:id="@+id/bottom_line"

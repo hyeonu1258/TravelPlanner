@@ -1,91 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
     android:clickable="false"
     android:descendantFocusability="blocksDescendants"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    android:layout_width="match_parent"
-    android:layout_height="80dp"
     android:orientation="horizontal">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:id="@+id/tempLinear"
-    android:layout_height="match_parent">
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardview"
-        card_view:cardCornerRadius="5dp"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_weight="1.5"
-        android:layout_margin="5dp">
-        <ImageView
-            android:id="@+id/imageViewThumbnail"
+
+    <LinearLayout
+        android:id="@+id/tempLinear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardview"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.5"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            card_view:cardCornerRadius="5dp">
+
+            <ImageView
+                android:id="@+id/imageViewThumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/img1" />
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_width="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_place"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:text="장소이름"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/textView_addr"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:text="주소"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:src="@drawable/img1" />
-    </android.support.v7.widget.CardView>
-    <LinearLayout
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="4"
-        android:orientation="vertical">
+            android:layout_weight="1.3"
+            android:orientation="vertical"
+            android:paddingTop="7dp">
 
-        <TextView
-            android:id="@+id/textView_place"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingTop="10dp"
-            android:text="장소이름"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="20dp" />
+            <Button
+                android:id="@+id/btnAddPlace"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="7dp"
+                android:background="@mipmap/btn_add_place" />
 
-        <TextView
-            android:id="@+id/textView_addr"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingTop="10dp"
-            android:text="주소"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="10dp" />
+            <Button
+                android:id="@+id/btnViewDetail"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="7dp"
+                android:background="@mipmap/btn_detail" />
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:paddingTop="7dp"
-        android:layout_weight="1.3"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnAddPlace"
-            android:layout_gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginRight="7dp"
-            android:background="@mipmap/btn_add_place"/>
-
-        <Button
-            android:id="@+id/btnViewDetail"
-            android:layout_gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginRight="7dp"
-            android:background="@mipmap/btn_detail"/>
-    </LinearLayout>
-</LinearLayout>
 
 </LinearLayout>

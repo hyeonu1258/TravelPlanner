@@ -60,7 +60,6 @@
             android:layout_height="match_parent"
             android:allowSingleTap="true"
             android:animateOnClick="true"
-            android:bottomOffset="5dp"
             android:content="@+id/content"
             android:handle="@+id/handle"
             android:orientation="vertical"
@@ -68,7 +67,7 @@
             >
             <ImageView
                 android:id="@+id/handle"
-                android:src="@drawable/ic_launcher"
+                android:src="@mipmap/slide_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />

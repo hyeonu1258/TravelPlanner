@@ -14,8 +14,9 @@
         card_view:cardCornerRadius="5dp"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_weight="1.5"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:layout_weight="1.5">
         <ImageView
             android:id="@+id/savedListThumbnail"
             android:clickable="false"
