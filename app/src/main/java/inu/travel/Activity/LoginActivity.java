@@ -257,6 +257,13 @@ public class LoginActivity extends Activity {
         Intent intent = new Intent(getApplication(), JoinActivity.class);
         startActivity(intent);
     }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) { // 백 버튼
+            Toast.makeText(LoginActivity.this, "back미러 뿌셔", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
 
 
 

@@ -58,7 +58,6 @@ import java.util.List;
 import inu.travel.Adapter.PlaceAdapter;
 import inu.travel.Adapter.SearchPlaceAdapter;
 import inu.travel.Component.ApplicationController;
-import inu.travel.Model.Font;
 import inu.travel.Model.Place;
 import inu.travel.Model.PlaceList;
 import inu.travel.Model.SearchPlace;
@@ -134,8 +133,9 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
     private int zoomLevel;
 
-    //inhoi listView set background
-    View preView;
+    //inhoi back click event
+    private final long	FINSH_INTERVAL_TIME    = 2000;
+    private long		backPressedTime        = 0;
 
 
     /**
@@ -178,6 +178,10 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 adapter.setSource(placeList.getItem()); //액션바 리스트 초기화
                 super.onDrawerSlide(drawerView, slideOffset);
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
             }
         };
         drawer.setDrawerListener(toggle);
@@ -1172,4 +1176,28 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         searchView.clearFocus(); //검색 포커스제거
         return true;
     }
-}
+
+    @Override
+    public void onBackPressed() { // 백 버튼
+        long tempTime        = System.currentTimeMillis();
+        long intervalTime    = tempTime - backPressedTime;
+
+            if(this.drawer.isDrawerOpen(GravityCompat.START))
+                this.drawer.closeDrawer(GravityCompat.START);
+            else if(SlidingDrawer.isOpened()){
+                SlidingDrawer.close();
+            }
+            else {
+                if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
+                    Toast.makeText(getApplicationContext(), "'종료한다~~~.", Toast.LENGTH_SHORT).show();
+                    super.onBackPressed();
+                } else {
+                    backPressedTime = tempTime;
+                    Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }
+
+    }
+
