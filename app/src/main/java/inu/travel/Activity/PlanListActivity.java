@@ -53,6 +53,10 @@ public class PlanListActivity extends Activity {
     Typeface typefaceRegular;          //font 설정
     Typeface typefaceBold;
 
+    //inhoi back click event
+    private final long	FINSH_INTERVAL_TIME    = 2000;
+    private long		backPressedTime        = 0;
+
 
 
     @Override
@@ -346,11 +350,28 @@ public class PlanListActivity extends Activity {
     }
     private void changeFont(){
         typefaceRegular = Typeface.createFromAsset(getAssets(),"NanumGothic.ttf");
-        typefaceBold = Typeface.createFromAsset(getAssets(),"NanumGothicBold.ttf");
+        typefaceBold = Typeface.createFromAsset(getAssets(), "NanumGothicBold.ttf");
         editDetail_d.setTypeface(typefaceRegular);
         editName_d.setTypeface(typefaceRegular);
         dialogTitle.setTypeface(typefaceBold);
         dialogDetail.setTypeface(typefaceBold);
+    }
+
+    @Override
+    public void onBackPressed() { // 백 버튼
+        long tempTime        = System.currentTimeMillis();
+        long intervalTime    = tempTime - backPressedTime;
+
+
+        if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
+            Toast.makeText(getApplicationContext(), "'종료한다~~~.", Toast.LENGTH_SHORT).show();
+            super.onBackPressed();
+        } else {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 }

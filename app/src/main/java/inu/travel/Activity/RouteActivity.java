@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +73,9 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
 
     // tmp
     ArrayList<NaviDescript> itemDatas = new ArrayList<NaviDescript>();
+
+    //slidewindow
+    SlidingDrawer slidingDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +171,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         naviListView = (ListView) findViewById(R.id.routeitemlist);
         btnBackRoute = (Button) findViewById(R.id.btnBackRoute);
         btnGoToTmap = (Button) findViewById(R.id.btnGoToTmap);
+        slidingDrawer = (SlidingDrawer) findViewById(R.id.slide);
     }
 
     private void parseXML(Document pathDoc) {
@@ -294,5 +299,15 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         return false;
+    }
+    public void onBackPressed() { // 백 버튼
+
+        if(slidingDrawer.isOpened()){
+            slidingDrawer.close();
+        }
+        else {
+                super.onBackPressed();
+        }
+
     }
 }

@@ -104,7 +104,7 @@ public class JoinActivity extends Activity {
                                 edit.putString("pass", pass);
                                 edit.commit();
                                 //id, pass SharedPreferences 저장한다.
-                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), DescriptionActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else if (response.code() == 406) {
@@ -198,4 +198,6 @@ public class JoinActivity extends Activity {
         String emailRegex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
         return Pattern.matches(emailRegex, src);
     }
+
+
 }
