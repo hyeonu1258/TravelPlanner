@@ -104,7 +104,7 @@ public class JoinActivity extends Activity {
                                 edit.putString("pass", pass);
                                 edit.commit();
                                 //id, pass SharedPreferences 저장한다.
-                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), DescriptionActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else if (response.code() == 406) {

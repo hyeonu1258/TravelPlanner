@@ -10,8 +10,8 @@
     <application
         android:name=".Component.ApplicationController"
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@mipmap/app_icon2"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activity.SplashActivity">
@@ -25,9 +25,7 @@
         <activity android:name=".Activity.FacilityActivity" />
         <activity android:name=".Activity.JoinActivity" />
         <activity android:name=".Activity.PlanListActivity" />
-        <activity android:name=".Activity.SearchPlaceActivity">
-
-        </activity>
+        <activity android:name=".Activity.SearchPlaceActivity"></activity>
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -37,8 +35,8 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Activity.ResultActivity" />
-
-        <activity android:name=".Activity.RouteActivity"></activity>
+        <activity android:name=".Activity.RouteActivity" />
+        <activity android:name=".Activity.DescriptionActivity"></activity>
     </application>
 
 </manifest>
