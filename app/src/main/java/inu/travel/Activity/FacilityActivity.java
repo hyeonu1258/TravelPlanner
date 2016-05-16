@@ -9,26 +9,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
-import android.text.Layout;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapInfo;
 import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
@@ -45,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import inu.travel.Adapter.FacilityAdapter;
-import inu.travel.Adapter.SearchPlaceAdapter;
 import inu.travel.Component.ApplicationController;
 import inu.travel.Model.SearchPlace;
 import inu.travel.Network.TourNetworkService;
@@ -54,8 +47,6 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-
-import android.os.Handler;
 
 
 public class FacilityActivity extends Activity implements TMapView.OnClickListenerCallback {
@@ -178,7 +169,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnMT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1);
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.facility1);
                 searchArea("32");
             }
         });
@@ -186,7 +177,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnEat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
+                defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.facility2);
                 searchArea("39");
             }
         });
@@ -437,15 +428,15 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         btnEdit = (Button) findViewById(R.id.btnEdit);
         listView = (ListView) findViewById(R.id.facilityItemListView);
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
-        tourBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        tourBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
         selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img2);
+        defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.facility2);
         searchArea("39");
     }
 
