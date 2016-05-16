@@ -1201,6 +1201,5 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             }
 
         }
-
     }
 

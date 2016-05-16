@@ -198,4 +198,6 @@ public class JoinActivity extends Activity {
         String emailRegex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
         return Pattern.matches(emailRegex, src);
     }
+
+
 }
