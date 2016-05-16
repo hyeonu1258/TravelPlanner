@@ -41,11 +41,12 @@
 
         <Button
             android:id="@+id/btnGoToTmap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="85dp"
+            android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
-            android:text="T map 연동"/>
+            android:layout_marginRight="10dp"
+            android:background="@mipmap/btn_tmap" />
     </RelativeLayout>
 
     <View
