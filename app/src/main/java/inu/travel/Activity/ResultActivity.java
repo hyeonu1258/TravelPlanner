@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapInfo;
 import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
@@ -103,6 +104,9 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
     private ResultPlaceAdapter resultPlaceAdapter;
 
     private Bitmap[] savedBitmap = new Bitmap[9]; //장소추가했을때
+
+    private boolean isShowTotalNavi = false; //전체경로보기
+    private int commonZoomLevel;
 
     //팝업
     PopupWindow mPopupWindow;
@@ -516,6 +520,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
                 if (response.code() == 200) {
                     System.out.println("Result:디비로딩성공");
+                    savedPOIPlaceList.clear();
                     //System.out.println(response.body());
 
                     placeList.setItem(response.body());
@@ -550,7 +555,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     //위치찾기
                     TMapInfo info = mMapView.getDisplayTMapInfo(tMapPoints);
                     mMapView.setCenterPoint(info.getTMapPoint().getLongitude(), info.getTMapPoint().getLatitude(), true);
-                    mMapView.setZoomLevel(info.getTMapZoomLevel());
+                    commonZoomLevel = info.getTMapZoomLevel();
+                    mMapView.setZoomLevel(commonZoomLevel);
                     initLine();
 
                     // 받아온 장소들 리스트뷰에 띄우기
@@ -626,6 +632,44 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         });
     }
 
+
+    //전체경로 띄움
+    private void initTotalNavi() {
+
+        System.out.println("전체경로보기");
+        //다중경로test
+        Thread getLineThread = new Thread(new Runnable() {
+            @Override
+            public void run() {    // 오래 걸릴 작업을 구현한다
+                // Auto-generated method stub
+                try {
+                    final TMapData tmapdata = new TMapData();
+                    TMapPoint startPoint = savedPOIPlaceList.get(0).getPOIPoint();
+                    TMapPoint endPoint = savedPOIPlaceList.get(savedPOIPlaceList.size()-1).getPOIPoint();
+                    ArrayList<TMapPoint> passList = new ArrayList<>();
+
+                    System.out.println("출발지=> " + savedPOIPlaceList.get(0).name);
+
+                    for(int i=1; i<savedPOIPlaceList.size()-1; i++){
+                        passList.add(savedPOIPlaceList.get(i).getPOIPoint());
+                        System.out.println(savedPOIPlaceList.get(i).name);
+                    }
+                    System.out.println("도착지=> " + savedPOIPlaceList.get(savedPOIPlaceList.size()-1).name);
+
+                    TMapPolyLine tMapPolyLine = tmapdata.findMultiPointPathData(startPoint, endPoint, passList, 0);
+                    mMapView.addTMapPath(tMapPolyLine); //출발지 도착지 경유지 표시
+
+                    //찍은 좌표로 맵 이동, 최적화
+                    mMapView.setZoomLevel(commonZoomLevel);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        getLineThread.start();
+    }
+
     public void btnClick(View v) {
         switch (v.getId()) {
             case R.id.btnInfo: //주변정보
@@ -642,6 +686,20 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                 intent2.putExtra("PlanExplain", planexplain);
                 startActivity(intent2);
                 finish();
+                break;
+            case R.id.btnTotalNavi: //전체경로
+                if(isShowTotalNavi==false){
+                    isShowTotalNavi=true;
+                    mMapView.removeAllTMapPOIItem();
+                    mMapView.removeAllMarkerItem();
+                    mMapView.removeAllTMapPolyLine();
+                    initTotalNavi();
+                }else{
+                    isShowTotalNavi=false;
+                    mMapView.removeTMapPath();
+                    getPlaceList();
+                }
+                break;
                 //TODO : 자동차 대중교통 버튼 추가
         }
     }

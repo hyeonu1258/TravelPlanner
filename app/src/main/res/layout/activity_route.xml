@@ -37,7 +37,16 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="420dp"
-        android:layout_marginTop="51dp"></RelativeLayout>
+        android:layout_marginTop="51dp">
+
+        <Button
+            android:id="@+id/btnGoToTmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:text="T map 연동"/>
+    </RelativeLayout>
 
     <View
         android:id="@+id/bottom_line"

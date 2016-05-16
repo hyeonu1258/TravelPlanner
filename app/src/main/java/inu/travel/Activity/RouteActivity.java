@@ -7,14 +7,13 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapInfo;
@@ -22,33 +21,16 @@ import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapPolyLine;
+import com.skp.Tmap.TMapTapi;
 import com.skp.Tmap.TMapView;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import java.util.HashMap;
 
 import inu.travel.Adapter.NaviListAdapter;
 import inu.travel.Component.ApplicationController;
@@ -82,6 +64,12 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
 
     private Button btnBackRoute;
 
+    //TMap 연동을 위한 자원
+    private TMapTapi tmaptapi;
+    private Button btnGoToTmap;
+    String startName;
+    String endName;
+
     // tmp
     ArrayList<NaviDescript> itemDatas = new ArrayList<NaviDescript>();
 
@@ -91,7 +79,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         setContentView(R.layout.activity_route);
 
         initView();
-
+        initTmapAPI();
         initNetworkService();
         initTMap();
         initPoint();
@@ -138,6 +126,34 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
                 finish();
             }
         });
+
+        btnGoToTmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isTmapApp = tmaptapi.isTmapApplicationInstalled();
+
+                if (isTmapApp) {
+                    HashMap<String, String> pathinfo = new HashMap<String, String>();
+                    // 출발지
+                    pathinfo.put("rStName",  startName);
+                    pathinfo.put("rStX", String.valueOf(startPoint.getLongitude()));
+                    pathinfo.put("rStY", String.valueOf(startPoint.getLatitude()));
+                    // 목적지
+                    pathinfo.put("rGoName",  endName);
+                    pathinfo.put("rGoX", String.valueOf(endPoint.getLongitude()));
+                    pathinfo.put("rGoY", String.valueOf(endPoint.getLatitude()));
+
+                    tmaptapi.invokeRoute(pathinfo);
+                } else {
+                    Toast.makeText(getApplicationContext(), "TMap이 설치되지 않았습니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void initTmapAPI() {
+        tmaptapi = new TMapTapi(this);
+        tmaptapi.setSKPMapAuthentication("8818efcf-6165-3d1c-a056-93025f8b06c3");
     }
 
     private void initView() {
@@ -150,6 +166,7 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         txtStartEndPlace = (TextView) findViewById(R.id.txtStartEndPlace);
         naviListView = (ListView) findViewById(R.id.routeitemlist);
         btnBackRoute = (Button) findViewById(R.id.btnBackRoute);
+        btnGoToTmap = (Button) findViewById(R.id.btnGoToTmap);
     }
 
     private void parseXML(Document pathDoc) {
@@ -201,8 +218,8 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
         double startY = i.getDoubleExtra("startY", 000.000D);
         double endX = i.getDoubleExtra("endX", 000.000D);
         double endY = i.getDoubleExtra("endY", 000.000D);
-        String startName = i.getStringExtra("startName");
-        String endName = i.getStringExtra("endName");
+        startName = i.getStringExtra("startName");
+        endName = i.getStringExtra("endName");
         startPoint.setLatitude(startX);
         startPoint.setLongitude(startY);
         endPoint.setLatitude(endX);
