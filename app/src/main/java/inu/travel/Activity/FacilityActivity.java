@@ -430,7 +430,7 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         //지도에 띄울 마크이미지 설정 기본이미지랑 클릭했을때 이미지
         tourBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
         defaultBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.place);
-        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img3);
+        selectedBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.selected_facility);
     }
 
     @Override
