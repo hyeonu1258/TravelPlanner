@@ -86,7 +86,7 @@ public class JoinActivity extends Activity {
                 pass = editPass.getText().toString();
                 email = editEmail.getText().toString();
                 if (!checkEmailForm(email)) {               //이메일 형시 검사
-//                    Toast.makeText(JoinActivity.this, "email형식이 틀려", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(JoinActivity.this, "email형식을 올바르게 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
                     String temp = testMD5(pass);            //MD5를 통해서 비밀번호 암호화
                     //temp 임시 암호화 변수
