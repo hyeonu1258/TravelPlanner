@@ -134,8 +134,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     private int zoomLevel;
 
     //inhoi back click event
-    private final long	FINSH_INTERVAL_TIME    = 2000;
-    private long		backPressedTime        = 0;
+    private final long FINSH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
 
 
     /**
@@ -180,6 +180,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 adapter.setSource(placeList.getItem()); //액션바 리스트 초기화
                 super.onDrawerSlide(drawerView, slideOffset);
             }
+
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -256,7 +257,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     else
                         Toast.makeText(getApplicationContext(), "선택된 장소가 없습니다.", Toast.LENGTH_SHORT).show();
                 } else if (view.getId() == R.id.btnRemoveListPlace) {
-//                    Toast.makeText(getApplicationContext(), "장소삭제", Toast.LENGTH_SHORT).show();
                     if (selectedPOIItem == null || placeList.getItem().isEmpty())
                         return;
 
@@ -265,8 +265,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         if (placeList.getItem().get(i).getContentid().equals(selectedPOIItem.id)) {
                             System.out.println("삭제할 장소 : " + placeList.getItem().get(i).getPlacename());
                             placeList.getItem().remove(i);
+                            Toast.makeText(getApplicationContext(), "장소가 삭제되었습니다.", Toast.LENGTH_SHORT).show();
 
-                            System.out.println("삭제성공");
                             adapter.setSource(placeList.getItem()); //액션바 리스트 초기화
                             //이미 표시된 POI 지우기
                             mMapView.removeAllTMapPOIItem();
@@ -528,7 +528,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                                                         } else if (response.code() == 503) {
                                                             int statusCode = response.code();
                                                             Log.i("MyTag", "응답코드 : " + statusCode);
-                                                        }else{
+                                                        } else {
                                                             System.out.println("에러1");
 
                                                         }
@@ -688,22 +688,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
     //상세정보를 띄움
     private void showDetailView(final SearchPlace searchPlace) {
-        //정보가 없는 장소가 있으므로 예외처리할것
-//        try {
-//            Log.i("MyLog:detailname", selectedPOIItem.name);
-//            if (searchPlace.addr1 != null)
-//                Log.i("MyLog:detailaddr1", searchPlace.addr1);
-//            if (searchPlace.addr2 != null)
-//                Log.i("MyLog:detailaddr2", searchPlace.addr2);
-//            if (searchPlace.tel != null)
-//                Log.i("MyLog:detailtel", searchPlace.tel);
-//            if (searchPlace.homepage != null)
-//                Log.i("MyLog:detailhomepage", searchPlace.homepage);
-//            if (searchPlace.overview != null)
-//                Log.i("MyLog:detailoverview", searchPlace.overview);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
         LayoutInflater layoutInflater = (LayoutInflater) getLayoutInflater();
         final View dialogLayout = layoutInflater.inflate(R.layout.detail_view, null);
@@ -746,39 +730,12 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
         t.start();
 
-        //runOnUiThread사용방법
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                // 인터넷 상의 이미지 보여주기
-//
-//                // 1. 권한을 획득한다 (인터넷에 접근할수 있는 권한을 획득한다)  - 메니페스트 파일
-//                // 2. Thread 에서 웹의 이미지를 받아온다 - honeycomb(3.0) 버젼 부터 바뀜
-//                // 3. 외부쓰레드에서 메인 UI에 접근하려면 Handler 를 사용해야 한다.
-//
-//                try {
-//                    URL url = new URL(searchPlace.firstimage);
-//                    InputStream is = url.openStream();
-//                    Bitmap bm = BitmapFactory.decodeStream(is);
-//                    imageViewDetailPicture.setImageBitmap(bm);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
         try {
-//        if (selectedPOIItem.name != null)
             txtDetailName.setText(searchPlace.title);
-//        if (searchPlace.addr1 != null)
             txtDetailAddr.setText(searchPlace.addr1);
-//        if (searchPlace.addr2 != null)
             txtDetailAddr.append(searchPlace.addr1);
-//        if (searchPlace.homepage != null)
             txtDetailHomepage.setText(Html.fromHtml(searchPlace.homepage));
-//        if (searchPlace.tel != null)
             txtDetailTel.setText(searchPlace.tel);
-//        if (searchPlace.overview != null)
             txtDetailOverview.setText(Html.fromHtml(searchPlace.overview));
         } catch (Exception e) {
             e.printStackTrace();
@@ -1045,17 +1002,22 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
     public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> poiArrayList, TMapPoint tMapPoint, PointF pointF) {
         if (!poiArrayList.isEmpty()) { //장소를 클릭했을 경우
             //저장된것 검사해서 넘어감
-            for (int i = 0; i < poiArrayList.size(); i++) {
-                for (int j = 0; j < savedPOIPlaceList.size(); j++) {
-                    if (poiArrayList.get(i).getPOIID() == savedPOIPlaceList.get(j).getPOIID()) {
-                        System.out.println("저장된것클릭");
-                        Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
+            try {
+                for (int i = 0; i < poiArrayList.size(); i++) {
+                    for (int j = 0; j < savedPOIPlaceList.size(); j++) {
+                        if (poiArrayList.get(i).getPOIID() == savedPOIPlaceList.get(j).getPOIID()) {
+                            System.out.println("저장된것클릭");
+                            Toast.makeText(getApplicationContext(), poiArrayList.get(0).getPOIName(), Toast.LENGTH_SHORT).show();
 
-                        selectedPOIItem = poiArrayList.get(0);
+                            selectedPOIItem = poiArrayList.get(0);
 
-                        return false;
+                            return false;
+                        }
                     }
                 }
+            } catch (Exception e) {
+                System.out.println("클릭에러1");
+                e.printStackTrace();
             }
 
             try {
@@ -1077,7 +1039,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                     selectedPOIItem = poiArrayList.get(0);
                     selectedPOIItem.Icon = selectedBitmap;
                     mMapView.addTMapPOIItem(poiArrayList); //갱신
-//                mMapView.setIconVisibility(true); //SKT타워에 마커가 자꾸 생김
 
                     //클릭한것 스크롤뷰로 이동
                     int position = 0;
@@ -1086,23 +1047,14 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                         if (selectedPOIItem.getPOIID() == tMapPOISearchItems.get(i).getPOIID())
                             position = i;
                     }
-                    if (!SlidingDrawer.isOpened())
+                    if (!SlidingDrawer.isOpened()) {
                         SlidingDrawer.animateOpen();
+                    }
                     searchPlaceListView.smoothScrollToPositionFromTop(position, 0);
-
-
-
-
-
-                    /*
-                    View convertView = new View(getApplicationContext());
-                    LinearLayout layout;
-                    layout = (LinearLayout) searchPlaceAdapter.getView(position, convertView, searchPlaceListView).findViewById(R.id.tempLinear);
-                    layout.setBackgroundResource(R.drawable.layout_border);
-                    */
 
                 }
             } catch (Exception e) {
+                System.out.println("클릭에러2");
                 e.printStackTrace();
             }
         } else {
@@ -1158,7 +1110,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 return false;
             }
         });
-        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
         theTextArea.setTextColor(0xFF84C448);
 
         return true;
@@ -1182,24 +1134,22 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 
     @Override
     public void onBackPressed() { // 백 버튼
-        long tempTime        = System.currentTimeMillis();
-        long intervalTime    = tempTime - backPressedTime;
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
 
-            if(this.drawer.isDrawerOpen(GravityCompat.START))
-                this.drawer.closeDrawer(GravityCompat.START);
-            else if(SlidingDrawer.isOpened()){
-                SlidingDrawer.close();
+        if (this.drawer.isDrawerOpen(GravityCompat.START))
+            this.drawer.closeDrawer(GravityCompat.START);
+        else if (SlidingDrawer.isOpened()) {
+            SlidingDrawer.close();
+        } else {
+            if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
+                super.onBackPressed();
+            } else {
+                backPressedTime = tempTime;
+                Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
             }
-            else {
-                if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
-                    Toast.makeText(getApplicationContext(), "'종료한다~~~.", Toast.LENGTH_SHORT).show();
-                    super.onBackPressed();
-                } else {
-                    backPressedTime = tempTime;
-                    Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
         }
+
     }
+}
 

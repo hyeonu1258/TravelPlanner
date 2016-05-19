@@ -329,7 +329,11 @@ public class FacilityActivity extends Activity implements TMapView.OnClickListen
         }
         this.contentTypeId = contentTypeId;
         // Tour API에서 쓸 좌표를 넘긴다.
-        getLocationListFromServer(mapX, mapY);
+        try {
+            getLocationListFromServer(mapX, mapY);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     //Tour API에서

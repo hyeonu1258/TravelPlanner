@@ -15,7 +15,8 @@
         android:focusableInTouchMode="false"
         android:layout_width="65dp"
         android:layout_height="match_parent"
-        android:src="@drawable/img1" />
+        android:background="#ffffff"
+        />
 
     <LinearLayout
         android:clickable="false"

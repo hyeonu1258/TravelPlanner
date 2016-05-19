@@ -35,12 +35,12 @@
 
             <Button
                 android:id="@+id/btnTotalNavi"
+                android:background="@mipmap/btn_total_route"
                 android:layout_width="50dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:text="전체경로"
                 android:onClick="btnClick" />
 
             <View

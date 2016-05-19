@@ -295,8 +295,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             mapX = item.getPOIPoint().getLongitude();
             mapY = item.getPOIPoint().getLatitude();
             mMapView.setCenterPoint(mapX, mapY, false);
-            mPopupWindow.showAsDropDown(v, display.getWidth() / 2, -500);
-//
+            mPopupWindow.showAsDropDown(v, display.getWidth() / 2 -70, -860);
 
         } else {
             System.out.println("빠졌다");
