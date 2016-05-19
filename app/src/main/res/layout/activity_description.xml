@@ -4,20 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@mipmap/bg_description"
     tools:context="inu.travel.Activity.DescriptionActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_marginTop="50dp"
-        android:layout_width="310dp"
-        android:layout_height="380dp"
+        android:layout_width="340dp"
+        android:layout_height="490dp"
         android:layout_gravity="center">
     </android.support.v4.view.ViewPager>
 
     <LinearLayout
         android:id="@+id/viewPagerCountDots"
         android:layout_marginTop="20dp"
-        android:layout_width="310dp"
+        android:layout_width="340dp"
         android:layout_height="20dp"
         android:layout_gravity="center"
         android:gravity="center"
@@ -26,10 +27,10 @@
 
     <Button
         android:id="@+id/btnStart"
+        android:background="@mipmap/btn_start"
         android:layout_marginTop="20dp"
-        android:layout_width="310dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:text="START"/>
+        android:layout_width="290dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center" />
 
 </LinearLayout>

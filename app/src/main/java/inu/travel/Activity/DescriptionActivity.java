@@ -59,7 +59,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
         for (int i = 0; i < dotsCount; i++) {
             dots[i] = new ImageView(this);
-            dots[i].setImageDrawable(getResources().getDrawable(R.drawable.nonselecteditem_dot));
+            dots[i].setImageDrawable(getResources().getDrawable(R.mipmap.dot_nonselecteditem));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -71,7 +71,7 @@ public class DescriptionActivity extends AppCompatActivity {
             pagerIndicator.addView(dots[i], params);
         }
 
-        dots[0].setImageDrawable(getResources().getDrawable(R.drawable.selecteditem_dot));
+        dots[0].setImageDrawable(getResources().getDrawable(R.mipmap.dot_selecteditem));
     }
 
     public void pagerEvent() {
@@ -84,10 +84,10 @@ public class DescriptionActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 for (int i = 0; i < dotsCount; i++) {
-                    dots[i].setImageDrawable(getResources().getDrawable(R.drawable.nonselecteditem_dot));
+                    dots[i].setImageDrawable(getResources().getDrawable(R.mipmap.dot_nonselecteditem));
                 }
 
-                dots[position].setImageDrawable(getResources().getDrawable(R.drawable.selecteditem_dot));
+                dots[position].setImageDrawable(getResources().getDrawable(R.mipmap.dot_selecteditem));
             }
 
             @Override

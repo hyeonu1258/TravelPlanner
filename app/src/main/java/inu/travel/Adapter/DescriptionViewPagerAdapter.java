@@ -42,7 +42,7 @@ public class DescriptionViewPagerAdapter extends PagerAdapter {
 
         // ImageView에 현재 position 번째에 해당하는 이미지를 보여주기 위한 작업
         // 현재 position에 해당하는 이미지를 setting
-        img.setImageResource(R.drawable.gametitle_01+position);
+        img.setImageResource(R.mipmap.description_01+position);
 
         //ViewPager에 만들어 낸 View 추가
         container.addView(view);
