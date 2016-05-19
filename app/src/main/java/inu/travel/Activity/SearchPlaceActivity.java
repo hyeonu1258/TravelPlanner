@@ -323,7 +323,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 System.out.println("y좌표는 : " + y);
 
                 mMapView.setCenterPoint(x, y, true);
-                mMapView.setZoomLevel(15);
+//                mMapView.setZoomLevel(15);
 
                 if (selectedPOIItem != null) { //이전에 저장된 값이 있으면
                     System.out.println("선택했네!");
@@ -336,13 +336,14 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 selectedPOIItem = tMapPOISearchItems.get(position);
                 selectedPOIItem.Icon = selectedBitmap;
                 mMapView.addTMapPOIItem(tMapPOISearchItems); //갱신
+                mMapView.addTMapPOIItem(savedPOIPlaceList); //갱신
 
 
                 long viewId = view.getId();
                 selectedPOIItem = tMapPOISearchItems.get(position);
 
                 if (viewId == R.id.btnAddPlace) {
-                    System.out.println("장소추가");
+                    Toast.makeText(getApplicationContext(), "추가완료.", Toast.LENGTH_SHORT).show();
                     addPlace(selectedPOIItem);
                 } else if (viewId == R.id.btnViewDetail) {
                     viewDetail(selectedPOIItem);
@@ -608,7 +609,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         //중복검사
         for (int i = 0; i < placeList.getItem().size(); i++) {
             if (placeList.getItem().get(i).getContentid().equals(this.selectedPOIItem.id)) {
-                System.out.println("이미 추가한 장소입니다.");
+                Toast.makeText(getApplicationContext(), "이미 추가한 장소입니다.", Toast.LENGTH_SHORT).show();
+
                 return;
             }
         }
