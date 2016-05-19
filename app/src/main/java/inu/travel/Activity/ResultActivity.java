@@ -295,7 +295,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             mapX = item.getPOIPoint().getLongitude();
             mapY = item.getPOIPoint().getLatitude();
             mMapView.setCenterPoint(mapX, mapY, false);
-            mPopupWindow.showAsDropDown(v, display.getWidth() / 2 -70, -860);
+            mPopupWindow.showAsDropDown(v, display.getWidth() / 2 -70, -870);
 
         } else {
             System.out.println("빠졌다");
@@ -344,7 +344,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
         toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         toolbar.showOverflowMenu();
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         //토글 생성
 //        drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
 //        toggle = new ActionBarDrawerToggle(this, drawer, toolbar,

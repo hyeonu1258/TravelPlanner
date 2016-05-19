@@ -68,7 +68,7 @@ public class ResultPlaceAdapter extends BaseAdapter {
         }
 
         final TMapPOIItem place = placeDatas.get(position);
-        viewHolder.txtNameItem.setText(place.getPOIName().toString());
+        viewHolder.txtNameItem.setText(position+1 + ". " + place.getPOIName().toString());
         viewHolder.txtAddrItem.setText(place.address);
         final SearchPlaceViewHolder finalViewHolder = viewHolder;
         Thread t = new Thread(new Runnable() {

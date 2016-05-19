@@ -147,7 +147,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
 //        Font.setGlobalFont(this, getWindow().getDecorView());
 
         setContentView(R.layout.activity_search_place);
-        setTitle("");
         initNetworkService();
         mContext = this;
 
@@ -155,6 +154,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.showOverflowMenu();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // 슬라이딩 레이아웃 생성
         searchPlaceListView = (ListView) findViewById(R.id.searchitemlist);
