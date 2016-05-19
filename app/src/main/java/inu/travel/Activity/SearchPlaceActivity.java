@@ -343,7 +343,6 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
                 selectedPOIItem = tMapPOISearchItems.get(position);
 
                 if (viewId == R.id.btnAddPlace) {
-                    Toast.makeText(getApplicationContext(), "추가완료.", Toast.LENGTH_SHORT).show();
                     addPlace(selectedPOIItem);
                 } else if (viewId == R.id.btnViewDetail) {
                     viewDetail(selectedPOIItem);
@@ -615,6 +614,7 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
             }
         }
 
+
         //리스트에 장소객체추가
         Place place = new Place();
         place.setPlacename(this.selectedPOIItem.name);
@@ -630,6 +630,8 @@ public class SearchPlaceActivity extends AppCompatActivity implements TMapView.O
         System.out.println("장소리스트 개수 : " + placeList.getItem().size());
         System.out.println("추가한 장소 : " + placeList.getItem().get(placeList.getItem().size() - 1).getPlacename());
         printArray();
+        Toast.makeText(getApplicationContext(), "추가완료.", Toast.LENGTH_SHORT).show();
+
     }
 
     private void printArray() {

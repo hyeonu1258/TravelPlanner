@@ -185,8 +185,8 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
 
         for (int i = 1; i < savedPOIPlaceList.size(); i++) {
             TMapPolyLine polyLine = new TMapPolyLine();
-            polyLine.setLineColor(0x00F7EF04);
-//            polyLine.setLineWidth(10);
+            polyLine.setLineColor(0x000000ff);
+            polyLine.setLineWidth(10);
             //시작점
             startPoint = savedPOIPlaceList.get(i - 1).getPOIPoint();
             polyLine.addLinePoint(startPoint);
@@ -296,6 +296,7 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
             mapY = item.getPOIPoint().getLatitude();
             mMapView.setCenterPoint(mapX, mapY, false);
             mPopupWindow.showAsDropDown(v, display.getWidth() / 2 -70, -870);
+//            mPopupWindow.showAsDropDown(v, display.getWidth() / 2 -70, -(display.getWidth() / 2) - 100);
 
         } else {
             System.out.println("빠졌다");
@@ -655,6 +656,10 @@ public class ResultActivity extends AppCompatActivity implements TMapView.OnClic
                     System.out.println("도착지=> " + savedPOIPlaceList.get(savedPOIPlaceList.size()-1).name);
 
                     TMapPolyLine tMapPolyLine = tmapdata.findMultiPointPathData(startPoint, endPoint, passList, 0);
+                    tMapPolyLine.setLineWidth(10);
+                    tMapPolyLine.setLineColor(0x000000ff);
+
+
                     mMapView.addTMapPath(tMapPolyLine); //출발지 도착지 경유지 표시
 
                     //찍은 좌표로 맵 이동, 최적화

@@ -244,6 +244,9 @@ public class RouteActivity extends AppCompatActivity implements TMapView.OnClick
                 try {
                     final TMapData tmapdata = new TMapData();
                     TMapPolyLine tMapPolyLine = tmapdata.findMultiPointPathData(startPoint, endPoint, null, 0);
+                    tMapPolyLine.setLineWidth(10);
+                    tMapPolyLine.setLineColor(0x000000ff);
+
                     mMapView.addTMapPath(tMapPolyLine); //출발지 도착지 경유지 표시
 
                     //찍은 좌표로 맵 이동, 최적화
